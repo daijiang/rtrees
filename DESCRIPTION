@@ -1,0 +1,14 @@
+Package: rtrees
+Title: Deriving Phylogenies From Synthesis Trees
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Daijiang",
+           family = "Li",
+           role = c("aut", "cre"),
+           email = "daijianglee@gmail.com")
+Description: To facilitate generating phylogenies from synthesis trees.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
