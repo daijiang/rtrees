@@ -9,7 +9,7 @@ cap_first_letter = function (x) {
 if(getRversion() >= "2.15.1") 
   utils::globalVariables(c(".", "isTip", "is_tip", "node",
                            "tree_fish", "tree_plant_GBOTB", "classifications",
-                           "tree_bird_ericson"))
+                           "tree_bird_ericson", "tree_mammal"))
 
 #' Convert a vector of species names to a data frame
 #' 

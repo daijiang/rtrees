@@ -1,7 +1,8 @@
 source("data-raw/functions.R")
 
+# classifications ----
+
 # plants ----
-load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/GBOTB.extended.rda")))
 load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/nodes.info.1.rda")))
 classification_plants = select(nodes.info.1, genus, family) %>% 
   unique() %>% 
@@ -24,50 +25,8 @@ if(!"Lithraea" %in% classification_plants$genus)
   classification_plants = add_row(classification_plants, 
                                   genus = "Lithraea",
                                   family = "Anacardiaceae")
-# usethis::use_data(classification_plants, overwrite = T, compress = "xz")
-
-# # takes a while, commented out
-# tree_plant_GBOTB = add_root_info(tree = GBOTB.extended, classification = classification_plants)
-
-# usethis::use_data(tree_plant_GBOTB, overwrite = T, compress = "xz")
-# tools::checkRdaFiles("data/tree_plant_GBOTB.rda")
-
-# test
-sp_list = tibble::as_tibble(read.csv("~/Dropbox/Reading/ECOG-04434/Appendix_3-Example_species_list.csv", stringsAsFactors = F))
-
-ape::branching.times(tidytree::as.phylo(tree_df))[where]
-system.time(tst1 <- get_tree(dplyr::filter(sp_list, !species %in% c("Hicoria_texana")), scenario = "S3"))
-system.time(tst1 <- get_tree(sp_list, scenario = "S3"))
-plot(tst1)
-
-library(V.PhyloMaker)
-system.time(tst1_v <- V.PhyloMaker::phylo.maker(sp_list, scenarios = "S3"))
-par(mfrow = c(1, 2))
-plot(ladderize(tst1), cex = 0.8)
-plot(ladderize(tst1_v$scenario.2$run.1), cex = 0.8)
-plot(ladderize(tree_sub), cex = 0.8)
-
+any(duplicated(classification_plants$genus)) # all genus monophytic? T
 # fish ----
-# time tree
-fishurl = "https://fishtreeoflife.org/downloads/actinopt_12k_treePL.tre.xz"
-tempf = tempfile()
-download.file(fishurl, tempf)
-fish_tree_12k = read.tree(tempf) # 11638 species, no node labels
-unlink(tempf)
-fish_tree_12k$node.label = paste0("N", 1:Nnode(fish_tree_12k))
-
-# # full tree
-# fishurl2 = "https://fishtreeoflife.org/downloads/actinopt_full.trees.xz"
-# tempf = tempfile()
-# download.file(fishurl2, tempf)
-# fish_tree_full = read.tree(tempf)
-# str(fish_tree_full) # 100 phylogenies
-# fish_tree_full[[1]] # 31516 species each
-# Nnode(fish_tree_full[[1]])
-# Nnode(fish_tree_full[[2]])
-# # unlink(tempf)
-
-# fish names
 fishurl3 = "https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz"
 tempf2 = tempfile()
 download.file(fishurl3, tempf2)
@@ -83,23 +42,6 @@ fish_names = select(fish_names, -genus2) %>%
 classification_fish = select(fish_names, genus, family) %>% 
   unique()
 any(duplicated(classification_fish$genus)) # all genus monophytic? T
-# usethis::use_data(fish_names, compress = "xz", overwrite = T)
-# usethis::use_data(classification_fish, compress = "xz", overwrite = T)
-
-# find roots for fish tree
-tree_fish = add_root_info(fish_tree_12k, classification_fish)
-usethis::use_data(tree_fish, overwrite = T, compress = "xz")
-
-# test
-sp_list_fish = tibble(species = c(sample(tree_fish$tip.label, 5), "Barathronus_bicolor",
-                 sample(setdiff(fish_names$species, tree_fish$tip.label), 6))) %>% 
-  unique() %>% 
-  left_join(fish_names, by = "species")
-test = get_tree(sp_list = sp_list_fish, tree = tree_fish, scenario = "S3")
-test = get_tree(sp_list = sp_list_fish, taxon = "fish", scenario = "S3")
-test = get_tree(sp_list = sp_list_fish, tree = tree_fish, show_grafted = T, scenario = "S3")
-plot(ladderize(test))
-
 
 # birds ----
 tempf = tempfile(fileext = ".zip")
@@ -129,9 +71,9 @@ full_join(unique(select(tips, genus, family)), classification_bird)
 # It seems the online version of birdlife is more accurate, if a genus has different family,
 # use birdlife's version.
 classification_bird2 = filter(unique(select(tips, genus, family)), 
-       !genus %in% classification_bird$genus)
+                              !genus %in% classification_bird$genus)
 filter(tips, genus %in% 
-classification_bird2$genus[duplicated(classification_bird2$genus)])
+         classification_bird2$genus[duplicated(classification_bird2$genus)])
 # double checked, and it should be an error,
 # genus Chlorothraupis belongs to family Cardinalidae
 classification_bird2 = filter(classification_bird2, !(genus == "Chlorothraupis" & family == "Thraupidae"))
@@ -141,18 +83,67 @@ classification_bird = bind_rows(
 )
 any(duplicated(classification_bird$genus))
 
-# phylogeny
+# mammals ----
+names_mammal = read_csv("https://raw.githubusercontent.com/MegaPast2Future/PHYLACINE_1.2/master/Data/Taxonomy/Synonymy_table_valid_species_only.csv")
+names_mammal = unique(select(names_mammal, species = Binomial.1.2, genus = Genus.1.2, family = Family.1.2))
+classification_mammal = unique(select(names_mammal, genus, family)) %>% mutate(taxon = "mammal")
+any(duplicated(classification_mammal$genus))
+
+# combine classifications ----
+classifications = bind_rows(mutate(classification_plants, taxon = "plant"),
+                            mutate(classification_fish, taxon = "fish"))
+classifications = bind_rows(classifications, 
+                            mutate(classification_bird, taxon = "bird"))
+classifications = bind_rows(classifications, classification_mammal)
+usethis::use_data(classifications, overwrite = T, compress = "xz")
+
+# mega-trees ===============================================================
+
+# plant ----
+load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/GBOTB.extended.rda")))
+
+# # takes a while, commented out
+# tree_plant_GBOTB = add_root_info(tree = GBOTB.extended, classification = classification_plants)
+
+# usethis::use_data(tree_plant_GBOTB, overwrite = T, compress = "xz")
+# tools::checkRdaFiles("data/tree_plant_GBOTB.rda")
+
+# fish ----
+# time tree
+fishurl = "https://fishtreeoflife.org/downloads/actinopt_12k_treePL.tre.xz"
+tempf = tempfile()
+download.file(fishurl, tempf)
+fish_tree_12k = read.tree(tempf) # 11638 species, no node labels
+unlink(tempf)
+fish_tree_12k$node.label = paste0("N", 1:Nnode(fish_tree_12k))
+
+# # full tree
+# fishurl2 = "https://fishtreeoflife.org/downloads/actinopt_full.trees.xz"
+# tempf = tempfile()
+# download.file(fishurl2, tempf)
+# fish_tree_full = read.tree(tempf)
+# str(fish_tree_full) # 100 phylogenies
+# fish_tree_full[[1]] # 31516 species each
+# Nnode(fish_tree_full[[1]])
+# Nnode(fish_tree_full[[2]])
+# # unlink(tempf)
+
+# find roots for fish tree
+tree_fish = add_root_info(fish_tree_12k, classification_fish)
+usethis::use_data(tree_fish, overwrite = T, compress = "xz")
+
+# birds ----
 # downloaded the first 1000 phylogenies
 tempf = tempfile(fileext = ".zip")
 download.file("https://data.vertlife.org/birdtree/Stage2/EricsonStage2_0001_1000.zip",
               tempf)
 unzip(tempf, list = T)
-unzip(tempf, file = unzip(tempf, list = T)$Name[1])
+unzip(tempf, file = unzip(tempf, list = T)$Name[1]) 
 tree_bird_ericson = read.tree(unzip(tempf, list = T)$Name[1])
 set.seed(123)
 nnw = sample(1:1000, 1) # 288
 tree_bird_ericson = tree_bird_ericson[[nnw]]
-unlink(unzip(tempf, list = T)$Name[1])
+unlink(unzip(tempf, list = T)$Name[1]) # need modify
 unlink(tempf)
 tree_bird_ericson$node.label = paste0("N", 1:Nnode(tree_bird_ericson))
 tree_bird_ericson0 = tree_bird_ericson
@@ -179,11 +170,17 @@ usethis::use_data(tree_bird_hackett, overwrite = T, compress = "xz")
 setdiff(tree_bird_ericson$tip.label, tree_bird_hackett$tip.label)
 setdiff(tree_bird_ericson$tip.label, tips$species)
 
-
-xx = read.nexus("~/Downloads/tree-pruner-67cdc9cc-3480-4bc8-96f3-0d997b1e4802/output.nex")
-plot(xx[[1]])
-
 # mammals ----
+m_url = "https://github.com/MegaPast2Future/PHYLACINE_1.2/blob/master/Data/Phylogenies/Complete_phylogeny.nex"
+browseURL(m_url)
+# download mammal tree, 1000 trees
+tree_mammal = ape::read.nexus("~/Downloads/Complete_phylogeny.nex")
+set.seed(123)
+nnw = sample(1:1000, 1) # 288
+tree_mammal = tree_mammal[[nnw]]
+tree_mammal = add_root_info(tree_mammal, classification_mammal)
+usethis::use_data(tree_mammal, overwrite = T, compress = "xz")
+
 
 # butterfly ----
 xb = readLines("https://datadryad.org/bitstream/handle/10255/dryad.170784/Espeland_et_al_Dated_tree_Magallon_2015_root_calibration.tre?sequence=1")
@@ -193,10 +190,5 @@ cat(paste(xb, collapse = "\n"), file = tempf)
 tree_butterfly = ape::read.nexus(tempf)
 plot(tree_butterfly, cex = 0.5)
 tree_butterfly$tip.label
+unlink(tempf)
 
-# combine classifications ----
-classifications = bind_rows(mutate(classification_plants, taxon = "plant"),
-          mutate(classification_fish, taxon = "fish"))
-classifications = bind_rows(classifications, 
-                            mutate(classification_bird, taxon = "bird"))
-usethis::use_data(classifications, overwrite = T, compress = "xz")

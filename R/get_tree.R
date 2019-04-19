@@ -57,14 +57,14 @@ get_tree = function(sp_list, tree, taxon,
     tree = switch(taxon,
       plant = tree_plant_GBOTB,
       fish = tree_fish,
-      bird = tree_bird_ericson
+      bird = tree_bird_ericson,
+      mammal = tree_mammal
     )
   }
   scenario = match.arg(scenario)
   
   sp_list$species = gsub(" +", "_", sp_list$species)
   sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
-  sp_out_tree$status = ""
   
   if(nrow(sp_out_tree) == 0){
     message("Wow, all species are already in the mega-tree!")
@@ -72,6 +72,7 @@ get_tree = function(sp_list, tree, taxon,
     return(tree_sub)
   }
   
+  sp_out_tree$status = ""
   tree_df = tidytree::as_tibble(tree)
   tree_df$is_tip = !(tree_df$node %in% tree_df$parent)
   node_hts = ape::branching.times(tree)

@@ -4,7 +4,7 @@
 \name{classifications}
 \alias{classifications}
 \title{Classifications of species}
-\format{A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}).}
+\format{A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}, \code{mammal}).}
 \usage{
 classifications
 }
@@ -22,6 +22,8 @@ and Lithraea (Anacardiaceae). There are 10,606 genus in this file.
 \href{https://data.vertlife.org/birdtree/BLIOCPhyloMasterTax.csv}{taxonomy file}
 of the Jetz et al. 2012 phylogeny, there are additional 117 genus that are not in the file
 of BirdLife. Both are combined here, which leads to 2,508 genus.
+\item Mammal classification information was based on PHYLACINE, which has 1,400 genus.
+\url{https://github.com/MegaPast2Future/PHYLACINE_1.2/blob/master/Data/Taxonomy/Synonymy_table_valid_species_only.csv}
 }
 }
 \keyword{datasets}
