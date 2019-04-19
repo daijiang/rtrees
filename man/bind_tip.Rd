@@ -31,7 +31,7 @@ bind_tip(tree = NULL, where, tip_label, frac = 0.5,
 Either a phylogeny or a data frame, which can be then converted to a phylogeny later.
 }
 \description{
-Insert a tip to a phylogeny at location specified.
+Graft a tip to a phylogeny at location specified.
 }
 \examples{
 \dontrun{

@@ -11,13 +11,18 @@ get_tree(sp_list, tree, taxon, scenario = c("S3", "S2", "S1"),
 \item{sp_list}{A data frame with at least three columns: species, genus, family. Species column
 holds the species for which we want to have a phylogeny. It can also have two optional columns:
 close_sp and close_genus. We can specify the cloest species/genus of the species based on
-expert knowledgement. If specified, the new species will be grafted to this particular location.}
+expert knowledgement. If specified, the new species will be grafted to this particular location.
+
+It can also be a string vector if \code{taxon} is specified. Though it probably is a better idea
+to prepare your data frame with \code{\link[=sp_list_df]{sp_list_df()}}.}
 
 \item{tree}{A mega-tree with class \code{phylo}. Optional if \code{taxon} is specified, in which case, a default
 mega-phylogeny will be used.
 \itemize{
-\item For plants, the mega-tree is \link{tree_plant_GBOTB}.
+\item For plant, the mega-tree is \link{tree_plant_GBOTB}.
 \item For fish, the mega-tree is \link{tree_fish}.
+\item For bird, the mega-trees are \link{tree_bird_ericson} and \link{tree_bird_hackett}. \link{tree_bird_ericson} will be the
+default if no \code{tree} is specified and \code{taxon} is \code{bird}.
 }}
 
 \item{taxon}{The taxon of species in the \code{sp_list}. Currently, can be \code{plant} or \code{fish}.}

@@ -7,11 +7,16 @@
 #' holds the species for which we want to have a phylogeny. It can also have two optional columns:
 #' close_sp and close_genus. We can specify the cloest species/genus of the species based on
 #' expert knowledgement. If specified, the new species will be grafted to this particular location.
+#' 
+#' It can also be a string vector if `taxon` is specified. Though it probably is a better idea
+#' to prepare your data frame with [sp_list_df()].
 #' @param tree A mega-tree with class `phylo`. Optional if `taxon` is specified, in which case, a default
 #' mega-phylogeny will be used.
 #' 
-#' - For plants, the mega-tree is [tree_plant_GBOTB].
+#' - For plant, the mega-tree is [tree_plant_GBOTB].
 #' - For fish, the mega-tree is [tree_fish].
+#' - For bird, the mega-trees are [tree_bird_ericson] and [tree_bird_hackett]. [tree_bird_ericson] will be the 
+#' default if no `tree` is specified and `taxon` is `bird`.
 #' 
 #' @param taxon The taxon of species in the `sp_list`. Currently, can be `plant` or `fish`.
 #' @param scenario How to insert a species into the mega-tree? 
@@ -40,6 +45,8 @@ get_tree = function(sp_list, tree, taxon,
                     scenario = c("S3", "S2", "S1"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE) {
+  if(is.vector(sp_list, mode = "character") & !missing(taxon))
+    sp_list = sp_list_df(sp_list, taxon)
   if(!inherits(sp_list, "data.frame"))
     stop("sp_list must be a data frame with at least these columns: species, genus, family.")
   if(any(!c("species", "genus", "family") %in% names(sp_list)))
@@ -49,7 +56,8 @@ get_tree = function(sp_list, tree, taxon,
   if(missing(tree) & !missing(taxon)){# pick default tree
     tree = switch(taxon,
       plant = tree_plant_GBOTB,
-      fish = tree_fish
+      fish = tree_fish,
+      bird = tree_bird_ericson
     )
   }
   scenario = match.arg(scenario)
@@ -193,5 +201,3 @@ get_tree = function(sp_list, tree, taxon,
   }
   return(tree_sub)
 }
-
-

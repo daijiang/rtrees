@@ -6,6 +6,8 @@ library(tidytree)
 #' @param classification A data frame of 2 columns: genus, family
 #' @noRd
 add_root_info = function(tree, classification){
+  if(is.null(tree$node.label))
+    tree$node.label = paste0("N", 1:Nnode(tree))
   tree = makeLabel(tree, tips = FALSE, node = TRUE)
   if(any(ww <- grepl("^[0-9]*$", tree$node.label)))
     tree$node.label[ww] = paste0("N", tree$node.label[ww])

@@ -27,3 +27,8 @@ test_that("Test get tree for fish", {
   expect_s3_class(tt, "phylo")
   expect_equal(ape::Ntip(tt), nrow(test_plant_list) - 1)
 })
+
+test_that("Test get tree for bird", {
+  tt = get_tree(test_bird_list, taxon = "bird", show_grafted = T)
+  # plot(ladderize(tt))
+})

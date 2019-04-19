@@ -82,6 +82,7 @@ fish_names = select(fish_names, -genus2) %>%
   mutate(species = gsub(" ", "_", species))
 classification_fish = select(fish_names, genus, family) %>% 
   unique()
+any(duplicated(classification_fish$genus)) # all genus monophytic? T
 # usethis::use_data(fish_names, compress = "xz", overwrite = T)
 # usethis::use_data(classification_fish, compress = "xz", overwrite = T)
 
@@ -99,7 +100,103 @@ test = get_tree(sp_list = sp_list_fish, taxon = "fish", scenario = "S3")
 test = get_tree(sp_list = sp_list_fish, tree = tree_fish, show_grafted = T, scenario = "S3")
 plot(ladderize(test))
 
+
+# birds ----
+tempf = tempfile(fileext = ".zip")
+download.file("http://datazone.birdlife.org/userfiles/file/Species/Taxonomy/HBW-BirdLife_Checklist_v3_Nov18.zip",
+              tempf)
+unzip(tempf, list = T)
+unzip(tempf, file = "HBW-BirdLife_Checklist_Version_3.xlsx")
+bird_names = readxl::read_excel("HBW-BirdLife_Checklist_Version_3.xlsx", skip = 1)
+unlink(tempf)
+unlink("HBW-BirdLife_Checklist_Version_3.xlsx")
+bird_names = unique(dplyr::select(bird_names, species = `Scientific name`, family = `Family name`)) %>% 
+  mutate(species = gsub(" ", "_", species))
+
+bird_names = mutate(bird_names, genus = gsub("^([-A-Za-z]*)_.*$", "\\1", species))
+classification_bird = select(bird_names, genus, family) %>% unique()
+
+tips = read_csv("https://data.vertlife.org/birdtree/BLIOCPhyloMasterTax.csv") %>% 
+  select(species = TipLabel, family = BLFamilyLatin) %>% 
+  mutate(genus = gsub("^([-A-Za-z]*)_.*$", "\\1", species))
+select(tips, genus, family) %>% unique()
+all(tips$genus %in% classification_bird$genus)
+setdiff(tips$genus, classification_bird$genus)
+setdiff(classification_bird$genus, tips$genus)
+full_join(unique(select(tips, genus, family)), classification_bird) 
+# filter(classification_bird, genus == "Bias")
+# filter(tips, genus == "Bias")
+# It seems the online version of birdlife is more accurate, if a genus has different family,
+# use birdlife's version.
+classification_bird2 = filter(unique(select(tips, genus, family)), 
+       !genus %in% classification_bird$genus)
+filter(tips, genus %in% 
+classification_bird2$genus[duplicated(classification_bird2$genus)])
+# double checked, and it should be an error,
+# genus Chlorothraupis belongs to family Cardinalidae
+classification_bird2 = filter(classification_bird2, !(genus == "Chlorothraupis" & family == "Thraupidae"))
+classification_bird = bind_rows(
+  classification_bird,
+  classification_bird2
+)
+any(duplicated(classification_bird$genus))
+
+# phylogeny
+# downloaded the first 1000 phylogenies
+tempf = tempfile(fileext = ".zip")
+download.file("https://data.vertlife.org/birdtree/Stage2/EricsonStage2_0001_1000.zip",
+              tempf)
+unzip(tempf, list = T)
+unzip(tempf, file = unzip(tempf, list = T)$Name[1])
+tree_bird_ericson = read.tree(unzip(tempf, list = T)$Name[1])
+set.seed(123)
+nnw = sample(1:1000, 1) # 288
+tree_bird_ericson = tree_bird_ericson[[nnw]]
+unlink(unzip(tempf, list = T)$Name[1])
+unlink(tempf)
+tree_bird_ericson$node.label = paste0("N", 1:Nnode(tree_bird_ericson))
+tree_bird_ericson0 = tree_bird_ericson
+tree_bird_ericson = add_root_info(tree_bird_ericson, classification_bird)
+usethis::use_data(tree_bird_ericson, overwrite = T, compress = "xz")
+
+tempf = tempfile(fileext = ".zip")
+download.file("https://data.vertlife.org/birdtree/Stage2/HackettStage2_0001_1000.zip",
+              tempf)
+unzip(tempf, list = T)
+unzip(tempf, file = unzip(tempf, list = T)$Name[1])
+set.seed(123)
+nnw = sample(1:1000, 1) # 288
+tree_bird_hackett = read.tree(unzip(tempf, list = T)$Name[1])[[nnw]]
+unlink(unzip(tempf, list = T)$Name[1])
+unlink(tempf)
+
+tree_bird_hackett$node.label = paste0("N", 1:Nnode(tree_bird_hackett))
+tree_bird_hackett0 = tree_bird_hackett
+tree_bird_hackett = add_root_info(tree_bird_hackett, classification_bird)
+tree_bird_hackett$genus_family_root
+tail(tree_bird_hackett$genus_family_root)
+usethis::use_data(tree_bird_hackett, overwrite = T, compress = "xz")
+setdiff(tree_bird_ericson$tip.label, tree_bird_hackett$tip.label)
+setdiff(tree_bird_ericson$tip.label, tips$species)
+
+
+xx = read.nexus("~/Downloads/tree-pruner-67cdc9cc-3480-4bc8-96f3-0d997b1e4802/output.nex")
+plot(xx[[1]])
+
+# mammals ----
+
+# butterfly ----
+xb = readLines("https://datadryad.org/bitstream/handle/10255/dryad.170784/Espeland_et_al_Dated_tree_Magallon_2015_root_calibration.tre?sequence=1")
+xb[4] = sub("UTREE", "TREE", xb[4])
+tempf = tempfile()
+cat(paste(xb, collapse = "\n"), file = tempf)
+tree_butterfly = ape::read.nexus(tempf)
+plot(tree_butterfly, cex = 0.5)
+tree_butterfly$tip.label
+
 # combine classifications ----
 classifications = bind_rows(mutate(classification_plants, taxon = "plant"),
           mutate(classification_fish, taxon = "fish"))
+classifications = bind_rows(classifications, 
+                            mutate(classification_bird, taxon = "bird"))
 usethis::use_data(classifications, overwrite = T, compress = "xz")

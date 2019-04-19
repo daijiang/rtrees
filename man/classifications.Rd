@@ -4,7 +4,7 @@
 \name{classifications}
 \alias{classifications}
 \title{Classifications of species}
-\format{A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}).}
+\format{A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}).}
 \usage{
 classifications
 }
@@ -13,10 +13,15 @@ Genus and family information of different groups of taxon.
 \itemize{
 \item Plant classification information was based on The Plant List. It was generated
 based on \code{V.PhyloMaker::nodes.info.1} with two additions: genus Malaisia (Euphorbiaceae)
-and Lithraea (Anacardiaceae). Three are 10,606 genus in this file.
+and Lithraea (Anacardiaceae). There are 10,606 genus in this file.
 \url{https://github.com/jinyizju/V.PhyloMaker/tree/master/data}
-\item Fish classification information was based on FishBase. They are 4,825 genus in this file.
+\item Fish classification information was based on FishBase. There are 4,825 genus in this file.
 \url{https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz}
+\item Bird classification information was based on BirdLife, which resulted in 2,391 genus.
+\url{http://datazone.birdlife.org/species/taxonomy} However, based on the
+\href{https://data.vertlife.org/birdtree/BLIOCPhyloMasterTax.csv}{taxonomy file}
+of the Jetz et al. 2012 phylogeny, there are additional 117 genus that are not in the file
+of BirdLife. Both are combined here, which leads to 2,508 genus.
 }
 }
 \keyword{datasets}

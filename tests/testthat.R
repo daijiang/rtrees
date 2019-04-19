@@ -1,6 +1,8 @@
 library(testthat)
 library(rtrees)
 
+library(dplyr)
+library(tibble)
 # plants
 test_plant_list = bind_rows(
   # out of tree
@@ -29,7 +31,12 @@ test_fish_list = tibble(
              "Cyprinidae", "Cichlidae", "Stomiidae", "Batrachoididae")
 )
 
-
+# bird
+test_bird_list = c("Brachypteryx_major", "Asthenes_perijana", "Ciridops_anna", 
+                   "Leiothlypis_ruficapilla", "Reinwardtoena_reinwardti",
+                   "Garrulax_caerulatus", "Buteo_rufofuscus", "Sylvia_mystacea",
+                   "Telophorus_viridis", "Trachyphonus_darnaudii") %>% 
+  sp_list_df(taxon = "bird")
 
 
 test_check("rtrees")

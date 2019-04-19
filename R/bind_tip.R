@@ -1,6 +1,6 @@
 #' Bind a tip to a phylogeny
 #'
-#' Insert a tip to a phylogeny at location specified.
+#' Graft a tip to a phylogeny at location specified.
 #'
 #' @param tree A phylogeny, with class of "phylo".
 #' @param where Location where to insert the tip. It can be either tip label or node label, but must be characters. If the location does not have a name, assign it first.
@@ -76,7 +76,7 @@ bind_tip = function(tree = NULL, where, tip_label,
                                    branch.length = tree_tbl_2$branch.length[tree_tbl_2$label == where] +
                                      node_height,
                                    label = tip_label)
-    } else { # attach to a target node
+    } else { # attach to a target node; no need to create a new one
       if(at_root){ # root
         tree_tbl_new = tibble::tibble(parent = node_orig + 1, node = 1,
                                     branch.length = node_height, label = tip_label)
