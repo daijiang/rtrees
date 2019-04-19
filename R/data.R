@@ -3,13 +3,13 @@
 #' This tree was based on Brown and Smith (2018), which in turn was based on the Open Tree of Life. 
 #' It was copied from `V.PhyloMaker::GBOTB.extended`. After then, node labels were added for empty ones.
 #'
-#' @format A phylogeny with class "phylo". It is also a list. Compare with a normal phylo object, it has another data frame `tree_plant_GBOTB$genus_family_root`, which provides the root nodes information for every unique genus and family in the phylogeny. Such information can be used to insert new tips onto the phylogeny later.
+#' @format A phylogeny with class "phylo". It is also a list. Compare with a normal phylo object, it has another data frame `tree_plant_otl$genus_family_root`, which provides the root nodes information for every unique genus and family in the phylogeny. Such information can be used to insert new tips onto the phylogeny later.
 #' @source <https://github.com/jinyizju/V.PhyloMaker/tree/master/data>
 #' @references Smith, S. A., & Brown, J. W. (2018). Constructing a broadly inclusive seed plant phylogeny. American Journal of Botany, 105(3), 302-314.
 #' 
 #' Jin, Y., & Qian, H. (2019). V. PhyloMaker: an R package that can generate very large phylogenies for vascular plants. Ecography.
-#' 
-"tree_plant_GBOTB"
+#' @family trees
+"tree_plant_otl"
 
 
 #' Classifications of species
@@ -45,6 +45,7 @@
 #' @format A phylogeny with class "phylo". It is also a list. Compare with a normal phylo object, it has another data frame `tree_fish$genus_family_root`, which provides the root nodes information for every unique genus and family in the phylogeny. Such information can be used to insert new tips onto the phylogeny later.
 #' @source <https://fishtreeoflife.org/downloads/actinopt_12k_treePL.tre.xz>
 #' @references Rabosky, D. L., Chang, J., Title, P. O., Cowman, P. F., Sallan, L., Friedman, M., ... & Alfaro, M. E. (2018). An inverse latitudinal gradient in speciation rate for marine fishes. Nature, 559(7714), 392.
+#' @family trees
 #' 
 "tree_fish"
 
@@ -55,6 +56,7 @@
 #' @format A phylogeny with class "phylo". It is also a list. Compare with a normal phylo object, it has another data frame `tree_bird_ericson$genus_family_root`, which provides the root nodes information for every unique genus and family in the phylogeny. Such information can be used to insert new tips onto the phylogeny later.
 #' @source <https://birdtree.org/downloads/>
 #' @references Jetz, W., Thomas, G. H., Joy, J. B., Hartmann, K., & Mooers, A. O. (2012). The global diversity of birds in space and time. Nature, 491(7424), 444.
+#' @family trees
 #' 
 "tree_bird_ericson"
 
@@ -65,6 +67,7 @@
 #' @format A phylogeny with class "phylo". It is also a list. Compare with a normal phylo object, it has another data frame `tree_bird_hackett$genus_family_root`, which provides the root nodes information for every unique genus and family in the phylogeny. Such information can be used to insert new tips onto the phylogeny later.
 #' @source <https://birdtree.org/downloads/>
 #' @references Jetz, W., Thomas, G. H., Joy, J. B., Hartmann, K., & Mooers, A. O. (2012). The global diversity of birds in space and time. Nature, 491(7424), 444.
+#' @family trees
 #' 
 "tree_bird_hackett"
 
@@ -75,5 +78,6 @@
 #' @format A phylogeny with class "phylo". It is also a list. Compare with a normal phylo object, it has another data frame `tree_mammal$genus_family_root`, which provides the root nodes information for every unique genus and family in the phylogeny. Such information can be used to insert new tips onto the phylogeny later.
 #' @source <https://github.com/MegaPast2Future/PHYLACINE_1.2/blob/master/Data/Phylogenies/Complete_phylogeny.nex>
 #' @references Faurby, S., Davis, M., Pedersen, R. Ø., Schowanek, S. D., Antonelli, A., & Svenning, J. C. (2018). PHYLACINE 1.2: The phylogenetic atlas of mammal macroecology. Ecology, 99(11), 2626-2626.
+#' @family trees
 #' 
 "tree_mammal"

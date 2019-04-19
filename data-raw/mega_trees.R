@@ -1,6 +1,6 @@
 source("data-raw/functions.R")
 
-# classifications ----
+# classifications of tips in the mega-trees ----
 
 # plants ----
 load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/nodes.info.1.rda")))
@@ -103,10 +103,10 @@ usethis::use_data(classifications, overwrite = T, compress = "xz")
 load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/GBOTB.extended.rda")))
 
 # # takes a while, commented out
-# tree_plant_GBOTB = add_root_info(tree = GBOTB.extended, classification = classification_plants)
+# tree_plant_otl = add_root_info(tree = GBOTB.extended, classification = classification_plants)
 
-# usethis::use_data(tree_plant_GBOTB, overwrite = T, compress = "xz")
-# tools::checkRdaFiles("data/tree_plant_GBOTB.rda")
+# usethis::use_data(tree_plant_otl, overwrite = T, compress = "xz")
+# tools::checkRdaFiles("data/tree_plant_otl.rda")
 
 # fish ----
 # time tree

@@ -17,4 +17,10 @@ This tree was the 288th \code{set.seed(123); sample(1:1000, 1)} of those 10000 t
 \references{
 Jetz, W., Thomas, G. H., Joy, J. B., Hartmann, K., & Mooers, A. O. (2012). The global diversity of birds in space and time. Nature, 491(7424), 444.
 }
+\seealso{
+Other trees: \code{\link{tree_bird_hackett}},
+  \code{\link{tree_fish}}, \code{\link{tree_mammal}},
+  \code{\link{tree_plant_otl}}
+}
+\concept{trees}
 \keyword{datasets}

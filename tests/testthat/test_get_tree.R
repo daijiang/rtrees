@@ -30,5 +30,10 @@ test_that("Test get tree for fish", {
 
 test_that("Test get tree for bird", {
   tt = get_tree(test_bird_list, taxon = "bird", show_grafted = T)
-  # plot(ladderize(tt))
+  # plot(ape::ladderize(tt))
+})
+
+test_that("Test get tree for mammal", {
+  tt = get_tree(test_mammal_list, taxon = "mammal", show_grafted = T)
+  # plot(ape::ladderize(tt))
 })

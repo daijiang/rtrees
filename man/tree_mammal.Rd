@@ -17,4 +17,10 @@ This tree was the 288th \code{set.seed(123); sample(1:1000, 1)} of those 1000 tr
 \references{
 Faurby, S., Davis, M., Pedersen, R. Ø., Schowanek, S. D., Antonelli, A., & Svenning, J. C. (2018). PHYLACINE 1.2: The phylogenetic atlas of mammal macroecology. Ecology, 99(11), 2626-2626.
 }
+\seealso{
+Other trees: \code{\link{tree_bird_ericson}},
+  \code{\link{tree_bird_hackett}}, \code{\link{tree_fish}},
+  \code{\link{tree_plant_otl}}
+}
+\concept{trees}
 \keyword{datasets}

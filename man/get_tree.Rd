@@ -19,7 +19,7 @@ to prepare your data frame with \code{\link[=sp_list_df]{sp_list_df()}}.}
 \item{tree}{A mega-tree with class \code{phylo}. Optional if \code{taxon} is specified, in which case, a default
 mega-phylogeny will be used.
 \itemize{
-\item For plant, the mega-tree is \link{tree_plant_GBOTB}.
+\item For plant, the mega-tree is \link{tree_plant_otl}.
 \item For fish, the mega-tree is \link{tree_fish}.
 \item For bird, the mega-trees are \link{tree_bird_ericson} and \link{tree_bird_hackett}. \link{tree_bird_ericson} will be the
 default if no \code{tree} is specified and \code{taxon} is \code{bird}.

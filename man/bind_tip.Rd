@@ -36,10 +36,10 @@ Graft a tip to a phylogeny at location specified.
 \examples{
 \dontrun{
 library(rtree)
-bind_tip(tree_plant_GBOTB, "N70407", tip_label = "test_sp")
-tree_plant_GBOTB_df = tidytree::as_tibble(tree_plant_GBOTB)
-node_heights = ape::branching.times(tree_plant_GBOTB)
-bind_tip(tree_tbl = tree_plant_GBOTB_df, where = "N70407", 
+bind_tip(tree_plant_otl, "N70407", tip_label = "test_sp")
+tree_plant_otl_df = tidytree::as_tibble(tree_plant_otl)
+node_heights = ape::branching.times(tree_plant_otl)
+bind_tip(tree_tbl = tree_plant_otl_df, where = "N70407", 
          tip_label = "test_sp", node_heights = node_heights)
 }
 }

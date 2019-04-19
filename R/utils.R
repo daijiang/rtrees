@@ -8,7 +8,7 @@ cap_first_letter = function (x) {
 
 if(getRversion() >= "2.15.1") 
   utils::globalVariables(c(".", "isTip", "is_tip", "node",
-                           "tree_fish", "tree_plant_GBOTB", "classifications",
+                           "tree_fish", "tree_plant_otl", "classifications",
                            "tree_bird_ericson", "tree_mammal"))
 
 #' Convert a vector of species names to a data frame
@@ -21,7 +21,7 @@ if(getRversion() >= "2.15.1")
 #' sp_list_df(sp_list = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii"),
 #'            taxon = "fish")
 sp_list_df = function(sp_list, taxon){
-  if(!taxon %in% c("plant", "fish", "bird")) 
+  if(!taxon %in% c("plant", "fish", "bird", "mammal")) 
     stop("Sorry but only the following taxon groups are supported: plant, fish.")
   if(!is.vector(sp_list, mode = "character"))
     stop("sp_list must be a character vector.")

@@ -13,7 +13,7 @@
 #' @param tree A mega-tree with class `phylo`. Optional if `taxon` is specified, in which case, a default
 #' mega-phylogeny will be used.
 #' 
-#' - For plant, the mega-tree is [tree_plant_GBOTB].
+#' - For plant, the mega-tree is [tree_plant_otl].
 #' - For fish, the mega-tree is [tree_fish].
 #' - For bird, the mega-trees are [tree_bird_ericson] and [tree_bird_hackett]. [tree_bird_ericson] will be the 
 #' default if no `tree` is specified and `taxon` is `bird`.
@@ -24,6 +24,7 @@
 #' if the mega-tree does not have any species of this genus. 
 #' - If `scenario = "S2"`, a species is attached to a randomly selected node that is at or below the 
 #' basal node of the same genus of the same family if the mega-tree does not have any species in this genus.
+#' The probability of node been selected is proportional to its branch length.
 #' Because of the random sampling involved, you may want to run several times to get a collection of 
 #' derived phylogenies.
 #' - If `scenario = "S3"`, a species is attached to the basal node of the same genus if the mega-tree has species 
@@ -55,7 +56,7 @@ get_tree = function(sp_list, tree, taxon,
     stop("Please specify at least a tree or a taxon group.")
   if(missing(tree) & !missing(taxon)){# pick default tree
     tree = switch(taxon,
-      plant = tree_plant_GBOTB,
+      plant = tree_plant_otl,
       fish = tree_fish,
       bird = tree_bird_ericson,
       mammal = tree_mammal
@@ -143,7 +144,14 @@ get_tree = function(sp_list, tree, taxon,
           tree_df_sub = dplyr::filter(tidytree::offspring(tree_df, where_loc), !is_tip)
           if(nrow(tree_df_sub) > 0){
             # only bind to genus/family basal node, not within genus nodes
-            where_loc = sample(intersect(c(where_loc, tree_df_sub$label), all_eligible_nodes), 1)
+            potential_locs = intersect(c(where_loc, tree_df_sub$label), all_eligible_nodes)
+            locs_bl = dplyr::filter(tree_df_sub, label %in% potential_locs)
+            bls = locs_bl$branch.length
+            names(bls) = locs_bl$label
+            bls = c(root_sub$root_time - root_sub$basal_time, bls)
+            names(bls)[1] = root_sub$basal_node
+            prob = bls/sum(bls)
+            where_loc = sample(potential_locs, 1, prob = prob)
           }
         }
         if(scenario == "S3"){ # insert new node and bind tip above family basal node
