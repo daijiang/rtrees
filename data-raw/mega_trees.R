@@ -24,14 +24,15 @@ if(!"Lithraea" %in% classification_plants$genus)
   classification_plants = add_row(classification_plants, 
                                   genus = "Lithraea",
                                   family = "Anacardiaceae")
-usethis::use_data(classification_plants, overwrite = T, compress = "xz")
-tree_plant_GBOTB = add_root_info(tree = GBOTB.extended, classification = classification_plants)
+# usethis::use_data(classification_plants, overwrite = T, compress = "xz")
 
-# usethis::use_data(tree_plant_GBOTB, overwrite = T)
-usethis::use_data(tree_plant_GBOTB, overwrite = T, compress = "xz")
-tools::checkRdaFiles("data/tree_plant_GBOTB.rda")
+# # takes a while, commented out
+# tree_plant_GBOTB = add_root_info(tree = GBOTB.extended, classification = classification_plants)
 
-# sp list of plants
+# usethis::use_data(tree_plant_GBOTB, overwrite = T, compress = "xz")
+# tools::checkRdaFiles("data/tree_plant_GBOTB.rda")
+
+# test
 sp_list = tibble::as_tibble(read.csv("~/Dropbox/Reading/ECOG-04434/Appendix_3-Example_species_list.csv", stringsAsFactors = F))
 
 ape::branching.times(tidytree::as.phylo(tree_df))[where]
@@ -82,8 +83,23 @@ fish_names = select(fish_names, -genus2) %>%
 classification_fish = select(fish_names, genus, family) %>% 
   unique()
 # usethis::use_data(fish_names, compress = "xz", overwrite = T)
-usethis::use_data(classification_fish, compress = "xz", overwrite = T)
+# usethis::use_data(classification_fish, compress = "xz", overwrite = T)
 
 # find roots for fish tree
 tree_fish = add_root_info(fish_tree_12k, classification_fish)
 usethis::use_data(tree_fish, overwrite = T, compress = "xz")
+
+# test
+sp_list_fish = tibble(species = c(sample(tree_fish$tip.label, 5), "Barathronus_bicolor",
+                 sample(setdiff(fish_names$species, tree_fish$tip.label), 6))) %>% 
+  unique() %>% 
+  left_join(fish_names, by = "species")
+test = get_tree(sp_list = sp_list_fish, tree = tree_fish, scenario = "S3")
+test = get_tree(sp_list = sp_list_fish, taxon = "fish", scenario = "S3")
+test = get_tree(sp_list = sp_list_fish, tree = tree_fish, show_grafted = T, scenario = "S3")
+plot(ladderize(test))
+
+# combine classifications ----
+classifications = bind_rows(mutate(classification_plants, taxon = "plant"),
+          mutate(classification_fish, taxon = "fish"))
+usethis::use_data(classifications, overwrite = T, compress = "xz")

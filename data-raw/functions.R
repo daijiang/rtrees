@@ -39,13 +39,13 @@ add_root_info = function(tree, classification){
       sp_names = filter(tips, genus == target)$species
     }
     tree_df_subset = filter(tree_df, label %in% sp_names)
-    basel_node = tidytree::MRCA(tree_df, min(tree_df_subset$node), max(tree_df_subset$node))
+    basal_node = tidytree::MRCA(tree_df, min(tree_df_subset$node), max(tree_df_subset$node))
     if(length(sp_names) == 1){ # only 1 sp
-      root_node = basel_node
+      root_node = basal_node
     } else {
-      root_node = tidytree::parent(tree_df, basel_node$node)
+      root_node = tidytree::parent(tree_df, basal_node$node)
     }
-    tibble(basel_node = basel_node$label,
+    tibble(basal_node = basal_node$label,
            root_node = root_node$label,
            only_sp = if(length(sp_names) == 1) sp_names else NA)
   }
@@ -60,9 +60,9 @@ add_root_info = function(tree, classification){
   
   gf_summ3 = left_join(gf_summ, gf_summ2, by = "grp") %>%
     mutate(root_time = node_heights[root_node],
-           basel_time = node_heights[basel_node]) %>%
+           basal_time = node_heights[basal_node]) %>%
     ungroup() %>%
-    select(family, genus, basel_node, basel_time, root_node, root_time, n_genus, n_spp, only_sp)
+    select(family, genus, basal_node, basal_time, root_node, root_time, n_genus, n_spp, only_sp)
   
   tree$genus_family_root = gf_summ3
   

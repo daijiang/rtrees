@@ -5,15 +5,22 @@
 \title{Derive a phylogeny from a mega-tree}
 \usage{
 get_tree(sp_list, tree, taxon, scenario = c("S3", "S2", "S1"),
-  tree_by_user = FALSE)
+  show_grafted = FALSE, tree_by_user = FALSE)
 }
 \arguments{
 \item{sp_list}{A data frame with at least three columns: species, genus, family. Species column
-holds the species for which we want to have a phylogeny.}
+holds the species for which we want to have a phylogeny. It can also have two optional columns:
+close_sp and close_genus. We can specify the cloest species/genus of the species based on
+expert knowledgement. If specified, the new species will be grafted to this particular location.}
 
-\item{tree}{A mega-tree with class \code{phylo}.}
+\item{tree}{A mega-tree with class \code{phylo}. Optional if \code{taxon} is specified, in which case, a default
+mega-phylogeny will be used.
+\itemize{
+\item For plants, the mega-tree is \link{tree_plant_GBOTB}.
+\item For fish, the mega-tree is \link{tree_fish}.
+}}
 
-\item{taxon}{The taxon of species in the \code{sp_list}.}
+\item{taxon}{The taxon of species in the \code{sp_list}. Currently, can be \code{plant} or \code{fish}.}
 
 \item{scenario}{How to insert a species into the mega-tree?
 \itemize{
@@ -32,6 +39,10 @@ into the middle point of the basal node and the root node of the family.
 the middle point of this only species' branch length and the new species will be attached to this new
 node.
 }}
+
+\item{show_grafted}{Whether to indicate which species was grafted onto the mega-tree.
+If \code{TRUE}, a \code{*} will be appended to the species name on the tip if it was grafted within
+the same genus; \code{**} will be appended if it was grafted within the same family.}
 
 \item{tree_by_user}{Is the mega-tree provided by user?}
 }

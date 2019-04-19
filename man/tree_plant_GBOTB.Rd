@@ -15,4 +15,9 @@ tree_plant_GBOTB
 This tree was based on Brown and Smith (2018), which in turn was based on the Open Tree of Life.
 It was copied from \code{V.PhyloMaker::GBOTB.extended}. After then, node labels were added for empty ones.
 }
+\references{
+Smith, S. A., & Brown, J. W. (2018). Constructing a broadly inclusive seed plant phylogeny. American Journal of Botany, 105(3), 302-314.
+
+Jin, Y., & Qian, H. (2019). V. PhyloMaker: an R package that can generate very large phylogenies for vascular plants. Ecography.
+}
 \keyword{datasets}
