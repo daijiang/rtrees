@@ -33,6 +33,7 @@ default if no \code{tree} is specified and \code{taxon} is \code{bird}.
 if the mega-tree does not have any species of this genus.
 \item If \code{scenario = "S2"}, a species is attached to a randomly selected node that is at or below the
 basal node of the same genus of the same family if the mega-tree does not have any species in this genus.
+The probability of node been selected is proportional to its branch length.
 Because of the random sampling involved, you may want to run several times to get a collection of
 derived phylogenies.
 \item If \code{scenario = "S3"}, a species is attached to the basal node of the same genus if the mega-tree has species

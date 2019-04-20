@@ -1,4 +1,6 @@
-source("data-raw/functions.R")
+library(tidyverse)
+library(ape)
+library(tidytree)
 
 # classifications of tips in the mega-trees ----
 

@@ -108,7 +108,13 @@ get_tree = function(sp_list, tree, taxon,
         if(scenario == "S2"){ # randomly select a node in the genus and attach to it, no new node added
           tree_df_sub = dplyr::filter(tidytree::offspring(tree_df, where_loc), !is_tip)
           if(nrow(tree_df_sub) > 0){
-            where_loc = sample(c(where_loc, tree_df_sub$label), 1)
+            potential_locs = c(where_loc, tree_df_sub$label)
+            bls = tree_df_sub$branch.length
+            names(bls) = tree_df_sub$label
+            bls = c(root_sub$root_time - root_sub$basal_time, bls)
+            names(bls)[1] = root_sub$basal_node
+            prob = bls/sum(bls)
+            where_loc = sample(potential_locs, 1, prob = prob)
           }
         }
       }
@@ -145,7 +151,7 @@ get_tree = function(sp_list, tree, taxon,
           if(nrow(tree_df_sub) > 0){
             # only bind to genus/family basal node, not within genus nodes
             potential_locs = intersect(c(where_loc, tree_df_sub$label), all_eligible_nodes)
-            locs_bl = dplyr::filter(tree_df_sub, label %in% potential_locs)
+            locs_bl = tree_df_sub[tree_df_sub$label %in% potential_locs, ]
             bls = locs_bl$branch.length
             names(bls) = locs_bl$label
             bls = c(root_sub$root_time - root_sub$basal_time, bls)
