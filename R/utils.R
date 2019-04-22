@@ -23,8 +23,10 @@ if(getRversion() >= "2.15.1")
 #' sp_list_df(sp_list = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii"),
 #'            taxon = "fish")
 sp_list_df = function(sp_list, taxon){
-  if(!taxon %in% c("plant", "fish", "bird", "mammal")) 
-    stop("Sorry but only the following taxon groups are supported: plant, fish.")
+  groups_supported = c("plant", "fish", "bird", "mammal")
+  if(!taxon %in% groups_supported) 
+    stop("Sorry but only the following taxon groups are supported: ", 
+         paste(groups_supported, collapse = ", "))
   if(!is.vector(sp_list, mode = "character"))
     stop("sp_list must be a character vector.")
   utils::data("classifications", envir = environment())
