@@ -1,3 +1,5 @@
+context("Test different trees")
+
 test_that("Test get tree for plants", {
   tt = get_tree(test_plant_list, taxon = "plant", scenario = "S1")
   expect_s3_class(tt, "phylo")
@@ -30,10 +32,11 @@ test_that("Test get tree for fish", {
 
 test_that("Test get tree for bird", {
   tt = get_tree(test_bird_list, taxon = "bird", show_grafted = T)
-  # plot(ape::ladderize(tt))
+  expect_equal(ape::Ntip(tt), nrow(test_bird_list))
 })
 
 test_that("Test get tree for mammal", {
   tt = get_tree(test_mammal_list, taxon = "mammal", show_grafted = T)
+  expect_equal(ape::Ntip(tt), nrow(test_mammal_list))
   # plot(ape::ladderize(tt))
 })
