@@ -26,6 +26,7 @@ devtools::install_github("daijiang/rtrees")
 
 ```{r}
 library(rtrees)
+library(ape)
 ```
 
 # Mega-trees
@@ -35,8 +36,10 @@ Currently, `rtrees` provides mega-trees for four taxon groups: plants, fishes, b
 ```{r echo = FALSE}
 coverage_tb = data.frame(
   Taxon = c("Plant", "Fish", "Bird", "Mammal"),
-  Mega_tree = c("`tree_plant_otl`", "`tree_fish`", "`tree_bird_ericon`, `tree_bird_hackett`",
-                "`tree_mammal`"),
+  Mega_tree = c("`tree_plant_otl` (74,531 tips)", 
+                "`tree_fish` (11,638 tips)", 
+                "`tree_bird_ericon`, `tree_bird_hackett` (9,993 tips)",
+                "`tree_mammal` (5,831 tips)"),
   Reference = c("Open Tree of Life, Smith & Brown 2018; Jin & Qian 2019",
                 "Fish Tree of Life, Rabosky et al. 2018",
                 "Bird Tree of Life, Jetz et al. 2018",
@@ -84,7 +87,6 @@ test_tree = get_tree(sp_list = test_fish_list,
                      taxon = "fish", # or
                      scenario = "S1",
                      show_grafted = TRUE)
-library(ape)
 plot(ladderize(test_tree), no.margin = T)
 ```
 

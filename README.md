@@ -14,6 +14,7 @@ devtools::install_github("daijiang/rtrees")
 
 ``` r
 library(rtrees)
+library(ape)
 ```
 
 # Mega-trees
@@ -22,12 +23,12 @@ Currently, `rtrees` provides mega-trees for four taxon groups: plants,
 fishes, birds, and
 mammals.
 
-| Taxon  | Mega\_tree                              | Reference                                              |
-| :----- | :-------------------------------------- | :----------------------------------------------------- |
-| Plant  | `tree_plant_otl`                        | Open Tree of Life, Smith & Brown 2018; Jin & Qian 2019 |
-| Fish   | `tree_fish`                             | Fish Tree of Life, Rabosky et al. 2018                 |
-| Bird   | `tree_bird_ericon`, `tree_bird_hackett` | Bird Tree of Life, Jetz et al. 2018                    |
-| Mammal | `tree_mammal`                           | PHYLACINE, Faurby et al. 2018                          |
+| Taxon  | Mega\_tree                                           | Reference                                              |
+| :----- | :--------------------------------------------------- | :----------------------------------------------------- |
+| Plant  | `tree_plant_otl` (74,531 tips)                       | Open Tree of Life, Smith & Brown 2018; Jin & Qian 2019 |
+| Fish   | `tree_fish` (11,638 tips)                            | Fish Tree of Life, Rabosky et al. 2018                 |
+| Bird   | `tree_bird_ericon`, `tree_bird_hackett` (9,993 tips) | Bird Tree of Life, Jetz et al. 2018                    |
+| Mammal | `tree_mammal` (5,831 tips)                           | PHYLACINE, Faurby et al. 2018                          |
 
 # Usage examples
 
@@ -78,7 +79,6 @@ test_tree = get_tree(sp_list = test_fish_list,
                      show_grafted = TRUE)
 #> These species have no species in the same family in the mega-tree, skipped: 
 #> Barathronus_bicolor
-library(ape)
 plot(ladderize(test_tree), no.margin = T)
 ```
 
