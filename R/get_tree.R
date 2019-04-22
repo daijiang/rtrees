@@ -17,8 +17,9 @@
 #' - For fish, the mega-tree is [tree_fish].
 #' - For bird, the mega-trees are [tree_bird_ericson] and [tree_bird_hackett]. [tree_bird_ericson] will be the 
 #' default if no `tree` is specified and `taxon` is `bird`.
+#' - For mammal, the mega-tree is [tree_mammal].
 #' 
-#' @param taxon The taxon of species in the `sp_list`. Currently, can be `plant` or `fish`.
+#' @param taxon The taxon of species in the `sp_list`. Currently, can be `plant`, `fish`, `bird`, or `mammal`.
 #' @param scenario How to insert a species into the mega-tree? 
 #' - If `scenario = "S1"`, a species is attached to the basal node of the same genus or the same family 
 #' if the mega-tree does not have any species of this genus. 
@@ -43,7 +44,7 @@
 #' @export
 #' 
 get_tree = function(sp_list, tree, taxon, 
-                    scenario = c("S3", "S2", "S1"), 
+                    scenario = c("S1", "S2", "S3"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE) {
   if(is.vector(sp_list, mode = "character") & !missing(taxon))

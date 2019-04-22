@@ -15,4 +15,95 @@ knitr::opts_chunk$set(
 
 # rtrees
 
-The goal of rtrees is to collect the most up-to-date mega-trees; provide functions to derive phylogenies for a list of species in the same taxon group. Basically, `Phylomatic2`.
+The goal of `rtrees` is to remove the barriers to derive phylogenies for a list of species from mega-trees. Basically, `Phylomatic` and more.
+
+
+# Installation
+
+```{r eval=FALSE}
+devtools::install_github("daijiang/rtrees")
+```
+
+```{r}
+library(rtrees)
+```
+
+# Mega-trees
+
+Currently, `rtrees` provides mega-trees for four taxon groups: plants, fishes, birds, and mammals.
+
+```{r echo = FALSE}
+coverage_tb = data.frame(
+  Taxon = c("Plant", "Fish", "Bird", "Mammal"),
+  Mega_tree = c("`tree_plant_otl`", "`tree_fish`", "`tree_bird_ericon`, `tree_bird_hackett`",
+                "`tree_mammal`"),
+  Reference = c("Open Tree of Life, Smith & Brown 2018; Jin & Qian 2019",
+                "Fish Tree of Life, Rabosky et al. 2018",
+                "Bird Tree of Life, Jetz et al. 2018",
+                "PHYLACINE, Faurby et al. 2018")
+)
+knitr::kable(coverage_tb, booktabs = T)
+```
+
+# Usage examples
+
+The species lists which we want to have a phylogeny should be provided as a data frame with at least 3 columns: `family`, `genus`, and `species`. Their order does not matter. Here is an example for fish.
+
+```{r echo = F}
+test_fish_list = tibble::tibble(
+  species = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii", 
+              "Periophthalmus_barbarus", "Prognichthys_glaphyrae", "Barathronus_bicolor", 
+              "Knipowitschia_croatica", "Rhamphochromis_lucius", "Neolissochilus_tweediei", 
+              "Haplochromis_nyanzae", "Astronesthes_micropogon", "Sanopus_reticulatus"),
+  genus = c("Serrasalmus", "Careproctus", "Gobiomorphus", "Periophthalmus",
+            "Prognichthys", "Barathronus", "Knipowitschia", "Rhamphochromis", 
+            "Neolissochilus", "Haplochromis", "Astronesthes", "Sanopus"),
+  family = c("Serrasalmidae", "Liparidae", "Eleotridae", "Gobiidae", 
+             "Exocoetidae", "Aphyonidae", "Gobiidae", "Cichlidae", 
+             "Cyprinidae", "Cichlidae", "Stomiidae", "Batrachoididae")
+)
+```
+
+```{r}
+test_fish_list
+```
+
+For plant, fish, bird, and mammal, it is possible to prepare `sp_list` with function `sp_list_df()`.
+
+```{r}
+sp_list_df(sp_list = c("Periophthalmus_barbarus", "Barathronus_bicolor"),
+           taxon = "fish")
+```
+
+
+Then we can derive a phylogeny from `tree_fish`.
+
+```{r}
+test_tree = get_tree(sp_list = test_fish_list,
+                     tree = tree_fish, # either 
+                     taxon = "fish", # or
+                     scenario = "S1",
+                     show_grafted = TRUE)
+library(ape)
+plot(ladderize(test_tree), no.margin = T)
+```
+
+Some notes: 
+
+- If `tree` is specified, then `taxon` can be ignored and _vice versa_.
+- If a species does not have a co-family species in the mega-tree, it will be skipped.
+- If `show_grafted = TRUE`, species that are grafted will have one or two `*` at the end of their names.
+  + If it is grafted at the genus level, one `*`.
+  + If it is grafted at the family level, two `*`s.
+- The default scenario is `S1`, which will graft species at the genus/family basal node.
+  + `S2` will randomly select a downstream node to attach the new tip.
+  + `S3` will graft the new tip above the genus/family basal node.
+  + If only one species in the mega-tree that is in the same genus/family of the new tip, then the new tip will be grafted at the middle of this species' branch for all scenarioes.
+- See `?get_tree` for more details.
+  
+  
+  # Note
+  
+  This package is still in very early stage. Contributions are welcome.
+  
+

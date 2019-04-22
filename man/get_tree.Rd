@@ -4,7 +4,7 @@
 \alias{get_tree}
 \title{Derive a phylogeny from a mega-tree}
 \usage{
-get_tree(sp_list, tree, taxon, scenario = c("S3", "S2", "S1"),
+get_tree(sp_list, tree, taxon, scenario = c("S1", "S2", "S3"),
   show_grafted = FALSE, tree_by_user = FALSE)
 }
 \arguments{
@@ -23,9 +23,10 @@ mega-phylogeny will be used.
 \item For fish, the mega-tree is \link{tree_fish}.
 \item For bird, the mega-trees are \link{tree_bird_ericson} and \link{tree_bird_hackett}. \link{tree_bird_ericson} will be the
 default if no \code{tree} is specified and \code{taxon} is \code{bird}.
+\item For mammal, the mega-tree is \link{tree_mammal}.
 }}
 
-\item{taxon}{The taxon of species in the \code{sp_list}. Currently, can be \code{plant} or \code{fish}.}
+\item{taxon}{The taxon of species in the \code{sp_list}. Currently, can be \code{plant}, \code{fish}, \code{bird}, or \code{mammal}.}
 
 \item{scenario}{How to insert a species into the mega-tree?
 \itemize{
