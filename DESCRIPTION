@@ -5,7 +5,8 @@ Authors@R:
     person(given = "Daijiang",
            family = "Li",
            role = c("aut", "cre"),
-           email = "daijianglee@gmail.com")
+           email = "daijianglee@gmail.com",
+           comment = c(ORCID = "0000-0002-0925-3421"))
 Description: To facilitate generating phylogenies from synthesis trees.
 License: GPL-3
 Encoding: UTF-8
