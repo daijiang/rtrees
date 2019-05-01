@@ -239,5 +239,5 @@ get_tree = function(sp_list, tree, taxon,
     tree_sub$tip.label[wid] = dplyr::left_join(tibble::tibble(species = tree_sub$tip.label[wid]),
                                                grafted, by = "species")$sp2
   }
-  return(tree_sub)
+  return(ape::ladderize(tree_sub))
 }
