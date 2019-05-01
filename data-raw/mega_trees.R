@@ -5,29 +5,159 @@ library(tidytree)
 # classifications of tips in the mega-trees ----
 
 # plants ----
-load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/nodes.info.1.rda")))
-classification_plants = select(nodes.info.1, genus, family) %>% 
-  unique() %>% 
-  filter(genus != "") %>% 
-  as_tibble()
-# by looking at the phylogeny, two species do not have classification info:
-# Malaisia_scandens, Lithraea_molleoides
-# https://en.wikipedia.org/wiki/Trophis_scandens
-# tips$family[tips$species == "Malaisia_scandens"] = "Euphorbiaceae" # wiki
-# but the plant list said it is an annoymous...which makes me wonder how
-# V.PhyloMaker did their name standardization. I probably should do it by myself.
-# http://www.theplantlist.org/tpl1.1/record/kew-5837
-# tips$family[tips$species == "Lithraea_molleoides"] = "Anacardiaceae" # wiki
-# https://en.wikipedia.org/wiki/Lithraea_molleoides
-if(!"Malaisia" %in% classification_plants$genus)
-  classification_plants = add_row(classification_plants, 
-                                  genus = "Malaisia",
-                                  family = "Euphorbiaceae")
-if(!"Lithraea" %in% classification_plants$genus)
-  classification_plants = add_row(classification_plants, 
-                                  genus = "Lithraea",
-                                  family = "Anacardiaceae")
-any(duplicated(classification_plants$genus)) # all genus monophytic? T
+# load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/nodes.info.1.rda")))
+# classification_plants = select(nodes.info.1, genus, family) %>% 
+#   unique() %>% 
+#   filter(genus != "") %>% 
+#   as_tibble()
+# # by looking at the phylogeny, two species do not have classification info:
+# # Malaisia_scandens, Lithraea_molleoides
+# # https://en.wikipedia.org/wiki/Trophis_scandens
+# # tips$family[tips$species == "Malaisia_scandens"] = "Euphorbiaceae" # wiki
+# # but the plant list said it is an annoymous...which makes me wonder how
+# # V.PhyloMaker did their name standardization. I probably should do it by myself.
+# # http://www.theplantlist.org/tpl1.1/record/kew-5837
+# # tips$family[tips$species == "Lithraea_molleoides"] = "Anacardiaceae" # wiki
+# # https://en.wikipedia.org/wiki/Lithraea_molleoides
+# if(!"Malaisia" %in% classification_plants$genus)
+#   classification_plants = add_row(classification_plants, 
+#                                   genus = "Malaisia",
+#                                   family = "Euphorbiaceae")
+# if(!"Lithraea" %in% classification_plants$genus)
+#   classification_plants = add_row(classification_plants, 
+#                                   genus = "Lithraea",
+#                                   family = "Anacardiaceae")
+
+
+# all genus and family from The Plant List
+tpl_family = xml2::read_html("http://theplantlist.org/1.1/browse/-/") %>% 
+  rvest::html_nodes(".family") %>% 
+  rvest::html_text() # 652 families
+
+get_sp_per_family = function(x = "Didiereaceae"){
+  cat(x, "\t")
+  base_url = paste0("http://theplantlist.org/1.1/browse/A/", x, "/", x, ".csv")
+  out = try(read_csv(base_url))
+  if(inherits(out, "try-error")){
+    base_url = paste0("http://theplantlist.org/1.1/browse/B/", x, "/", x, ".csv")
+    out = try(read_csv(base_url))
+  }
+  if(inherits(out, "try-error")){
+    base_url = paste0("http://theplantlist.org/1.1/browse/P/", x, "/", x, ".csv")
+    out = try(read_csv(base_url))
+  }
+  if(inherits(out, "try-error")){
+    base_url = paste0("http://theplantlist.org/1.1/browse/G/", x, "/", x, ".csv")
+    out = try(read_csv(base_url))
+  }
+  out = try(out %>% 
+              select(genus = Genus, family = Family) %>% 
+              unique())
+  out
+}
+classification_plant = map(tpl_family, get_sp_per_family)
+classification_plant_TPL = bind_rows(classification_plant)
+usethis::use_data(classification_plant_TPL)
+classification_plant = bind_rows(classification_plant_TPL, 
+                                 # from Jin & Qian, 2019
+                                 tibble::tribble(~genus,~family,
+                                                 "Davilanthus","Asteraceae",
+                                                 "Ewartiothamnus","Asteraceae",
+                                                 "Myrovernix","Asteraceae",
+                                                 "Gongyloglossa","Asteraceae",
+                                                 "Laevicarpa","Asteraceae",
+                                                 "Monticapra","Asteraceae",
+                                                 "Leucosyris","Asteraceae",
+                                                 "Kieslingia","Asteraceae",
+                                                 "Tephrothamnus","Asteraceae",
+                                                 "Kurziella","Asteraceae",
+                                                 "Sampera","Asteraceae",
+                                                 "Platycarphella","Asteraceae",
+                                                 "Pseudocodon","Campanulaceae",
+                                                 "Pankycodon","Campanulaceae",
+                                                 "Himalacodon","Campanulaceae",
+                                                 "Rivasmartinezia","Apiaceae",
+                                                 "Schultzia","Apiaceae",
+                                                 "Rughidia","Apiaceae",
+                                                 "Szovitsia","Apiaceae",
+                                                 "Spuriopimpinella","Apiaceae",
+                                                 "Trichera","Caprifoliaceae",
+                                                 "Erythranthe","Phrymaceae",
+                                                 "Diceratotheca","Acanthaceae",
+                                                 "Chayamaritia","Gesneriaceae",
+                                                 "Somrania","Gesneriaceae",
+                                                 "Tribounia","Gesneriaceae",
+                                                 "Lesia","Gesneriaceae",
+                                                 "Trichodrymonia","Gesneriaceae",
+                                                 "Johnstonella","Boraginaceae",
+                                                 "Greeneocharis","Boraginaceae",
+                                                 "Foonchewia","Rubiaceae",
+                                                 "Edrastima","Rubiaceae",
+                                                 "Dimetia","Rubiaceae",
+                                                 "Rubiaceae","Rubiaceae",
+                                                 "Rhachicallis","Rubiaceae",
+                                                 "Anemotrochus","Apocynaceae",
+                                                 "Monsanima","Apocynaceae",
+                                                 "Calciphila","Apocynaceae",
+                                                 "Richtersveldia","Apocynaceae",
+                                                 "White-sloanea","Apocynaceae",
+                                                 "Agiortia","Ericaceae",
+                                                 "Acrothamnus","Ericaceae",
+                                                 "Leptecophylla","Ericaceae",
+                                                 "Pleioluma","Sapotaceae",
+                                                 "Bemangidia","Sapotaceae",
+                                                 "Kewa","Kewaceae",
+                                                 "Pseudocherleria","Caryophyllaceae",
+                                                 "Sedobassia","Amaranthaceae",
+                                                 "Bactria","Polygonaceae",
+                                                 "Solori","Fabaceae",
+                                                 "Oberholzeria","Fabaceae",
+                                                 "Gabonius","Fabaceae",
+                                                 "Symbegonia","Begoniaceae",
+                                                 "Synostemon","Phyllanthaceae",
+                                                 "Gitara","Euphorbiaceae",
+                                                 "Hartogiopsis","Celastraceae",
+                                                 "Thelypodieae","Brassicaceae",
+                                                 "Phyllolepidum","Brassicaceae",
+                                                 "Kitaibela","Malvaceae",
+                                                 "Anthocarapa","Meliaceae",
+                                                 "Tetracarpaea","Tetracarpaeaceae",
+                                                 "Eucarpha","Proteaceae",
+                                                 "Oncidiinae","Orchidaceae",
+                                                 "Schlimmia","Orchidaceae",
+                                                 "Orthochilus","Orchidaceae",
+                                                 "Pendulorchis","Orchidaceae",
+                                                 "Neooreophilus","Orchidaceae",
+                                                 "Dracontia","Orchidaceae",
+                                                 "Sansonia","Orchidaceae",
+                                                 "Danxiaorchis","Orchidaceae",
+                                                 "Orchidaceae","Orchidaceae",
+                                                 "Tsaiorchis","Orchidaceae",
+                                                 "Dithrix","Orchidaceae",
+                                                 "Sinocurculigo","Hypoxidaceae",
+                                                 "Dupontiopsis","Poaceae",
+                                                 "Koordersiochloa","Poaceae",
+                                                 "Calliscirpus","Cyperaceae",
+                                                 "Wallisia","Bromeliaceae",
+                                                 "Stigmatodon","Bromeliaceae",
+                                                 "Zizkaea","Bromeliaceae",
+                                                 "Josemania","Bromeliaceae",
+                                                 "Borneocola","Zingiberaceae",
+                                                 "Ripogonum","Ripogonaceae",
+                                                 "Onixotis","Colchicaceae",
+                                                 "Schottarum","Araceae",
+                                                 "Fenestratarum","Araceae",
+                                                 "Hottarum","Araceae",
+                                                 "Guamia","Annonaceae",
+                                                 "Winitia","Annonaceae",
+                                                 "Huberantha","Annonaceae",
+                                                 "Sirdavidia","Annonaceae",
+                                                 "Hypodematium","Hypodematiaceae",
+                                                 "Desmophlebium","Desmophlebiaceae")
+)
+filter(classification_plant_TPL, genus %in% filter(classification_plant_TPL, duplicated(genus))$genus)
+any(duplicated(classification_plant_TPL$genus)) # all genus monophytic? No...
+
 # fish ----
 fishurl3 = "https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz"
 tempf2 = tempfile()
@@ -97,6 +227,15 @@ classifications = bind_rows(mutate(classification_plants, taxon = "plant"),
 classifications = bind_rows(classifications, 
                             mutate(classification_bird, taxon = "bird"))
 classifications = bind_rows(classifications, classification_mammal)
+
+# other genus based on later tests
+classifications = add_row(classifications,
+                          genus = "Epifagus", family = "Orobanchaceae", taxon = "plant") %>% 
+  add_row(genus = "Elytrigia", family = "Poaceae", taxon = "plant")
+
+classifications = add_row(classifications,
+                          genus = "Rumex", family = "Polygonaceae", taxon = "plant")
+
 usethis::use_data(classifications, overwrite = T, compress = "xz")
 
 # mega-trees ===============================================================

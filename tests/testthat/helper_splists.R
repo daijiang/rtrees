@@ -36,3 +36,4 @@ test_bird_list = c("Brachypteryx_major", "Asthenes_perijana", "Ciridops_anna",
 test_mammal_list = c("Necromys_temchuki", "Hipposideros_beatus", "Ateles_marginatus",
                      "Protemnodon_anak", "Mus_musculus", "Echymipera_sp", "Echymipera_davidi") %>% 
   sp_list_df(taxon = "mammal")
+

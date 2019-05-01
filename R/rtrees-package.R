@@ -4,5 +4,5 @@
 #' @aliases rtrees
 #' @docType package
 #' @author Daijiang Li <daijianglee@@gmail.com>
-#' @keywords package
-NULL
+#' @keywords internal
+"_PACKAGE"

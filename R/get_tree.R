@@ -6,10 +6,12 @@
 #' @param sp_list A data frame with at least three columns: species, genus, family. Species column
 #' holds the species for which we want to have a phylogeny. It can also have two optional columns:
 #' close_sp and close_genus. We can specify the cloest species/genus of the species based on
-#' expert knowledgement. If specified, the new species will be grafted to this particular location.
+#' expert knowledgement. If specified, the new species will be grafted to that particular location.
 #' 
 #' It can also be a string vector if `taxon` is specified. Though it probably is a better idea
 #' to prepare your data frame with [sp_list_df()].
+#' 
+#' In all cases, species names should be separated by `_` between genus and species, i.e. genus_sp.
 #' @param tree A mega-tree with class `phylo`. Optional if `taxon` is specified, in which case, a default
 #' mega-phylogeny will be used.
 #' 
@@ -47,8 +49,10 @@ get_tree = function(sp_list, tree, taxon,
                     scenario = c("S1", "S2", "S3"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE) {
-  if(is.vector(sp_list, mode = "character") & !missing(taxon))
-    sp_list = sp_list_df(sp_list, taxon)
+  if(is.vector(sp_list, mode = "character") & !missing(taxon)){
+    sp_list = sp_list_df(gsub(" +", "_", sp_list), taxon)
+  }
+    
   if(!inherits(sp_list, "data.frame"))
     stop("sp_list must be a data frame with at least these columns: species, genus, family.")
   if(any(!c("species", "genus", "family") %in% names(sp_list)))
@@ -63,6 +67,24 @@ get_tree = function(sp_list, tree, taxon,
       mammal = tree_mammal
     )
   }
+  
+  if(tree_by_user){
+    if(!is.null(tree$genus_family_root)) 
+      warning("The phylogeny has been processed, are you sure this is correct?")
+    if(all(!grepl("_", tree$tip.label)))
+      stop("Please change the tree's tip labels to be the format of genus_sp.")
+    # sp not in the tree
+    sp_not_in_tree = dplyr::filter(sp_list, !species %in% tree$tip.label)
+    # add root information for species not in the tree
+    tree = add_root_info(
+      tree, 
+      classification = rtrees::classifications[rtrees::classifications$taxon == taxon, ], 
+      genus_list = sp_not_in_tree$genus,
+      family_list = dplyr::filter(sp_not_in_tree, 
+                                  !genus %in% gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))$family,
+      show_warning = FALSE)
+  }
+  
   scenario = match.arg(scenario)
   
   sp_list$species = gsub(" +", "_", sp_list$species)
@@ -74,6 +96,8 @@ get_tree = function(sp_list, tree, taxon,
     return(tree_sub)
   }
   
+  if(is.null(tree$genus_family_root))
+    stop("Did you use your own phylogeny? If so, please set `tree_by_user = TRUE`.")
   sp_out_tree$status = ""
   tree_df = tidytree::as_tibble(tree)
   tree_df$is_tip = !(tree_df$node %in% tree_df$parent)

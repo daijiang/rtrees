@@ -11,10 +11,12 @@ get_tree(sp_list, tree, taxon, scenario = c("S1", "S2", "S3"),
 \item{sp_list}{A data frame with at least three columns: species, genus, family. Species column
 holds the species for which we want to have a phylogeny. It can also have two optional columns:
 close_sp and close_genus. We can specify the cloest species/genus of the species based on
-expert knowledgement. If specified, the new species will be grafted to this particular location.
+expert knowledgement. If specified, the new species will be grafted to that particular location.
 
 It can also be a string vector if \code{taxon} is specified. Though it probably is a better idea
-to prepare your data frame with \code{\link[=sp_list_df]{sp_list_df()}}.}
+to prepare your data frame with \code{\link[=sp_list_df]{sp_list_df()}}.
+
+In all cases, species names should be separated by \code{_} between genus and species, i.e. genus_sp.}
 
 \item{tree}{A mega-tree with class \code{phylo}. Optional if \code{taxon} is specified, in which case, a default
 mega-phylogeny will be used.

@@ -3,12 +3,13 @@
 \docType{package}
 \name{rtrees-package}
 \alias{rtrees-package}
+\alias{_PACKAGE}
 \alias{rtrees}
 \title{Fetching phylogenies from mega-trees}
 \description{
-Fetching phylogenies from mega-trees
+To facilitate generating phylogenies from synthesis trees.
 }
 \author{
 Daijiang Li \href{mailto:daijianglee@gmail.com}{daijianglee@gmail.com}
 }
-\keyword{package}
+\keyword{internal}

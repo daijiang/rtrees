@@ -4,13 +4,21 @@
 \alias{add_root_info}
 \title{Add genus and family basal/root node information to a phylogeny}
 \usage{
-add_root_info(tree, classification)
+add_root_info(tree, classification, genus_list = NULL,
+  family_list = NULL, show_warning = TRUE)
 }
 \arguments{
 \item{tree}{A phylogeny with class "phylo".}
 
 \item{classification}{A data frame of 2 columns: genus, family. It should include
 all genus the tips of the tree belong to.}
+
+\item{genus_list}{An optinoal subset list of genus to find root information.}
+
+\item{family_list}{An optinoal subset list of family to find root information.
+This should be for species that do not have co-genus in the tree.}
+
+\item{show_warning}{Whether to print warning information or not.}
 }
 \value{
 A phylogeny with basal nodes information attached.
