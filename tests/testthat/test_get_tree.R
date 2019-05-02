@@ -40,3 +40,12 @@ test_that("Test get tree for mammal", {
   expect_equal(ape::Ntip(tt), nrow(test_mammal_list))
   # plot(ape::ladderize(tt))
 })
+
+test_that("Test user provided tree", {
+  test_tree_sp2 = test_tree_sp[test_tree_sp != "Sorbus_sp"]
+  expect_error(get_tree(sp_list = test_tree_sp, tree = test_tree, tree_by_user = T))
+  tt = get_tree(sp_list = test_tree_sp, tree = test_tree, taxon = "plant", tree_by_user = T) # this should work
+  tt = get_tree(sp_list = test_tree_sp2, tree = test_tree, tree_by_user = T) # this should work
+  expect_error(get_tree(sp_list = test_tree_sp, tree = test_tree, tree_by_user = T))
+  
+})

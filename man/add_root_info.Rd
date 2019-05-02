@@ -4,14 +4,16 @@
 \alias{add_root_info}
 \title{Add genus and family basal/root node information to a phylogeny}
 \usage{
-add_root_info(tree, classification, genus_list = NULL,
-  family_list = NULL, show_warning = TRUE)
+add_root_info(tree, classification, process_all_tips = TRUE,
+  genus_list = NULL, family_list = NULL, show_warning = TRUE)
 }
 \arguments{
 \item{tree}{A phylogeny with class "phylo".}
 
 \item{classification}{A data frame of 2 columns: genus, family. It should include
 all genus the tips of the tree belong to.}
+
+\item{process_all_tips}{Whether to find basal nodes for all tips? Default is \code{TRUE}.}
 
 \item{genus_list}{An optinoal subset list of genus to find root information.}
 

@@ -9,10 +9,11 @@ sp_list_df(sp_list, taxon)
 \arguments{
 \item{sp_list}{A string vector.}
 
-\item{taxon}{The taxon group of this species list.}
+\item{taxon}{The taxon group of this species list. If not specified, only species and
+genus will be returned.}
 }
 \value{
-A data frame with 3 columns: species, genus, and family.
+A data frame with columns: species, genus, and family (if \code{taxon} is specified).
 }
 \description{
 Convert a vector of species names to a data frame

@@ -49,45 +49,39 @@ get_tree = function(sp_list, tree, taxon,
                     scenario = c("S1", "S2", "S3"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE) {
-  if(is.vector(sp_list, mode = "character") & !missing(taxon)){
-    sp_list = sp_list_df(gsub(" +", "_", sp_list), taxon)
-  }
-    
-  if(!inherits(sp_list, "data.frame"))
-    stop("sp_list must be a data frame with at least these columns: species, genus, family.")
-  if(any(!c("species", "genus", "family") %in% names(sp_list)))
-    stop("sp_list must has at least these columns: species, genus, family.")
   if(missing(tree) & missing(taxon))
     stop("Please specify at least a tree or a taxon group.")
   if(missing(tree) & !missing(taxon)){# pick default tree
     tree = switch(taxon,
-      plant = tree_plant_otl,
-      fish = tree_fish,
-      bird = tree_bird_ericson,
-      mammal = tree_mammal
+                  plant = tree_plant_otl,
+                  fish = tree_fish,
+                  bird = tree_bird_ericson,
+                  mammal = tree_mammal
     )
   }
+  if(all(!grepl("_", tree$tip.label)))
+    stop("Please change the tree's tip labels to be the format of genus_sp.")
+  tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
   
-  if(tree_by_user){
-    if(!is.null(tree$genus_family_root)) 
-      warning("The phylogeny has been processed, are you sure this is correct?")
-    if(all(!grepl("_", tree$tip.label)))
-      stop("Please change the tree's tip labels to be the format of genus_sp.")
-    # sp not in the tree
-    sp_not_in_tree = dplyr::filter(sp_list, !species %in% tree$tip.label)
-    # add root information for species not in the tree
-    tree = add_root_info(
-      tree, 
-      classification = rtrees::classifications[rtrees::classifications$taxon == taxon, ], 
-      genus_list = sp_not_in_tree$genus,
-      family_list = dplyr::filter(sp_not_in_tree, 
-                                  !genus %in% gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))$family,
-      show_warning = FALSE)
+  if(is.vector(sp_list, mode = "character")){
+    sp_list = gsub(" +", "_", sp_list)
+    sp_list = sp_list_df(sp_list)
+  } else {
+    if(!inherits(sp_list, "data.frame"))
+      stop("`sp_list` must either be a string vector or a data frame")
+    if(any(!c("species", "genus") %in% names(sp_list)))
+      stop("`sp_list` must has at least two columns: species, genus.")
+    sp_list$species = gsub(" +", "_", sp_list$species) # just in case
+  }
+    
+  all_genus_in_tree = all(unique(sp_list$genus) %in% tree_genus)
+  # if TRUE, no taxon is required
+  if(!all_genus_in_tree){
+    if((!"family" %in% names(sp_list)) & missing(taxon))
+      stop("Please specify `taxon`.")
+    sp_list = sp_list_df(sp_list$species, taxon) # add family information
   }
   
-  scenario = match.arg(scenario)
-  
-  sp_list$species = gsub(" +", "_", sp_list$species)
   sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
   
   if(nrow(sp_out_tree) == 0){
@@ -95,6 +89,27 @@ get_tree = function(sp_list, tree, taxon,
     tree_sub = ape::drop.tip(tree, setdiff(tree$tip.label, sp_list$species))
     return(tree_sub)
   }
+  
+  if(tree_by_user){
+    if(!is.null(tree$genus_family_root)) 
+      warning("The phylogeny has basal node information, are you sure this is correct?")
+    if(all_genus_in_tree){
+      tree = add_root_info(tree, process_all_tips = FALSE,
+                           genus_list = unique(sp_out_tree$genus), show_warning = FALSE)
+    } else { # some genus not in the tree
+      genus_not_in_tree = dplyr::filter(sp_out_tree, !genus %in% tree_genus)
+      # add root information for species not in the tree
+      tree = add_root_info(
+        tree, 
+        classification = rtrees::classifications[rtrees::classifications$taxon == taxon, ], 
+        process_all_tips = FALSE,
+        genus_list = setdiff(sp_out_tree$genus, genus_not_in_tree$genus),
+        family_list = ifelse(nrow(genus_not_in_tree) > 0, unique(genus_not_in_tree$family), NULL),
+        show_warning = FALSE)
+    }
+  }
+  
+  scenario = match.arg(scenario)
   
   if(is.null(tree$genus_family_root))
     stop("Did you use your own phylogeny? If so, please set `tree_by_user = TRUE`.")
@@ -108,10 +123,14 @@ get_tree = function(sp_list, tree, taxon,
   
   for(i in 1:nrow(sp_out_tree)){
     # cat(i)
-    if(!sp_out_tree$family[i] %in% tree$genus_family_root$family){
-      sp_out_tree$status[i] = "No co-family species in the mega-tree"
-      next()
+    if(!all_genus_in_tree){
+      if(is.na(sp_out_tree$family[i]) | 
+         !sp_out_tree$family[i] %in% tree$genus_family_root$family){
+        sp_out_tree$status[i] = "No co-family species in the mega-tree"
+        next()
+      }
     }
+    
     add_above_node = FALSE
     fraction = 1/2
     if(sp_out_tree$genus[i] %in% tree$genus_family_root$genus){
