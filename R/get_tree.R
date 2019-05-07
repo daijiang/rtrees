@@ -128,7 +128,7 @@ get_tree = function(sp_list, tree, taxon,
   
   for(i in 1:nrow(sp_out_tree)){
     # cat(i)
-    where_loc_i = NA
+    where_loc_i = where_loc_i2 = NA
     
     if(close_sp_specified){
       if(!is.na(sp_out_tree$close_sp[i]) &
@@ -142,6 +142,7 @@ get_tree = function(sp_list, tree, taxon,
          sp_out_tree$close_genus[i] != "" &
          sp_out_tree$close_genus[i] %in% tree_genus){
         sp_out_tree$genus[i] = sp_out_tree$close_genus[i]
+        where_loc_i2 = sp_out_tree$close_genus[i]
       }
     }
     
@@ -157,7 +158,7 @@ get_tree = function(sp_list, tree, taxon,
     fraction = 1/2
     
     if(sp_out_tree$genus[i] %in% tree$genus_family_root$genus |
-       close_genus_specified | !is.na(where_loc_i)){
+       !is.na(where_loc_i2) | !is.na(where_loc_i)){
       sp_out_tree$status[i] = "*"
       # tree has species in the same genus
       idx_row = which(tree$genus_family_root$genus == sp_out_tree$genus[i])

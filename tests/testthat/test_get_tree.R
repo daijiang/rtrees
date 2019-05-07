@@ -48,5 +48,5 @@ test_that("Test user provided tree", {
   tt = get_tree(sp_list = test_tree_sp2, tree = test_tree, tree_by_user = T) # this should work
   expect_error(get_tree(sp_list = test_tree_sp, tree = test_tree, tree_by_user = T))
   
-  tt = get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant", tree_by_user = T)
+  tt = get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant", show_grafted = T, tree_by_user = T)
 })

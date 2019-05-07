@@ -19,7 +19,9 @@ test_tree_sp = c("Rosa_sp", "Rubus_sp", "Amelanchier_sp", "Prunus_sp", "Sorbus_s
 
 test_tree_sp_df = sp_list_df(test_tree_sp, "plant")
 test_tree_sp_df$close_sp = NA
+test_tree_sp_df$close_genus = NA
 test_tree_sp_df$close_sp[1] = "Rosa_acicularis"
+test_tree_sp_df$close_genus[4] = "Rosa"
 
 setdiff(unique(sp_list_df(test_tree_sp)$genus), unique(sp_list_df(test_tree$tip.label)$genus))
 
