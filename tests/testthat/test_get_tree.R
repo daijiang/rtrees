@@ -25,7 +25,7 @@ test_that("Test get tree for plants", {
 })
 
 test_that("Test get tree for fish", {
-  expect_message(tt <- get_tree(test_fish_list, taxon = "fish", scenario = "S1"))
+  expect_message(tt <- get_tree(sp_list = test_fish_list, taxon = "fish", scenario = "S1"))
   expect_s3_class(tt, "phylo")
   expect_equal(ape::Ntip(tt), nrow(test_plant_list) - 1)
 })
@@ -48,4 +48,5 @@ test_that("Test user provided tree", {
   tt = get_tree(sp_list = test_tree_sp2, tree = test_tree, tree_by_user = T) # this should work
   expect_error(get_tree(sp_list = test_tree_sp, tree = test_tree, tree_by_user = T))
   
+  tt = get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant", tree_by_user = T)
 })

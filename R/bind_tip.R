@@ -14,7 +14,7 @@
 #' @return Either a phylogeny or a data frame, which can be then converted to a phylogeny later.
 #' @examples 
 #' \dontrun{
-#' library(rtree)
+#' library(rtrees)
 #' bind_tip(tree_plant_otl, "N70407", tip_label = "test_sp")
 #' tree_plant_otl_df = tidytree::as_tibble(tree_plant_otl)
 #' node_heights = ape::branching.times(tree_plant_otl)

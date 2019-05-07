@@ -77,12 +77,16 @@ get_tree = function(sp_list, tree, taxon,
   all_genus_in_tree = all(unique(sp_list$genus) %in% tree_genus)
   # if TRUE, no taxon is required
   if(!all_genus_in_tree){
-    if((!"family" %in% names(sp_list)) & missing(taxon))
-      stop("Please specify `taxon`.")
-    sp_list = sp_list_df(sp_list$species, taxon) # add family information
+    if((!"family" %in% names(sp_list))){
+      if(missing(taxon)) stop("Please specify `taxon`.")
+      sp_list = sp_list_df(sp_list$species, taxon) # add family information
+    }
   }
   
   sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
+  close_sp_specified = close_genus_specified = FALSE
+  if("close_sp" %in% names(sp_out_tree)) close_sp_specified = TRUE
+  if("close_genus" %in% names(sp_out_tree)) close_genus_specified = TRUE
   
   if(nrow(sp_out_tree) == 0){
     message("Wow, all species are already in the mega-tree!")
@@ -97,6 +101,7 @@ get_tree = function(sp_list, tree, taxon,
       tree = add_root_info(tree, process_all_tips = FALSE,
                            genus_list = unique(sp_out_tree$genus), show_warning = FALSE)
     } else { # some genus not in the tree
+      if(missing(taxon)) stop("Please specify `taxon`.")
       genus_not_in_tree = dplyr::filter(sp_out_tree, !genus %in% tree_genus)
       # add root information for species not in the tree
       tree = add_root_info(
@@ -123,7 +128,24 @@ get_tree = function(sp_list, tree, taxon,
   
   for(i in 1:nrow(sp_out_tree)){
     # cat(i)
-    if(!all_genus_in_tree){
+    where_loc_i = NA
+    
+    if(close_sp_specified){
+      if(!is.na(sp_out_tree$close_sp[i]) &
+         sp_out_tree$close_sp[i] %in% tree$tip.label){
+        where_loc_i = sp_out_tree$close_sp[i]
+      }
+    }
+    
+    if(close_genus_specified){
+      if(!is.na(sp_out_tree$close_genus[i]) &
+         sp_out_tree$close_genus[i] != "" &
+         sp_out_tree$close_genus[i] %in% tree_genus){
+        sp_out_tree$genus[i] = sp_out_tree$close_genus[i]
+      }
+    }
+    
+    if(!all_genus_in_tree & is.na(where_loc_i) & !close_genus_specified){
       if(is.na(sp_out_tree$family[i]) | 
          !sp_out_tree$family[i] %in% tree$genus_family_root$family){
         sp_out_tree$status[i] = "No co-family species in the mega-tree"
@@ -133,20 +155,44 @@ get_tree = function(sp_list, tree, taxon,
     
     add_above_node = FALSE
     fraction = 1/2
-    if(sp_out_tree$genus[i] %in% tree$genus_family_root$genus){
+    
+    if(sp_out_tree$genus[i] %in% tree$genus_family_root$genus |
+       close_genus_specified | !is.na(where_loc_i)){
       sp_out_tree$status[i] = "*"
       # tree has species in the same genus
       idx_row = which(tree$genus_family_root$genus == sp_out_tree$genus[i])
       root_sub = tree$genus_family_root[idx_row, ]
-      if(root_sub$n_spp == 1) { # but only 1 species in this genus
-        where_loc = root_sub$only_sp
-        # the new tip will be bind to this species, in the half of its branch length (default frac)
-        new_ht = root_sub$basal_time * (1 - fraction)
-        node_hts = c(new_ht, node_hts) # update node ages since added 1 new node
-        node_label_new = paste0("N", length(node_hts))
-        names(node_hts)[1] = node_label_new
-        all_eligible_nodes = c(all_eligible_nodes, node_label_new)
-        tree$genus_family_root$only_sp[idx_row] = NA # now will be more than 1 sp in this genus
+      if(root_sub$n_spp == 1 | !is.na(where_loc_i)) { # but only 1 species in this genus
+        if(!is.na(where_loc_i)){
+          where_loc = where_loc_i
+          # the new tip will be bind to this species, in the half of its branch length (default frac)
+          new_ht = tree_df$branch.length[tree_df$label == where_loc_i] * (1 - fraction)
+          node_hts = c(new_ht, node_hts) # update node ages since added 1 new node
+          node_label_new = paste0("N", length(node_hts))
+          names(node_hts)[1] = node_label_new
+          all_eligible_nodes = c(all_eligible_nodes, node_label_new)
+          if(!sp_out_tree$genus[i] %in% tree$genus_family_root$genus){
+            # cat("here")
+            tree$genus_family_root = tibble::add_row(
+              tree$genus_family_root,
+              family = sp_out_tree$family[i],
+              genus = sp_out_tree$genus[i],
+              basal_node = node_label_new,
+              basal_time = new_ht,
+              root_node = tree_df$lable[tree_df$node == tree_df$parent[tree_df$label == where_loc_i]],
+              root_time = tree_df$branch.length[tree_df$node == tree_df$parent[tree_df$label == where_loc_i]],
+              n_genus = 1, n_spp = 1, only_sp = sp_out_tree$species[i])
+          }
+        } else {
+          where_loc = root_sub$only_sp
+          # the new tip will be bind to this species, in the half of its branch length (default frac)
+          new_ht = root_sub$basal_time * (1 - fraction)
+          node_hts = c(new_ht, node_hts) # update node ages since added 1 new node
+          node_label_new = paste0("N", length(node_hts))
+          names(node_hts)[1] = node_label_new
+          all_eligible_nodes = c(all_eligible_nodes, node_label_new)
+          tree$genus_family_root$only_sp[idx_row] = NA # now will be more than 1 sp in this genus
+        }
       } else { # more than 1 species in the genus
         where_loc = root_sub$basal_node # scenarioes 1 and 3
         if(scenario == "S2"){ # randomly select a node in the genus and attach to it, no new node added
@@ -235,6 +281,7 @@ get_tree = function(sp_list, tree, taxon,
       tree$genus_family_root$n_genus[idx_row] = tree$genus_family_root$n_genus[idx_row] + 1
     }
     
+    # cat(where_loc)
     tree_df = bind_tip(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
                        new_node_above = add_above_node, tip_label = sp_out_tree$species[i], 
                        frac = fraction, return_tree = FALSE, node_label = node_label_new)
