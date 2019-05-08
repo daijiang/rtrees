@@ -56,8 +56,10 @@ test_fish_list
 ```
 
 For plant, fish, bird, and mammal, it is possible to prepare `sp_list`
-with function
-`sp_list_df()`.
+with function `sp_list_df()`; though you should check the results. It is
+possible to just provide the speices as a character vector for these
+taxon groups (or all genus in your species list are presented in the
+phylogeny).
 
 ``` r
 sp_list_df(sp_list = c("Periophthalmus_barbarus", "Barathronus_bicolor"),
@@ -83,26 +85,6 @@ plot(ladderize(test_tree), no.margin = T)
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
-
-Some notes:
-
-  - If `tree` is specified, then `taxon` can be ignored and *vice
-    versa*.
-  - If a species does not have a co-family species in the mega-tree, it
-    will be skipped.
-  - If `show_grafted = TRUE`, species that are grafted will have one or
-    two `*` at the end of their names.
-      - If it is grafted at the genus level, one `*`.
-      - If it is grafted at the family level, two `*`s.
-  - The default scenario is `S1`, which will graft species at the
-    genus/family basal node.
-      - `S2` will randomly select a downstream node to attach the new
-        tip.
-      - `S3` will graft the new tip above the genus/family basal node.
-      - If only one species in the mega-tree that is in the same
-        genus/family of the new tip, then the new tip will be grafted at
-        the middle of this species’ branch for all scenarioes.
-  - See `?get_tree` for more details.
 
 ## Add tips to user provided trees
 
@@ -135,6 +117,28 @@ plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
 
 <img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
-# Note
+Some notes:
 
-This package is still in very early stage. Contributions are welcome.
+  - If `tree` is specified, then `taxon` can be ignored if all genus in
+    the species list are presented in the phylogeny.
+  - If a species does not have a co-family species in the mega-tree, it
+    will be skipped.
+  - If `show_grafted = TRUE`, species that are grafted will have one or
+    two `*` at the end of their names.
+      - If it is grafted at the genus level, one `*`.
+      - If it is grafted at the family level, two `*`s.
+  - The default scenario is `S1`, which will graft species at the
+    genus/family basal node.
+      - `S2` will randomly select a downstream node to attach the new
+        tip.
+      - `S3` will graft the new tip above the genus/family basal node if
+        no co-family species found.
+      - If only one species in the mega-tree that is in the same
+        genus/family of the new tip, then the new tip will be grafted at
+        the middle of this species’ branch for all scenarioes.
+  - The `tree` can be a user provided tree, if so, set `tree_by_user =
+    TRUE`.
+  - See `?get_tree` for more details.
+
+This package is still in very early stage. Feel free to test it.
+Contributions and suggestions are welcome.
