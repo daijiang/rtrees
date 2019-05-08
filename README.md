@@ -105,7 +105,8 @@ plot(get_tree(sp_list = test_tree_sp, tree = test_tree, taxon = "plant",
 
 <img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
-It is also possible to specify a particular speices to bind with.
+It is also possible to specify a particular speices to bind with by specifing 
+columns `close_sp` and/or `close_genus`.
 
 ``` r
 test_tree_sp_df = sp_list_df(test_tree_sp, "plant")
