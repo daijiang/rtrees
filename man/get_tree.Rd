@@ -60,5 +60,5 @@ A phylogeny for the species required, with class \code{phylo}.
 }
 \description{
 For a list of species, generate a phylogeny from a provided mega-tree. If a species is
-not in the mega-tree, it will be inserted to the mega-tree with three scenarioes.
+not in the mega-tree, it will be grafted to the mega-tree with three scenarioes.
 }

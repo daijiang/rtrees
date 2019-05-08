@@ -1,7 +1,7 @@
 #' Derive a phylogeny from a mega-tree
 #' 
 #' For a list of species, generate a phylogeny from a provided mega-tree. If a species is
-#' not in the mega-tree, it will be inserted to the mega-tree with three scenarioes.
+#' not in the mega-tree, it will be grafted to the mega-tree with three scenarioes.
 #' 
 #' @param sp_list A data frame with at least three columns: species, genus, family. Species column
 #' holds the species for which we want to have a phylogeny. It can also have two optional columns:
@@ -143,10 +143,13 @@ get_tree = function(sp_list, tree, taxon,
          sp_out_tree$close_genus[i] %in% tree_genus){
         sp_out_tree$genus[i] = sp_out_tree$close_genus[i]
         where_loc_i2 = sp_out_tree$close_genus[i]
+      } else {
+        warning("The genus specified for ", sp_out_tree$species[i], 
+                " is not in the phylogeny.")
       }
     }
     
-    if(!all_genus_in_tree & is.na(where_loc_i) & !close_genus_specified){
+    if(!all_genus_in_tree & is.na(where_loc_i) & is.na(where_loc_i2)){
       if(is.na(sp_out_tree$family[i]) | 
          !sp_out_tree$family[i] %in% tree$genus_family_root$family){
         sp_out_tree$status[i] = "No co-family species in the mega-tree"
