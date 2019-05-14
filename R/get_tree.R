@@ -64,14 +64,14 @@ get_tree = function(sp_list, tree, taxon,
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
   
   if(is.vector(sp_list, mode = "character")){
-    sp_list = gsub(" +", "_", sp_list)
+    sp_list = cap_first_letter(gsub(" +", "_", sp_list))
     sp_list = sp_list_df(sp_list)
   } else {
     if(!inherits(sp_list, "data.frame"))
       stop("`sp_list` must either be a string vector or a data frame")
     if(any(!c("species", "genus") %in% names(sp_list)))
       stop("`sp_list` must has at least two columns: species, genus.")
-    sp_list$species = gsub(" +", "_", sp_list$species) # just in case
+    sp_list$species = cap_first_letter(gsub(" +", "_", sp_list$species)) # just in case
   }
     
   all_genus_in_tree = all(unique(sp_list$genus) %in% tree_genus)
@@ -126,8 +126,15 @@ get_tree = function(sp_list, tree, taxon,
   all_eligible_nodes = unique(c(tree$genus_family_root$basal_node,
                                 tree$genus_family_root$root_node))
   
+  if(nrow(sp_out_tree) > 100){
+    progbar = txtProgressBar(min = 0, max = nrow(sp_out_tree), initial = 0, style = 3)
+  }
+  
   for(i in 1:nrow(sp_out_tree)){
-    # cat(i)
+    if(nrow(sp_out_tree) > 100){
+      setTxtProgressBar(progbar, i)
+    }
+    
     where_loc_i = where_loc_i2 = NA
     
     if(close_sp_specified){
@@ -295,9 +302,14 @@ get_tree = function(sp_list, tree, taxon,
     tree$genus_family_root$n_spp[idx_row] = tree$genus_family_root$n_spp[idx_row] + 1
   }
   
+  if(nrow(sp_out_tree) > 100){
+    close(progbar)
+  }
+  
   if(any(sp_out_tree$status == "No co-family species in the mega-tree")) {
-    message("These species have no species in the same family in the mega-tree, skipped: \n",
-        sp_out_tree$species[sp_out_tree$status == "No co-family species in the mega-tree"])
+    sp_no_family = sp_out_tree$species[sp_out_tree$status == "No co-family species in the mega-tree"]
+    message(length(sp_no_family), " species have no co-family species in the mega-tree, skipped: \n",
+            paste(sp_no_family, collapse = ", "))
   }
   
   tree_sub = ape::drop.tip(tidytree::as.phylo(tree_df), setdiff(tree$tip.label, sp_list$species))
