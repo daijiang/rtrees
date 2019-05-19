@@ -25,6 +25,12 @@ test_tree_sp_df$close_genus[4] = "Rosa"
 
 setdiff(unique(sp_list_df(test_tree_sp)$genus), unique(sp_list_df(test_tree$tip.label)$genus))
 
+sp_list_phylomatic = c("asteraceae/Achillea/Achillea_millefolium",
+                       "berberidaceae/Achlys/Achlys_triphylla",
+                       "ranunculaceae/Aconitum/Aconitum_columbianum",
+                       "ranunculaceae/Actaea/Actaea_rubra",
+                       "asteraceae/Adenocaulon/Adenocaulon_bicolor")
+
 # fish
 test_fish_list = tibble::tibble(
   species = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii", 

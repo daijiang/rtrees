@@ -64,8 +64,16 @@ get_tree = function(sp_list, tree, taxon,
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
   
   if(is.vector(sp_list, mode = "character")){
-    sp_list = cap_first_letter(gsub(" +", "_", sp_list))
-    sp_list = sp_list_df(sp_list)
+    if(all(grepl(pattern = "[/]", x = sp_list))){ # phylomatic format
+      sp_list_sep = strsplit(sp_list, split = "/")
+      sp_list = tibble::tibble(species = cap_first_letter(sapply(sp_list_sep, 
+                                                                 function(x) gsub(" +", "_", x[3]))),
+                     genus = cap_first_letter(sapply(sp_list_sep, function(x) x[2])),
+                     family = cap_first_letter(sapply(sp_list_sep, function(x) x[1])))
+    } else {
+      sp_list = cap_first_letter(gsub(" +", "_", sp_list))
+      sp_list = sp_list_df(sp_list)
+    }
   } else {
     if(!inherits(sp_list, "data.frame"))
       stop("`sp_list` must either be a string vector or a data frame")
@@ -96,7 +104,7 @@ get_tree = function(sp_list, tree, taxon,
   
   if(tree_by_user){
     if(!is.null(tree$genus_family_root)) 
-      warning("The phylogeny has basal node information, are you sure this is correct?")
+      warning("The phylogeny has basal node information, are you sure this is an user provided tree?")
     if(all_genus_in_tree){
       tree = add_root_info(tree, process_all_tips = FALSE,
                            genus_list = unique(sp_out_tree$genus), show_warning = FALSE)
