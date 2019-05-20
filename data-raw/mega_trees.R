@@ -29,134 +29,135 @@ library(tidytree)
 #                                   family = "Anacardiaceae")
 
 
-# all genus and family from The Plant List
-tpl_family = xml2::read_html("http://theplantlist.org/1.1/browse/-/") %>% 
-  rvest::html_nodes(".family") %>% 
-  rvest::html_text() # 652 families
+# # all genus and family from The Plant List ----
+# tpl_family = xml2::read_html("http://theplantlist.org/1.1/browse/-/") %>% 
+#   rvest::html_nodes(".family") %>% 
+#   rvest::html_text() # 652 families
+# 
+# get_sp_per_family = function(x = "Didiereaceae"){
+#   cat(x, "\t")
+#   base_url = paste0("http://theplantlist.org/1.1/browse/A/", x, "/", x, ".csv")
+#   out = try(read_csv(base_url))
+#   if(inherits(out, "try-error")){
+#     base_url = paste0("http://theplantlist.org/1.1/browse/B/", x, "/", x, ".csv")
+#     out = try(read_csv(base_url))
+#   }
+#   if(inherits(out, "try-error")){
+#     base_url = paste0("http://theplantlist.org/1.1/browse/P/", x, "/", x, ".csv")
+#     out = try(read_csv(base_url))
+#   }
+#   if(inherits(out, "try-error")){
+#     base_url = paste0("http://theplantlist.org/1.1/browse/G/", x, "/", x, ".csv")
+#     out = try(read_csv(base_url))
+#   }
+#   out = try(out %>% 
+#               select(genus = Genus, family = Family) %>% 
+#               unique())
+#   out
+# }
+# classification_plant = map(tpl_family, get_sp_per_family)
+# classification_plant_TPL = bind_rows(classification_plant)
+# usethis::use_data(classification_plant_TPL)
+# classification_plant = bind_rows(classification_plant_TPL, 
+#                                  # from Jin & Qian, 2019
+#                                  tibble::tribble(~genus,~family,
+#                                                  "Davilanthus","Asteraceae",
+#                                                  "Ewartiothamnus","Asteraceae",
+#                                                  "Myrovernix","Asteraceae",
+#                                                  "Gongyloglossa","Asteraceae",
+#                                                  "Laevicarpa","Asteraceae",
+#                                                  "Monticapra","Asteraceae",
+#                                                  "Leucosyris","Asteraceae",
+#                                                  "Kieslingia","Asteraceae",
+#                                                  "Tephrothamnus","Asteraceae",
+#                                                  "Kurziella","Asteraceae",
+#                                                  "Sampera","Asteraceae",
+#                                                  "Platycarphella","Asteraceae",
+#                                                  "Pseudocodon","Campanulaceae",
+#                                                  "Pankycodon","Campanulaceae",
+#                                                  "Himalacodon","Campanulaceae",
+#                                                  "Rivasmartinezia","Apiaceae",
+#                                                  "Schultzia","Apiaceae",
+#                                                  "Rughidia","Apiaceae",
+#                                                  "Szovitsia","Apiaceae",
+#                                                  "Spuriopimpinella","Apiaceae",
+#                                                  "Trichera","Caprifoliaceae",
+#                                                  "Erythranthe","Phrymaceae",
+#                                                  "Diceratotheca","Acanthaceae",
+#                                                  "Chayamaritia","Gesneriaceae",
+#                                                  "Somrania","Gesneriaceae",
+#                                                  "Tribounia","Gesneriaceae",
+#                                                  "Lesia","Gesneriaceae",
+#                                                  "Trichodrymonia","Gesneriaceae",
+#                                                  "Johnstonella","Boraginaceae",
+#                                                  "Greeneocharis","Boraginaceae",
+#                                                  "Foonchewia","Rubiaceae",
+#                                                  "Edrastima","Rubiaceae",
+#                                                  "Dimetia","Rubiaceae",
+#                                                  "Rubiaceae","Rubiaceae",
+#                                                  "Rhachicallis","Rubiaceae",
+#                                                  "Anemotrochus","Apocynaceae",
+#                                                  "Monsanima","Apocynaceae",
+#                                                  "Calciphila","Apocynaceae",
+#                                                  "Richtersveldia","Apocynaceae",
+#                                                  "White-sloanea","Apocynaceae",
+#                                                  "Agiortia","Ericaceae",
+#                                                  "Acrothamnus","Ericaceae",
+#                                                  "Leptecophylla","Ericaceae",
+#                                                  "Pleioluma","Sapotaceae",
+#                                                  "Bemangidia","Sapotaceae",
+#                                                  "Kewa","Kewaceae",
+#                                                  "Pseudocherleria","Caryophyllaceae",
+#                                                  "Sedobassia","Amaranthaceae",
+#                                                  "Bactria","Polygonaceae",
+#                                                  "Solori","Fabaceae",
+#                                                  "Oberholzeria","Fabaceae",
+#                                                  "Gabonius","Fabaceae",
+#                                                  "Symbegonia","Begoniaceae",
+#                                                  "Synostemon","Phyllanthaceae",
+#                                                  "Gitara","Euphorbiaceae",
+#                                                  "Hartogiopsis","Celastraceae",
+#                                                  "Thelypodieae","Brassicaceae",
+#                                                  "Phyllolepidum","Brassicaceae",
+#                                                  "Kitaibela","Malvaceae",
+#                                                  "Anthocarapa","Meliaceae",
+#                                                  "Tetracarpaea","Tetracarpaeaceae",
+#                                                  "Eucarpha","Proteaceae",
+#                                                  "Oncidiinae","Orchidaceae",
+#                                                  "Schlimmia","Orchidaceae",
+#                                                  "Orthochilus","Orchidaceae",
+#                                                  "Pendulorchis","Orchidaceae",
+#                                                  "Neooreophilus","Orchidaceae",
+#                                                  "Dracontia","Orchidaceae",
+#                                                  "Sansonia","Orchidaceae",
+#                                                  "Danxiaorchis","Orchidaceae",
+#                                                  "Orchidaceae","Orchidaceae",
+#                                                  "Tsaiorchis","Orchidaceae",
+#                                                  "Dithrix","Orchidaceae",
+#                                                  "Sinocurculigo","Hypoxidaceae",
+#                                                  "Dupontiopsis","Poaceae",
+#                                                  "Koordersiochloa","Poaceae",
+#                                                  "Calliscirpus","Cyperaceae",
+#                                                  "Wallisia","Bromeliaceae",
+#                                                  "Stigmatodon","Bromeliaceae",
+#                                                  "Zizkaea","Bromeliaceae",
+#                                                  "Josemania","Bromeliaceae",
+#                                                  "Borneocola","Zingiberaceae",
+#                                                  "Ripogonum","Ripogonaceae",
+#                                                  "Onixotis","Colchicaceae",
+#                                                  "Schottarum","Araceae",
+#                                                  "Fenestratarum","Araceae",
+#                                                  "Hottarum","Araceae",
+#                                                  "Guamia","Annonaceae",
+#                                                  "Winitia","Annonaceae",
+#                                                  "Huberantha","Annonaceae",
+#                                                  "Sirdavidia","Annonaceae",
+#                                                  "Hypodematium","Hypodematiaceae",
+#                                                  "Desmophlebium","Desmophlebiaceae")
+# )
+# filter(classification_plant_TPL, genus %in% filter(classification_plant_TPL, duplicated(genus))$genus)
+# any(duplicated(classification_plant_TPL$genus)) # all genus monophytic? No...
 
-get_sp_per_family = function(x = "Didiereaceae"){
-  cat(x, "\t")
-  base_url = paste0("http://theplantlist.org/1.1/browse/A/", x, "/", x, ".csv")
-  out = try(read_csv(base_url))
-  if(inherits(out, "try-error")){
-    base_url = paste0("http://theplantlist.org/1.1/browse/B/", x, "/", x, ".csv")
-    out = try(read_csv(base_url))
-  }
-  if(inherits(out, "try-error")){
-    base_url = paste0("http://theplantlist.org/1.1/browse/P/", x, "/", x, ".csv")
-    out = try(read_csv(base_url))
-  }
-  if(inherits(out, "try-error")){
-    base_url = paste0("http://theplantlist.org/1.1/browse/G/", x, "/", x, ".csv")
-    out = try(read_csv(base_url))
-  }
-  out = try(out %>% 
-              select(genus = Genus, family = Family) %>% 
-              unique())
-  out
-}
-classification_plant = map(tpl_family, get_sp_per_family)
-classification_plant_TPL = bind_rows(classification_plant)
-usethis::use_data(classification_plant_TPL)
-classification_plant = bind_rows(classification_plant_TPL, 
-                                 # from Jin & Qian, 2019
-                                 tibble::tribble(~genus,~family,
-                                                 "Davilanthus","Asteraceae",
-                                                 "Ewartiothamnus","Asteraceae",
-                                                 "Myrovernix","Asteraceae",
-                                                 "Gongyloglossa","Asteraceae",
-                                                 "Laevicarpa","Asteraceae",
-                                                 "Monticapra","Asteraceae",
-                                                 "Leucosyris","Asteraceae",
-                                                 "Kieslingia","Asteraceae",
-                                                 "Tephrothamnus","Asteraceae",
-                                                 "Kurziella","Asteraceae",
-                                                 "Sampera","Asteraceae",
-                                                 "Platycarphella","Asteraceae",
-                                                 "Pseudocodon","Campanulaceae",
-                                                 "Pankycodon","Campanulaceae",
-                                                 "Himalacodon","Campanulaceae",
-                                                 "Rivasmartinezia","Apiaceae",
-                                                 "Schultzia","Apiaceae",
-                                                 "Rughidia","Apiaceae",
-                                                 "Szovitsia","Apiaceae",
-                                                 "Spuriopimpinella","Apiaceae",
-                                                 "Trichera","Caprifoliaceae",
-                                                 "Erythranthe","Phrymaceae",
-                                                 "Diceratotheca","Acanthaceae",
-                                                 "Chayamaritia","Gesneriaceae",
-                                                 "Somrania","Gesneriaceae",
-                                                 "Tribounia","Gesneriaceae",
-                                                 "Lesia","Gesneriaceae",
-                                                 "Trichodrymonia","Gesneriaceae",
-                                                 "Johnstonella","Boraginaceae",
-                                                 "Greeneocharis","Boraginaceae",
-                                                 "Foonchewia","Rubiaceae",
-                                                 "Edrastima","Rubiaceae",
-                                                 "Dimetia","Rubiaceae",
-                                                 "Rubiaceae","Rubiaceae",
-                                                 "Rhachicallis","Rubiaceae",
-                                                 "Anemotrochus","Apocynaceae",
-                                                 "Monsanima","Apocynaceae",
-                                                 "Calciphila","Apocynaceae",
-                                                 "Richtersveldia","Apocynaceae",
-                                                 "White-sloanea","Apocynaceae",
-                                                 "Agiortia","Ericaceae",
-                                                 "Acrothamnus","Ericaceae",
-                                                 "Leptecophylla","Ericaceae",
-                                                 "Pleioluma","Sapotaceae",
-                                                 "Bemangidia","Sapotaceae",
-                                                 "Kewa","Kewaceae",
-                                                 "Pseudocherleria","Caryophyllaceae",
-                                                 "Sedobassia","Amaranthaceae",
-                                                 "Bactria","Polygonaceae",
-                                                 "Solori","Fabaceae",
-                                                 "Oberholzeria","Fabaceae",
-                                                 "Gabonius","Fabaceae",
-                                                 "Symbegonia","Begoniaceae",
-                                                 "Synostemon","Phyllanthaceae",
-                                                 "Gitara","Euphorbiaceae",
-                                                 "Hartogiopsis","Celastraceae",
-                                                 "Thelypodieae","Brassicaceae",
-                                                 "Phyllolepidum","Brassicaceae",
-                                                 "Kitaibela","Malvaceae",
-                                                 "Anthocarapa","Meliaceae",
-                                                 "Tetracarpaea","Tetracarpaeaceae",
-                                                 "Eucarpha","Proteaceae",
-                                                 "Oncidiinae","Orchidaceae",
-                                                 "Schlimmia","Orchidaceae",
-                                                 "Orthochilus","Orchidaceae",
-                                                 "Pendulorchis","Orchidaceae",
-                                                 "Neooreophilus","Orchidaceae",
-                                                 "Dracontia","Orchidaceae",
-                                                 "Sansonia","Orchidaceae",
-                                                 "Danxiaorchis","Orchidaceae",
-                                                 "Orchidaceae","Orchidaceae",
-                                                 "Tsaiorchis","Orchidaceae",
-                                                 "Dithrix","Orchidaceae",
-                                                 "Sinocurculigo","Hypoxidaceae",
-                                                 "Dupontiopsis","Poaceae",
-                                                 "Koordersiochloa","Poaceae",
-                                                 "Calliscirpus","Cyperaceae",
-                                                 "Wallisia","Bromeliaceae",
-                                                 "Stigmatodon","Bromeliaceae",
-                                                 "Zizkaea","Bromeliaceae",
-                                                 "Josemania","Bromeliaceae",
-                                                 "Borneocola","Zingiberaceae",
-                                                 "Ripogonum","Ripogonaceae",
-                                                 "Onixotis","Colchicaceae",
-                                                 "Schottarum","Araceae",
-                                                 "Fenestratarum","Araceae",
-                                                 "Hottarum","Araceae",
-                                                 "Guamia","Annonaceae",
-                                                 "Winitia","Annonaceae",
-                                                 "Huberantha","Annonaceae",
-                                                 "Sirdavidia","Annonaceae",
-                                                 "Hypodematium","Hypodematiaceae",
-                                                 "Desmophlebium","Desmophlebiaceae")
-)
-filter(classification_plant_TPL, genus %in% filter(classification_plant_TPL, duplicated(genus))$genus)
-any(duplicated(classification_plant_TPL$genus)) # all genus monophytic? No...
 
 # fish ----
 fishurl3 = "https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz"
@@ -235,6 +236,19 @@ classifications = add_row(classifications,
 
 classifications = add_row(classifications,
                           genus = "Rumex", family = "Polygonaceae", taxon = "plant")
+
+# taxonlookup ----
+# devtools::install_github("wcornwell/taxonlookup")
+aplant = taxonlookup::plant_lookup() %>% 
+  select(genus, family) %>% 
+  mutate(taxon = "plant") %>% 
+  as_tibble()
+
+classifications = bind_rows(classifications, aplant) %>% 
+  unique() %>% 
+  arrange(taxon, family, genus)
+classifications$family[classifications$family == "Isoëtaceae"] = "Isoetaceae"
+classifications = unique(classifications)
 
 usethis::use_data(classifications, overwrite = T, compress = "xz")
 

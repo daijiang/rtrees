@@ -135,12 +135,12 @@ get_tree = function(sp_list, tree, taxon,
                                 tree$genus_family_root$root_node))
   
   if(nrow(sp_out_tree) > 100){
-    progbar = txtProgressBar(min = 0, max = nrow(sp_out_tree), initial = 0, style = 3)
+    progbar = utils::txtProgressBar(min = 0, max = nrow(sp_out_tree), initial = 0, style = 3)
   }
   
   for(i in 1:nrow(sp_out_tree)){
     if(nrow(sp_out_tree) > 100){
-      setTxtProgressBar(progbar, i)
+      utils::setTxtProgressBar(progbar, i)
     }
     
     where_loc_i = where_loc_i2 = NA
