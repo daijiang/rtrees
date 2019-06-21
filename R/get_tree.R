@@ -92,6 +92,21 @@ get_tree = function(sp_list, tree, taxon,
   }
   
   sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
+  
+  # some tree tips has genus_sp_subsp
+  sp_out_tree$re_matched = sp_out_tree$matched_name = NA
+  for(i in 1:length(sp_out_tree$species)){
+    name_in_tree = grep(sp_out_tree$species[i], x = tree$tip.label, value = T)
+    # cat(i, name_in_tree, "\n")
+    if(length(name_in_tree)) {
+      sp_out_tree$re_matched[i] = TRUE
+      sp_out_tree$matched_name[i] = sample(name_in_tree, 1)
+      # rename the tree tip 
+      tree$tip.label[tree$tip.label == sp_out_tree$matched_name[i]] = sp_out_tree$species[i]
+    }
+  }
+  sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
+  
   close_sp_specified = close_genus_specified = FALSE
   if("close_sp" %in% names(sp_out_tree)) close_sp_specified = TRUE
   if("close_genus" %in% names(sp_out_tree)) close_genus_specified = TRUE
@@ -314,6 +329,14 @@ get_tree = function(sp_list, tree, taxon,
     close(progbar)
   }
   
+  if(any(sp_out_tree$status == "*")) {
+    message(sum(sp_out_tree$status == "*"), " species added at genus level \n")
+  }
+  
+  if(any(sp_out_tree$status == "**")) {
+    message(sum(sp_out_tree$status == "**"), " species added at family level \n")
+  }
+  
   if(any(sp_out_tree$status == "No co-family species in the mega-tree")) {
     sp_no_family = sp_out_tree$species[sp_out_tree$status == "No co-family species in the mega-tree"]
     message(length(sp_no_family), " species have no co-family species in the mega-tree, skipped: \n",
@@ -329,5 +352,6 @@ get_tree = function(sp_list, tree, taxon,
     tree_sub$tip.label[wid] = dplyr::left_join(tibble::tibble(species = tree_sub$tip.label[wid]),
                                                grafted, by = "species")$sp2
   }
+  
   return(ape::ladderize(tree_sub))
 }
