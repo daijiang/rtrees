@@ -103,6 +103,11 @@ get_tree = function(sp_list, tree, taxon,
       sp_out_tree$matched_name[i] = sample(name_in_tree, 1)
       # rename the tree tip 
       tree$tip.label[tree$tip.label == sp_out_tree$matched_name[i]] = sp_out_tree$species[i]
+      if(!is.null(tree$genus_family_root)) {
+        tree$genus_family_root$only_sp[tree$genus_family_root$only_sp == 
+                                         sp_out_tree$matched_name[i]] = 
+          sp_out_tree$species[i]
+      }
     }
   }
   sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
@@ -157,7 +162,7 @@ get_tree = function(sp_list, tree, taxon,
     if(nrow(sp_out_tree) > 100){
       utils::setTxtProgressBar(progbar, i)
     }
-    
+    # cat(i, "\t")
     where_loc_i = where_loc_i2 = NA
     
     if(close_sp_specified){

@@ -248,6 +248,11 @@ classifications = bind_rows(classifications, aplant) %>%
   unique() %>% 
   arrange(taxon, family, genus)
 classifications$family[classifications$family == "Isoëtaceae"] = "Isoetaceae"
+
+classifications = tibble::add_row(classifications,
+                          genus = c("Dasyatis", "Entosphenus", "Ichthyomyzon", "Lampetra", "Lethenteron", "Petromyzon"), 
+                          family = c("Dasyatidae", rep("Petromyzontidae", 5)), taxon = "fish")
+
 classifications = unique(classifications)
 
 usethis::use_data(classifications, overwrite = T, compress = "xz")
