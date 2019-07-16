@@ -164,7 +164,7 @@ get_tree = function(sp_list, tree, taxon,
     if(nrow(sp_out_tree) > 100){
       utils::setTxtProgressBar(progbar, i)
     }
-    cat(i, "\t")
+    # cat(i, "\t")
     where_loc_i = where_loc_i2 = NA
     
     if(close_sp_specified){
