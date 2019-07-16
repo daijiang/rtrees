@@ -38,7 +38,9 @@ sp_list_df = function(sp_list, taxon){
   utils::data("classifications", envir = environment())
   clsf = classifications[classifications$taxon == taxon, ]
   if(any(!out$genus %in% clsf$genus)){
-    warning("Some genus are not in our classification database.", call. = FALSE)
+    warning("The following genus are not in our classification database: ", 
+            paste(setdiff(out$genus, clsf$genus), collapse = ", "),
+            call. = FALSE)
     # not necessary to be a problem, if tree has same genus species, 
     # then no family info needed
   }

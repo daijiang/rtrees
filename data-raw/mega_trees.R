@@ -254,6 +254,7 @@ classifications = tibble::add_row(classifications,
                           family = c("Dasyatidae", rep("Petromyzontidae", 5)), taxon = "fish")
 
 classifications = unique(classifications)
+classifications = filter(classifications, !(genus == "Nyssa" & family == "Cornaceae"))
 
 usethis::use_data(classifications, overwrite = T, compress = "xz")
 

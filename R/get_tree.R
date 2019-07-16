@@ -63,6 +63,7 @@ get_tree = function(sp_list, tree, taxon,
     stop("Please change the tree's tip labels to be the format of genus_sp.")
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
   
+  sp_list = unique(sp_list) # remove duplications
   if(is.vector(sp_list, mode = "character")){
     if(all(grepl(pattern = "[/]", x = sp_list))){ # phylomatic format
       sp_list_sep = strsplit(sp_list, split = "/")
@@ -71,7 +72,7 @@ get_tree = function(sp_list, tree, taxon,
                      genus = cap_first_letter(sapply(sp_list_sep, function(x) x[2])),
                      family = cap_first_letter(sapply(sp_list_sep, function(x) x[1])))
     } else {
-      sp_list = cap_first_letter(gsub(" +", "_", sp_list))
+      sp_list = unique(cap_first_letter(gsub(" +", "_", sp_list)))
       sp_list = sp_list_df(sp_list)
     }
   } else {
@@ -81,7 +82,7 @@ get_tree = function(sp_list, tree, taxon,
       stop("`sp_list` must has at least two columns: species, genus.")
     sp_list$species = cap_first_letter(gsub(" +", "_", sp_list$species)) # just in case
   }
-    
+  
   all_genus_in_tree = all(unique(sp_list$genus) %in% tree_genus)
   # if TRUE, no taxon is required
   if(!all_genus_in_tree){
@@ -90,13 +91,14 @@ get_tree = function(sp_list, tree, taxon,
       sp_list = sp_list_df(sp_list$species, taxon) # add family information
     }
   }
+  sp_list = unique(sp_list) # remove duplications
   
   sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
   
   # some tree tips has genus_sp_subsp
   sp_out_tree$re_matched = sp_out_tree$matched_name = NA
   for(i in 1:length(sp_out_tree$species)){
-    name_in_tree = grep(sp_out_tree$species[i], x = tree$tip.label, value = T)
+    name_in_tree = grep(sp_out_tree$species[i], x = tree$tip.label, ignore.case = T, value = T)
     # cat(i, name_in_tree, "\n")
     if(length(name_in_tree)) {
       sp_out_tree$re_matched[i] = TRUE
@@ -110,7 +112,7 @@ get_tree = function(sp_list, tree, taxon,
       }
     }
   }
-  sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
+  sp_out_tree = unique(sp_list[!sp_list$species %in% tree$tip.label, ])
   
   close_sp_specified = close_genus_specified = FALSE
   if("close_sp" %in% names(sp_out_tree)) close_sp_specified = TRUE
@@ -162,7 +164,7 @@ get_tree = function(sp_list, tree, taxon,
     if(nrow(sp_out_tree) > 100){
       utils::setTxtProgressBar(progbar, i)
     }
-    # cat(i, "\t")
+    cat(i, "\t")
     where_loc_i = where_loc_i2 = NA
     
     if(close_sp_specified){
