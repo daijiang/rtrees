@@ -59,22 +59,13 @@ get_tree = function(sp_list, tree, taxon,
                   mammal = tree_mammal
     )
   }
-  if(all(!grepl("_", tree$tip.label)))
+  if(tree_by_user & all(!grepl("_", tree$tip.label)))
     stop("Please change the tree's tip labels to be the format of genus_sp.")
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
   
   sp_list = unique(sp_list) # remove duplications
   if(is.vector(sp_list, mode = "character")){
-    if(all(grepl(pattern = "[/]", x = sp_list))){ # phylomatic format
-      sp_list_sep = strsplit(sp_list, split = "/")
-      sp_list = tibble::tibble(species = cap_first_letter(sapply(sp_list_sep, 
-                                                                 function(x) gsub(" +", "_", x[3]))),
-                     genus = cap_first_letter(sapply(sp_list_sep, function(x) x[2])),
-                     family = cap_first_letter(sapply(sp_list_sep, function(x) x[1])))
-    } else {
-      sp_list = unique(cap_first_letter(gsub(" +", "_", sp_list)))
-      sp_list = sp_list_df(sp_list)
-    }
+    sp_list = sp_list_df(sp_list)
   } else {
     if(!inherits(sp_list, "data.frame"))
       stop("`sp_list` must either be a string vector or a data frame")
@@ -98,7 +89,9 @@ get_tree = function(sp_list, tree, taxon,
   # some tree tips has genus_sp_subsp
   sp_out_tree$re_matched = sp_out_tree$matched_name = NA
   for(i in 1:length(sp_out_tree$species)){
-    name_in_tree = grep(sp_out_tree$species[i], x = tree$tip.label, ignore.case = T, value = T)
+    name_in_tree = grep(paste0("^", sp_out_tree$species[i], "_"), x = tree$tip.label,
+                        ignore.case = T, value = T) 
+    # avoid Allium_sp. match things like Allium_splendens
     # cat(i, name_in_tree, "\n")
     if(length(name_in_tree)) {
       sp_out_tree$re_matched[i] = TRUE

@@ -26,6 +26,16 @@ if(getRversion() >= "2.15.1")
 sp_list_df = function(sp_list, taxon){
   if(!is.vector(sp_list, mode = "character"))
     stop("sp_list must be a character vector.")
+  if(all(grepl(pattern = "[/]", x = sp_list))){ # phylomatic format
+    sp_list_sep = strsplit(sp_list, split = "/")
+    sp_list = tibble::tibble(species = cap_first_letter(sapply(sp_list_sep, 
+                                                               function(x) gsub(" +", "_", x[3]))),
+                             genus = cap_first_letter(sapply(sp_list_sep, function(x) x[2])),
+                             family = cap_first_letter(sapply(sp_list_sep, function(x) x[1])))
+    return(sp_list)
+  } 
+  
+  sp_list = unique(cap_first_letter(gsub(" +", "_", sp_list)))
   out = tibble::tibble(species = sp_list,
                  genus = gsub("^([-A-Za-z]*)_.*$", "\\1", sp_list))
   if(missing(taxon)) return(out)
