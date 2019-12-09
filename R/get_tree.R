@@ -321,6 +321,7 @@ get_tree = function(sp_list, tree, taxon,
                        frac = fraction, return_tree = FALSE, node_label = node_label_new)
     tree_df$is_tip[tree_df$label == sp_out_tree$species[i]] = TRUE
     tree_df$is_tip[is.na(tree_df$is_tip)] = FALSE
+    tree_df = unique(tree_df)
     # update n_spp in tree$genus_family_root
     tree$genus_family_root$n_spp[idx_row] = tree$genus_family_root$n_spp[idx_row] + 1
   }
