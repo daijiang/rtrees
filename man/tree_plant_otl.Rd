@@ -4,7 +4,9 @@
 \name{tree_plant_otl}
 \alias{tree_plant_otl}
 \title{Mega-tree of plants based on Open Tree of Life}
-\format{A phylogeny with class "phylo". It is also a list. Compare with a normal phylo object, it has another data frame \code{tree_plant_otl$genus_family_root}, which provides the root nodes information for every unique genus and family in the phylogeny. Such information can be used to insert new tips onto the phylogeny later.}
+\format{
+A phylogeny with class "phylo". It is also a list. Compare with a normal phylo object, it has another data frame \code{tree_plant_otl$genus_family_root}, which provides the root nodes information for every unique genus and family in the phylogeny. Such information can be used to insert new tips onto the phylogeny later.
+}
 \source{
 \url{https://github.com/jinyizju/V.PhyloMaker/tree/master/data}
 }
@@ -21,9 +23,11 @@ Smith, S. A., & Brown, J. W. (2018). Constructing a broadly inclusive seed plant
 Jin, Y., & Qian, H. (2019). V. PhyloMaker: an R package that can generate very large phylogenies for vascular plants. Ecography.
 }
 \seealso{
-Other trees: \code{\link{tree_bird_ericson}},
-  \code{\link{tree_bird_hackett}}, \code{\link{tree_fish}},
-  \code{\link{tree_mammal}}
+Other trees: 
+\code{\link{tree_bird_ericson}},
+\code{\link{tree_bird_hackett}},
+\code{\link{tree_fish}},
+\code{\link{tree_mammal}}
 }
 \concept{trees}
 \keyword{datasets}

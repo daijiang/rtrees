@@ -4,8 +4,14 @@
 \alias{add_root_info}
 \title{Add genus and family basal/root node information to a phylogeny}
 \usage{
-add_root_info(tree, classification, process_all_tips = TRUE,
-  genus_list = NULL, family_list = NULL, show_warning = TRUE)
+add_root_info(
+  tree,
+  classification,
+  process_all_tips = TRUE,
+  genus_list = NULL,
+  family_list = NULL,
+  show_warning = TRUE
+)
 }
 \arguments{
 \item{tree}{A phylogeny with class "phylo".}

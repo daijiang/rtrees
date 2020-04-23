@@ -315,10 +315,13 @@ get_tree = function(sp_list, tree, taxon,
       tree$genus_family_root$n_genus[idx_row] = tree$genus_family_root$n_genus[idx_row] + 1
     }
     
+    # when the clade is large, tidytree::offspring() will take a long time
+    if(root_sub$n_spp > 500) use_castor = TRUE else use_castor = FALSE
     # cat(where_loc)
     tree_df = bind_tip(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
                        new_node_above = add_above_node, tip_label = sp_out_tree$species[i], 
-                       frac = fraction, return_tree = FALSE, node_label = node_label_new)
+                       frac = fraction, return_tree = FALSE, node_label = node_label_new,
+                       use_castor = use_castor)
     tree_df$is_tip[tree_df$label == sp_out_tree$species[i]] = TRUE
     tree_df$is_tip[is.na(tree_df$is_tip)] = FALSE
     tree_df = dplyr::distinct(tree_df)
@@ -344,7 +347,7 @@ get_tree = function(sp_list, tree, taxon,
             paste(sp_no_family, collapse = ", "))
   }
   
-  tree_sub = ape::drop.tip(tidytree::as.phylo(tree_df), setdiff(tree$tip.label, sp_list$species))
+  tree_sub = castor::get_subtree_with_tips(tidytree::as.phylo(tree_df), sp_list$species)$subtree
   
   if(show_grafted){
     grafted = sp_out_tree[sp_out_tree$status %in% c("*", "**"), ]

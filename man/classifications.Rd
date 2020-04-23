@@ -4,7 +4,9 @@
 \name{classifications}
 \alias{classifications}
 \title{Classifications of species}
-\format{A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}, \code{mammal}).}
+\format{
+A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}, \code{mammal}).
+}
 \usage{
 classifications
 }

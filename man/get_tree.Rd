@@ -4,8 +4,14 @@
 \alias{get_tree}
 \title{Derive a phylogeny from a mega-tree}
 \usage{
-get_tree(sp_list, tree, taxon, scenario = c("S1", "S2", "S3"),
-  show_grafted = FALSE, tree_by_user = FALSE)
+get_tree(
+  sp_list,
+  tree,
+  taxon,
+  scenario = c("S1", "S2", "S3"),
+  show_grafted = FALSE,
+  tree_by_user = FALSE
+)
 }
 \arguments{
 \item{sp_list}{A data frame with at least three columns: species, genus, family. Species column
@@ -16,7 +22,7 @@ expert knowledgement. If specified, the new species will be grafted to that part
 It can also be a string vector if \code{taxon} is specified. Though it probably is a better idea
 to prepare your data frame with \code{\link[=sp_list_df]{sp_list_df()}}.
 
-In all cases, species names should be separated by \code{_} between genus and species, i.e. genus_sp.}
+In all cases, species names should be separated by \verb{_} between genus and species, i.e. genus_sp.}
 
 \item{tree}{A mega-tree with class \code{phylo}. Optional if \code{taxon} is specified, in which case, a default
 mega-phylogeny will be used.
@@ -51,7 +57,7 @@ node.
 
 \item{show_grafted}{Whether to indicate which species was grafted onto the mega-tree.
 If \code{TRUE}, a \code{*} will be appended to the species name on the tip if it was grafted within
-the same genus; \code{**} will be appended if it was grafted within the same family.}
+the same genus; \verb{**} will be appended if it was grafted within the same family.}
 
 \item{tree_by_user}{Is the mega-tree provided by user?}
 }
