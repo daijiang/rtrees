@@ -87,7 +87,7 @@ get_tree = function(sp_list, tree, taxon,
   sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
   
   # some tree tips has genus_sp_subsp
-  sp_out_tree$re_matched = sp_out_tree$matched_name = NA
+  sp_out_tree = dplyr::mutate(sp_out_tree, re_matched = NA, matched_name = NA)
   for(i in 1:length(sp_out_tree$species)){
     name_in_tree = grep(paste0("^", sp_out_tree$species[i], "_"), x = tree$tip.label,
                         ignore.case = T, value = T) 
@@ -321,7 +321,7 @@ get_tree = function(sp_list, tree, taxon,
                        frac = fraction, return_tree = FALSE, node_label = node_label_new)
     tree_df$is_tip[tree_df$label == sp_out_tree$species[i]] = TRUE
     tree_df$is_tip[is.na(tree_df$is_tip)] = FALSE
-    tree_df = unique(tree_df)
+    tree_df = dplyr::distinct(tree_df)
     # update n_spp in tree$genus_family_root
     tree$genus_family_root$n_spp[idx_row] = tree$genus_family_root$n_spp[idx_row] + 1
   }
@@ -331,11 +331,11 @@ get_tree = function(sp_list, tree, taxon,
   }
   
   if(any(sp_out_tree$status == "*")) {
-    message(sum(sp_out_tree$status == "*"), " species added at genus level \n")
+    message(sum(sp_out_tree$status == "*"), " species added at genus level (*) \n")
   }
   
   if(any(sp_out_tree$status == "**")) {
-    message(sum(sp_out_tree$status == "**"), " species added at family level \n")
+    message(sum(sp_out_tree$status == "**"), " species added at family level (**) \n")
   }
   
   if(any(sp_out_tree$status == "No co-family species in the mega-tree")) {
