@@ -87,25 +87,28 @@ get_tree = function(sp_list, tree, taxon,
   sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
   
   # some tree tips has genus_sp_subsp
-  sp_out_tree = dplyr::mutate(sp_out_tree, re_matched = NA, matched_name = NA)
-  for(i in 1:length(sp_out_tree$species)){
-    name_in_tree = grep(paste0("^", sp_out_tree$species[i], "_"), x = tree$tip.label,
-                        ignore.case = T, value = T) 
-    # avoid Allium_sp. match things like Allium_splendens
-    # cat(i, name_in_tree, "\n")
-    if(length(name_in_tree)) {
-      sp_out_tree$re_matched[i] = TRUE
-      sp_out_tree$matched_name[i] = sample(name_in_tree, 1)
-      # rename the tree tip 
-      tree$tip.label[tree$tip.label == sp_out_tree$matched_name[i]] = sp_out_tree$species[i]
-      if(!is.null(tree$genus_family_root)) {
-        tree$genus_family_root$only_sp[tree$genus_family_root$only_sp == 
-                                         sp_out_tree$matched_name[i]] = 
-          sp_out_tree$species[i]
+  subsp_in_tree = grep("^.*_.*_.*$", x = tree$tip.label, value = T)
+  if(length(subsp_in_tree)){
+    sp_out_tree = dplyr::mutate(sp_out_tree, re_matched = NA, matched_name = NA)
+    for(i in 1:length(sp_out_tree$species)){
+      name_in_tree = grep(paste0("^", sp_out_tree$species[i], "_"), x = subsp_in_tree,
+                          ignore.case = T, value = T) 
+      # avoid Allium_sp. match things like Allium_splendens
+      # cat(i, name_in_tree, "\n")
+      if(length(name_in_tree)) {
+        sp_out_tree$re_matched[i] = TRUE
+        sp_out_tree$matched_name[i] = sample(name_in_tree, 1)
+        # rename the tree tip 
+        tree$tip.label[tree$tip.label == sp_out_tree$matched_name[i]] = sp_out_tree$species[i]
+        if(!is.null(tree$genus_family_root)) {
+          tree$genus_family_root$only_sp[tree$genus_family_root$only_sp == 
+                                           sp_out_tree$matched_name[i]] = 
+            sp_out_tree$species[i]
+        }
       }
     }
+    sp_out_tree = dplyr::distinct(sp_list[!sp_list$species %in% tree$tip.label, ])
   }
-  sp_out_tree = unique(sp_list[!sp_list$species %in% tree$tip.label, ])
   
   close_sp_specified = close_genus_specified = FALSE
   if("close_sp" %in% names(sp_out_tree)) close_sp_specified = TRUE
