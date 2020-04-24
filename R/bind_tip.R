@@ -151,7 +151,8 @@ bind_tip = function(tree = NULL, where, tip_label,
     # tree_tbl_2$branch.length[tree_tbl_2$label %in% c(where, tip_label)] = tree_tbl_new$branch.length * (1 - frac)
   }
   
-  tree_tbl_2 = dplyr::arrange(tree_tbl_2, node)
+  # tree_tbl_2 = dplyr::arrange(tree_tbl_2, node)
+  tree_tbl_2 = tree_tbl_2[order(tree_tbl_2$node), ] 
   tree_tbl_2$isTip = NULL
   
   if(!inherits(tree_tbl_2, "tbl_tree")) class(tree_tbl_2) = c("tbl_tree", class(tree_tbl_2))
