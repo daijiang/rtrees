@@ -258,6 +258,108 @@ classifications = filter(classifications, !(genus == "Nyssa" & family == "Cornac
 
 usethis::use_data(classifications, overwrite = T, compress = "xz")
 
+# duplicated genera
+dp = filter(classifications, taxon == "plant") %>% 
+  group_by(genus) %>% 
+  tally() %>% 
+  filter(n > 1) %>% pull(genus)
+# checked with POWO http://www.plantsoftheworldonline.org/
+# several genus not there or have different family
+# used Wiki or TPL instead
+gfam_powo = tribble(
+  ~genus, ~family, ~taxon,
+  "Alzatea","Alzateaceae","plant",
+  "Anthobolus","Santalaceae","plant",
+  "Apodytes","Metteniusaceae","plant",
+  "Axinandra","Crypteroniaceae","plant",
+  "Balbisia","Francoaceae","plant",
+  "Batis","Bataceae","plant",
+  "Bersama","Francoaceae","plant",
+  "Bornmuellerantha","Orobanchaceae","plant",
+  "Borthwickia","Resedaceae","plant",
+  "Bottegoa","Rutaceae","plant",
+  "Brandisia","Orobanchaceae","plant",
+  "Calandrinia","Montiaceae","plant",
+  "Calatola","Metteniusaceae","plant",
+  "Calophyllum","Calophyllaceae","plant",
+  "Camptotheca","Nyssaceae","plant",
+  "Cedrelopsis","Rutaceae","plant",
+  "Chaetocarpus","Peraceae","plant",
+  "Chamaescilla","Asphodelaceae","plant",
+  "Cissarobryon","Francoaceae","plant",
+  "Cistanthe","Montiaceae","plant",
+  "Cleoserrata","Cleomaceae","plant",
+  "Corrigiola","Molluginaceae","plant",
+  "Crypteronia","Crypteroniaceae","plant",
+  "Cubitanthus","Gesneriaceae","plant",
+  "Cyathobasis","Amaranthaceae","plant",
+  "Dactylocladus","Crypteroniaceae","plant",
+  "Davidia","Nyssaceae","plant",
+  "Dendrobangia","Metteniusaceae","plant",
+  "Diplopanax","Nyssaceae","plant",
+  "Dodartia","Mazaceae","plant",
+  "Emmotum","Metteniusaceae","plant",
+  "Euryodendron","Theaceae","plant",
+  "Forchhammeria","Resedaceae","plant",
+  "Francoa","Francoaceae","plant",
+  "Gallesia","Petiveriaceae","plant",
+  "Greyia","Francoaceae","plant",
+  "Griselinia","Griseliniaceae","plant",
+  "Hemidictyum","Aspleniaceae","plant",
+  "Hilleria","Petiveriaceae","plant",
+  "Kaliphora","Cornaceae","plant",
+  "Lancea","Mazaceae","plant",
+  "Lapiedra","Amaryllidaceae","plant",
+  "Ledenbergia","Petiveriaceae","plant",
+  "Lindenbergia","Orobanchaceae","plant",
+  "Macarthuria","Macarthuriaceae","plant",
+  "Malaisia","Moraceae","plant",
+  "Mastixia","Nyssaceae","plant",
+  "Maundia","Maundiaceae","plant",
+  "Mazus","Mazaceae","plant",
+  "Melianthus","Francoaceae","plant",
+  "Microtea","Microteaceae","plant",
+  "Nuttallia","Rosaceae","plant",
+  "Oecopetalum","Metteniusaceae","plant",
+  "Ottoschulzia","Metteniusaceae","plant",
+  "Peltanthera","Gesneriaceae","plant",
+  "Petiveria","Petiveriaceae","plant",
+  "Philcoxia","Plantaginaceae","plant",
+  "Pittosporopsis","Icacinaceae","plant",
+  "Platea","Icacinaceae","plant",
+  "Poraqueiba","Metteniusaceae","plant",
+  "Purdiaea","Clethraceae","plant",
+  "Pyrsonota","Elaeocarpaceae","plant",
+  "Rehmannia","Orobanchaceae","plant",
+  "Rhaphiostylis","Metteniusaceae","plant",
+  "Rhipogonum","Rhipogonaceae","plant",
+  "Rhynchotheca","Geraniaceae","plant",
+  "Richea","Rhizophoraceae","plant",
+  "Rivina","Petiveriaceae","plant",
+  "Seguieria","Petiveriaceae","plant",
+  "Stemodiopsis","Linderniaceae","plant",
+  "Stilbocarpa","Apiaceae","plant",
+  "Stixis","Resedaceae","plant",
+  "Tetilla","Saxifragaceae","plant",
+  "Triaenophora","Plantaginaceae","plant",
+  "Trichopodium","Dioscoreaceae","plant",
+  "Trichostigma","Petiveriaceae","plant",
+  "Trigonopleura","Peraceae","plant",
+  "Viviania","Vivianiaceae","plant",
+  "Wendtia","Francoaceae","plant"
+)
+
+classifications = bind_rows(
+  filter(classifications, taxon == "plant", 
+         !genus %in% dp),
+  gfam_powo
+) %>% 
+  bind_rows(filter(classifications, taxon != "plant"))
+
+usethis::use_data(classifications, overwrite = T, compress = "xz")
+
+
+
 # mega-trees ===============================================================
 
 # plant ----
