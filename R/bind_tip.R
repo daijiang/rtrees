@@ -34,6 +34,8 @@ bind_tip = function(tree = NULL, where, tip_label,
   if(!is.null(tree)){
     # make sure node labels are assigned and unique
     if(is.null(tree$node.label) || any(duplicated(tree$node.label)))
+      if(is.null(tree$node.label))
+        tree$node.label = paste0("N", 1:ape::Nnode(tree))
       tree = ape::makeLabel(tree, tips = FALSE, nodes = TRUE)
       tree_tbl = tidytree::as_tibble(tree)
       node_heights = ape::branching.times(tree)
