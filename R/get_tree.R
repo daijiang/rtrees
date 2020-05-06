@@ -34,7 +34,7 @@
 #' in the same genus; otherwise, a species is inserted to a new node above the basal node of the family.
 #' If the age of the basal node is less than 2/3 of the node above it (root node of the family), the new node will
 #' be added so that its age will be 2/3 of the root node of the family. Otherwise, a new node will be inserted 
-#' into the middle point of the basal node and the root node of the family.
+#' into the middle point of the basal node and the root node of the family. I probably won't use this scenario.
 #' - In all scenarioes, if there is only 1 species in the genus or family, a new node will be inserted to
 #' the middle point of this only species' branch length and the new species will be attached to this new 
 #' node.
@@ -53,10 +53,10 @@ get_tree = function(sp_list, tree, taxon,
     stop("Please specify at least a tree or a taxon group.")
   if(missing(tree) & !missing(taxon)){# pick default tree
     tree = switch(taxon,
-                  plant = tree_plant_otl,
-                  fish = tree_fish,
-                  bird = tree_bird_ericson,
-                  mammal = tree_mammal
+                  plant = rtrees::tree_plant_otl,
+                  fish = rtrees::tree_fish,
+                  bird = rtrees::tree_bird_ericson,
+                  mammal = rtrees::tree_mammal
     )
   }
   if(tree_by_user & all(!grepl("_", tree$tip.label)))
@@ -200,7 +200,7 @@ get_tree = function(sp_list, tree, taxon,
       idx_row = which(tree$genus_family_root$genus == sp_out_tree$genus[i])
       root_sub = tree$genus_family_root[idx_row, ]
       if(root_sub$n_spp == 1 | !is.na(where_loc_i)) { # but only 1 species in this genus
-        if(!is.na(where_loc_i)){
+        if(!is.na(where_loc_i)){# a close sp specified
           where_loc = where_loc_i
           # the new tip will be bind to this species, in the half of its branch length (default frac)
           new_ht = tree_df$branch.length[tree_df$label == where_loc_i] * (1 - fraction)
@@ -209,6 +209,7 @@ get_tree = function(sp_list, tree, taxon,
           names(node_hts)[1] = node_label_new
           all_eligible_nodes = c(all_eligible_nodes, node_label_new)
           if(!sp_out_tree$genus[i] %in% tree$genus_family_root$genus){
+            # this is a new genus that has not in the tree
             # cat("here")
             tree$genus_family_root = tibble::add_row(
               tree$genus_family_root,
@@ -231,7 +232,7 @@ get_tree = function(sp_list, tree, taxon,
           tree$genus_family_root$only_sp[idx_row] = NA # now will be more than 1 sp in this genus
         }
       } else { # more than 1 species in the genus
-        where_loc = root_sub$basal_node # scenarioes 1 and 3
+        where_loc = root_sub$basal_node # scenarioes 1 and 3, no new node added
         if(scenario == "S2"){ # randomly select a node in the genus and attach to it, no new node added
           tree_df_sub = dplyr::filter(tidytree::offspring(tree_df, where_loc), !is_tip)
           if(nrow(tree_df_sub) > 0){
@@ -272,7 +273,7 @@ get_tree = function(sp_list, tree, taxon,
                                                  only_sp = sp_out_tree$species[i]
                                                  )
       } else { # more than 1 species; can be the same genus or different genus
-        where_loc = root_sub$basal_node # for scenario 1 & 3
+        where_loc = root_sub$basal_node # for scenario 1, no new node added
         if(scenario == "S2"){ # randomly select a node in the family, no new node added
           tree_df_sub = dplyr::filter(tidytree::offspring(tree_df, where_loc), !is_tip)
           if(nrow(tree_df_sub) > 0){

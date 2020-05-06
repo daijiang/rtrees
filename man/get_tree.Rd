@@ -49,7 +49,7 @@ derived phylogenies.
 in the same genus; otherwise, a species is inserted to a new node above the basal node of the family.
 If the age of the basal node is less than 2/3 of the node above it (root node of the family), the new node will
 be added so that its age will be 2/3 of the root node of the family. Otherwise, a new node will be inserted
-into the middle point of the basal node and the root node of the family.
+into the middle point of the basal node and the root node of the family. I probably won't use this scenario.
 \item In all scenarioes, if there is only 1 species in the genus or family, a new node will be inserted to
 the middle point of this only species' branch length and the new species will be attached to this new
 node.
