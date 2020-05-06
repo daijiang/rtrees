@@ -38,6 +38,9 @@ default if no \code{tree} is specified and \code{taxon} is \code{bird}.
 
 \item{scenario}{How to insert a species into the mega-tree?
 \itemize{
+\item In all scenarioes, if there is only 1 species in the genus or family, a new node will be inserted to
+the middle point of this only species' branch length and the new species will be attached to this new
+node.
 \item If \code{scenario = "S1"}, a species is attached to the basal node of the same genus or the same family
 if the mega-tree does not have any species of this genus.
 \item If \code{scenario = "S2"}, a species is attached to a randomly selected node that is at or below the
@@ -50,9 +53,6 @@ in the same genus; otherwise, a species is inserted to a new node above the basa
 If the age of the basal node is less than 2/3 of the node above it (root node of the family), the new node will
 be added so that its age will be 2/3 of the root node of the family. Otherwise, a new node will be inserted
 into the middle point of the basal node and the root node of the family. I probably won't use this scenario.
-\item In all scenarioes, if there is only 1 species in the genus or family, a new node will be inserted to
-the middle point of this only species' branch length and the new species will be attached to this new
-node.
 }}
 
 \item{show_grafted}{Whether to indicate which species was grafted onto the mega-tree.
