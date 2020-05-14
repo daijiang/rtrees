@@ -4,11 +4,11 @@ library(tidytree)
 
 # classifications of tips in the mega-trees ----
 
-# plants ----
+# # plants ----
 # load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/nodes.info.1.rda")))
-# classification_plants = select(nodes.info.1, genus, family) %>% 
-#   unique() %>% 
-#   filter(genus != "") %>% 
+# classification_plants = select(nodes.info.1, genus, family) %>%
+#   unique() %>%
+#   filter(genus != "") %>%
 #   as_tibble()
 # # by looking at the phylogeny, two species do not have classification info:
 # # Malaisia_scandens, Lithraea_molleoides
@@ -20,20 +20,19 @@ library(tidytree)
 # # tips$family[tips$species == "Lithraea_molleoides"] = "Anacardiaceae" # wiki
 # # https://en.wikipedia.org/wiki/Lithraea_molleoides
 # if(!"Malaisia" %in% classification_plants$genus)
-#   classification_plants = add_row(classification_plants, 
+#   classification_plants = add_row(classification_plants,
 #                                   genus = "Malaisia",
 #                                   family = "Euphorbiaceae")
 # if(!"Lithraea" %in% classification_plants$genus)
-#   classification_plants = add_row(classification_plants, 
+#   classification_plants = add_row(classification_plants,
 #                                   genus = "Lithraea",
 #                                   family = "Anacardiaceae")
 
-
 # # all genus and family from The Plant List ----
-# tpl_family = xml2::read_html("http://theplantlist.org/1.1/browse/-/") %>% 
-#   rvest::html_nodes(".family") %>% 
+# tpl_family = xml2::read_html("http://theplantlist.org/1.1/browse/-/") %>%
+#   rvest::html_nodes(".family") %>%
 #   rvest::html_text() # 652 families
-# 
+#
 # get_sp_per_family = function(x = "Didiereaceae"){
 #   cat(x, "\t")
 #   base_url = paste0("http://theplantlist.org/1.1/browse/A/", x, "/", x, ".csv")
@@ -50,15 +49,15 @@ library(tidytree)
 #     base_url = paste0("http://theplantlist.org/1.1/browse/G/", x, "/", x, ".csv")
 #     out = try(read_csv(base_url))
 #   }
-#   out = try(out %>% 
-#               select(genus = Genus, family = Family) %>% 
+#   out = try(out %>%
+#               select(genus = Genus, family = Family) %>%
 #               unique())
 #   out
 # }
 # classification_plant = map(tpl_family, get_sp_per_family)
 # classification_plant_TPL = bind_rows(classification_plant)
 # usethis::use_data(classification_plant_TPL)
-# classification_plant = bind_rows(classification_plant_TPL, 
+# classification_plant = bind_rows(classification_plant_TPL,
 #                                  # from Jin & Qian, 2019
 #                                  tibble::tribble(~genus,~family,
 #                                                  "Davilanthus","Asteraceae",
@@ -239,6 +238,7 @@ classifications = add_row(classifications,
 
 # taxonlookup ----
 # devtools::install_github("wcornwell/taxonlookup")
+# maily from TPL too.
 aplant = taxonlookup::plant_lookup() %>% 
   select(genus, family) %>% 
   mutate(taxon = "plant") %>% 
@@ -258,14 +258,25 @@ classifications = filter(classifications, !(genus == "Nyssa" & family == "Cornac
 
 usethis::use_data(classifications, overwrite = T, compress = "xz")
 
-# duplicated genera
+# duplicated genera ----
 dp = filter(classifications, taxon == "plant") %>% 
   group_by(genus) %>% 
   tally() %>% 
   filter(n > 1) %>% pull(genus)
-# checked with POWO http://www.plantsoftheworldonline.org/
-# several genus not there or have different family
-# used Wiki or TPL instead
+# # checked with POWO http://www.plantsoftheworldonline.org/
+# # several genus not there or have different family
+# # used Wiki or TPL instead
+# taxize::get_pow_("Balbisia")[[1]] %>% 
+#   filter(rank == "Genus", accepted) %>% 
+#   pull(family)
+# taxize::pow_lookup("urn:lsid:ipni.org:names:7831-1")$meta$taxonomicStatus
+# taxize::pow_lookup("urn:lsid:ipni.org:names:329554-2")$meta$taxonomicStatus
+# taxize::pow_synonyms(id = 'urn:lsid:ipni.org:names:7831-1')
+# taxize::pow_synonyms(id = 'urn:lsid:ipni.org:names:329554-2')
+# xb = taxize::pow_search(q = "Balbisia")
+# xb$meta
+# View(xb$data)
+
 gfam_powo = tribble(
   ~genus, ~family, ~taxon,
   "Alzatea","Alzateaceae","plant",
@@ -358,6 +369,25 @@ classifications = bind_rows(
 
 usethis::use_data(classifications, overwrite = T, compress = "xz")
 
+# catalogue of life 2019 ----
+## https://www.catalogueoflife.org/content/annual-checklist-archive 
+catl_2019 = vroom::vroom("~/Downloads/2019-annual/taxa.txt")
+sort(unique(catl_2019$kingdom))
+xc = filter(catl_2019, kingdom == "Plantae")
+filter(xc, taxonomicStatus == "accepted name")
+xc_cls = select(xc, family, genus) %>% 
+  drop_na(family, genus) %>% 
+  distinct()
+n_distinct(xc_cls$family)
+n_distinct(xc_cls$genus)
+xc_cls2 = left_join(xc_cls, filter(classifications, taxon == "plant"))
+filter(xc_cls2, is.na(taxon)) %>% View()
+xc_cls3 = filter(xc_cls2, is.na(taxon), family != "Not assigned") %>% 
+  mutate(taxon = "plant")
+xc_cls3[!xc_cls3$genus %in% classifications$genus, ] # 26 new genus
+classifications = bind_rows(classifications,
+                            xc_cls3[!xc_cls3$genus %in% classifications$genus, ])
+usethis::use_data(classifications, overwrite = T, compress = "xz")
 
 
 # mega-trees ===============================================================
