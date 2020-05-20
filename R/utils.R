@@ -46,7 +46,7 @@ sp_list_df = function(sp_list, taxon){
          paste(groups_supported, collapse = ", "),
          "\n You need to prepare the classification data frame by yourself.")
   utils::data("classifications", envir = environment())
-  clsf = classifications[classifications$taxon == taxon, ]
+  clsf = rtrees::classifications[rtrees::classifications$taxon == taxon, ]
   if(any(!out$genus %in% clsf$genus)){
     warning("The following genus are not in our classification database: ", 
             paste(setdiff(out$genus, clsf$genus), collapse = ", "),

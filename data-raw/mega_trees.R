@@ -474,6 +474,10 @@ tree_mammal = tree_mammal[[nnw]]
 tree_mammal = add_root_info(tree_mammal, classification_mammal)
 usethis::use_data(tree_mammal, overwrite = T, compress = "xz")
 
+# from vertlife
+"https://data.vertlife.org/"
+"https://data.vertlife.org/mammaltree/Completed_5911sp_topoCons_NDexp.zip"
+
 
 # butterfly ----
 xb = readLines("https://datadryad.org/bitstream/handle/10255/dryad.170784/Espeland_et_al_Dated_tree_Magallon_2015_root_calibration.tre?sequence=1")
