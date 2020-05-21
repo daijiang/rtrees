@@ -464,15 +464,19 @@ setdiff(tree_bird_ericson$tip.label, tree_bird_hackett$tip.label)
 setdiff(tree_bird_ericson$tip.label, tips$species)
 
 # mammals ----
-m_url = "https://github.com/MegaPast2Future/PHYLACINE_1.2/blob/master/Data/Phylogenies/Complete_phylogeny.nex"
-browseURL(m_url)
+m_url = "https://media.githubusercontent.com/media/MegaPast2Future/PHYLACINE_1.2/master/Data/Phylogenies/Complete_phylogeny.nex"
+download.file(m_url, "~/Downloads/Complete_phylogeny.nex")
 # download mammal tree, 1000 trees
 tree_mammal = ape::read.nexus("~/Downloads/Complete_phylogeny.nex")
 set.seed(123)
-nnw = sample(1:1000, 1) # 288
-tree_mammal = tree_mammal[[nnw]]
-tree_mammal = add_root_info(tree_mammal, classification_mammal)
+nnw = sample(1:1000, 100) # 288
+tree_mammal_phylacine = tree_mammal[nnw]
+tree_mammal_phylacine = lapply(tree_mammal_phylacine, add_root_info, 
+                               classification = dplyr::filter(rtrees::classifications, taxon == "mammal"))
+names(tree_mammal_phylacine) = paste0("tree_", nnw)
+# tree_mammal = add_root_info(tree_mammal, classification_mammal)
 usethis::use_data(tree_mammal, overwrite = T, compress = "xz")
+usethis::use_data(tree_mammal_phylacine, overwrite = T, compress = "xz")
 
 # from vertlife
 "https://data.vertlife.org/"
