@@ -52,7 +52,7 @@ knitr::kable(coverage_tb, booktabs = T)
 
 The species lists which we want to have a phylogeny should be provided as a data frame with at least 3 columns: `family`, `genus`, and `species`. Their order does not matter. Here is an example for fish.
 
-```{r echo = F}
+```{r echo = T}
 test_fish_list = tibble::tibble(
   species = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii", 
               "Periophthalmus_barbarus", "Prognichthys_glaphyrae", "Barathronus_bicolor", 
