@@ -45,7 +45,7 @@
 #' @return A phylogeny for the species required, with class `phylo`.
 #' @export
 #' 
-get_tree = function(sp_list, tree, taxon, 
+get_one_tree = function(sp_list, tree, taxon, 
                     scenario = c("S1", "S2", "S3"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE) {
