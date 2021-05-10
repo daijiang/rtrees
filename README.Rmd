@@ -85,9 +85,9 @@ Then we can derive a phylogeny from `tree_fish`.
 test_tree = get_tree(sp_list = test_fish_list,
                      tree = tree_fish, # either 
                      taxon = "fish", # or
-                     scenario = "S1",
+                     scenario = "at_basal_node",
                      show_grafted = TRUE)
-plot(ladderize(test_tree), no.margin = T)
+plot(test_tree, no.margin = T)
 ```
   
 ## Add tips to user provided trees

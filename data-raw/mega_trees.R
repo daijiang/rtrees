@@ -77,9 +77,13 @@ setdiff(tree_bird_ericson$tip.label, tips$species)
 
 # mammals ----
 m_url = "https://media.githubusercontent.com/media/MegaPast2Future/PHYLACINE_1.2/master/Data/Phylogenies/Complete_phylogeny.nex"
-download.file(m_url, "~/Downloads/Complete_phylogeny.nex")
+tempf = tempfile()
+download.file(m_url, tempf)
 # download mammal tree, 1000 trees
-tree_mammal = ape::read.nexus("~/Downloads/Complete_phylogeny.nex")
+tree_mammal = ape::read.nexus(tempf)
+unlink(tempf)
+class(tree_mammal)
+
 set.seed(123)
 nnw = sample(1:1000, 100) # 288
 tree_mammal_phylacine = tree_mammal[nnw]

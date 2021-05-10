@@ -17,11 +17,12 @@
 #' @description 
 #' Genus and family information of different groups of taxon. 
 #' 
-#' - Plant classification information was based on The Plant List. It was generated 
-#' based on `V.PhyloMaker::nodes.info.1` with two additions: genus Malaisia (Euphorbiaceae) 
-#' and Lithraea (Anacardiaceae). There are 10,606 genus in this file.
-#' <https://github.com/jinyizju/V.PhyloMaker/tree/master/data>
-#' 
+#' - Plant classification information. Its sources include:
+#'         + based on [`V.PhyloMaker::nodes.info.1`](https://github.com/jinyizju/V.PhyloMaker/tree/master/data)
+#'         + based on The Plant List
+#'         + [taxonlookup](https://github.com/traitecoevo/taxonlookup)
+#'         + [Plants of the World online](http://plantsoftheworldonline.org/)
+#'         
 #' - Fish classification information was based on FishBase. There are 4,825 genus in this file.
 #' <https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz>
 #' 

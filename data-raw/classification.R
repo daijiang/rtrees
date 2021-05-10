@@ -391,8 +391,13 @@ classifications = bind_rows(classifications,
 # Plant of World online data ----
 # https://github.com/RBGKew/powo-data/blob/master/data-prod.json
 "https://storage.googleapis.com/powop-content/backbone/powoNames.zip" # download and unzip. it is large
-
-
-                          
+powo = data.table::fread("/media/dli/Data/common_data/taxon_powo.txt")
+powo_gf = select(powo, genus = V6, family = V5) %>% distinct() %>% 
+  mutate(taxon = "plant") %>% as_tibble()
+classifications = bind_rows(powo_gf, classifications) %>% distinct()
+                   
+tools::showNonASCII(classifications$genus)
+classifications$genus[15153] = "Leptochloopsis" # "Leptochloöpsis"
+# classifications$genus = stringi::stri_trans_general(classifications$genus, "Latin-ASCII")
                           
 usethis::use_data(classifications, overwrite = T, compress = "xz")

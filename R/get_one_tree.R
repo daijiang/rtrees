@@ -50,16 +50,6 @@ get_one_tree = function(sp_list, tree, taxon,
                     scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE) {
-  if(missing(tree) & missing(taxon))
-    stop("Please specify at least a tree or a taxon group.")
-  if(missing(tree) & !missing(taxon)){# pick default tree
-    tree = switch(taxon,
-                  plant = rtrees::tree_plant_otl,
-                  fish = rtrees::tree_fish,
-                  bird = rtrees::tree_bird_ericson,
-                  mammal = rtrees::tree_mammal
-    )
-  }
   if(tree_by_user & all(!grepl("_", tree$tip.label)))
     stop("Please change the tree's tip labels to be the format of genus_sp.")
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
@@ -178,8 +168,9 @@ get_one_tree = function(sp_list, tree, taxon,
         sp_out_tree$genus[i] = sp_out_tree$close_genus[i]
         where_loc_i2 = sp_out_tree$close_genus[i]
       } else {
-        warning("The genus specified for ", sp_out_tree$species[i], 
-                " is not in the phylogeny.")
+        if(!is.na(sp_out_tree$close_genus[i]))
+          warning("The genus specified for ", sp_out_tree$species[i], 
+                  " is not in the phylogeny.")
       }
     }
     

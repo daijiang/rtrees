@@ -8,7 +8,7 @@ get_one_tree(
   sp_list,
   tree,
   taxon,
-  scenario = c("S1", "S2", "S3"),
+  scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"),
   show_grafted = FALSE,
   tree_by_user = FALSE
 )
@@ -41,14 +41,14 @@ default if no \code{tree} is specified and \code{taxon} is \code{bird}.
 \item In all scenarioes, if there is only 1 species in the genus or family, a new node will be inserted to
 the middle point of this only species' branch length and the new species will be attached to this new
 node.
-\item If \code{scenario = "S1"}, a species is attached to the basal node of the same genus or the same family
+\item If \code{scenario = "at_basal_node"}, a species is attached to the basal node of the same genus or the same family
 if the mega-tree does not have any species of this genus.
-\item If \code{scenario = "S2"}, a species is attached to a randomly selected node that is at or below the
+\item If \code{scenario = "random_below_basal"}, a species is attached to a randomly selected node that is at or below the
 basal node of the same genus of the same family if the mega-tree does not have any species in this genus.
 The probability of node been selected is proportional to its branch length.
 Because of the random sampling involved, you may want to run several times to get a collection of
 derived phylogenies.
-\item If \code{scenario = "S3"}, a species is attached to the basal node of the same genus if the mega-tree has species
+\item If \code{scenario = "at_or_above_basal"}, a species is attached to the basal node of the same genus if the mega-tree has species
 in the same genus; otherwise, a species is inserted to a new node above the basal node of the family.
 If the age of the basal node is less than 2/3 of the node above it (root node of the family), the new node will
 be added so that its age will be 2/3 of the root node of the family. Otherwise, a new node will be inserted
