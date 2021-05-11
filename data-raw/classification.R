@@ -388,16 +388,45 @@ xc_cls3[!xc_cls3$genus %in% classifications$genus, ] # 26 new genus
 classifications = bind_rows(classifications,
                             xc_cls3[!xc_cls3$genus %in% classifications$genus, ])
 
+filter(classifications, taxon == "plant") %>% 
+  group_by(genus) %>% 
+  summarise(n_f = n_distinct(family)) %>% 
+  arrange(desc(n_f)) %>% 
+  filter(n_f > 1) # no duplicated genus
+
 # Plant of World online data ----
 # https://github.com/RBGKew/powo-data/blob/master/data-prod.json
 "https://storage.googleapis.com/powop-content/backbone/powoNames.zip" # download and unzip. it is large
 powo = data.table::fread("/media/dli/Data/common_data/taxon_powo.txt")
-powo_gf = select(powo, genus = V6, family = V5) %>% distinct() %>% 
+powo2 = filter(powo, V3 == "Genus", V28 == "Accepted")
+powo_gf = select(powo2, genus = V6, family = V5) %>% distinct() %>% 
   mutate(taxon = "plant") %>% as_tibble()
-classifications = bind_rows(powo_gf, classifications) %>% distinct()
+
+setdiff(filter(classifications, taxon == "plant")$genus, powo_gf$genus)
+setdiff(powo_gf$genus, filter(classifications, taxon == "plant")$genus)
+
+filter(powo_gf, genus %in% intersect(powo_gf$genus, filter(classifications, taxon == "plant")$genus)) %>% 
+  rename(family_powo = family) %>% 
+  left_join(filter(classifications, taxon == "plant")) %>% 
+  mutate(dame = family_powo == family) -> tst
+filter(tst, !dame) %>% View()
+
+class_plant = bind_rows(
+  # unique genus from other sources
+  filter(classifications, taxon == "plant", !genus %in% powo_gf$genus),
+  # common genus between other sources and POWO, use accepted info from POWO instead
+  filter(powo_gf, genus %in% intersect(powo_gf$genus, filter(classifications, taxon == "plant")$genus)),
+  # unique genus from POWO
+  filter(powo_gf, genus %in% setdiff(powo_gf$genus, filter(classifications, taxon == "plant")$genus))
+)
+
+
+classifications = bind_rows(class_plant, 
+                            filter(classifications, taxon != "plant")) %>% 
+  distinct()
                    
 tools::showNonASCII(classifications$genus)
-classifications$genus[15153] = "Leptochloopsis" # "Leptochloöpsis"
+# classifications$genus[15153] = "Leptochloopsis" # "Leptochloöpsis"
 # classifications$genus = stringi::stri_trans_general(classifications$genus, "Latin-ASCII")
                           
 usethis::use_data(classifications, overwrite = T, compress = "xz")
