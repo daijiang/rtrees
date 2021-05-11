@@ -1,7 +1,7 @@
 context("Test different trees")
 
 test_that("Test get tree for plants", {
-  tt = get_tree(test_plant_list, taxon = "plant", scenario = "S1")
+  tt = get_tree(sp_list = test_plant_list, taxon = "plant", scenario = "at_basal_node")
   expect_s3_class(tt, "phylo")
   expect_equal(ape::Ntip(tt), nrow(test_plant_list))
   
@@ -25,7 +25,7 @@ test_that("Test get tree for plants", {
 })
 
 test_that("Test get tree for fish", {
-  expect_message(tt <- get_tree(sp_list = test_fish_list, taxon = "fish", scenario = "S1"))
+  expect_message(tt <- get_tree(sp_list = test_fish_list, taxon = "fish", scenario = "at_basal_node"))
   expect_s3_class(tt, "phylo")
   expect_equal(ape::Ntip(tt), nrow(test_plant_list) - 1)
 })

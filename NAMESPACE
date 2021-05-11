@@ -2,6 +2,7 @@
 
 export(add_root_info)
 export(bind_tip)
+export(get_one_tree)
 export(get_tree)
 export(rm_stars)
 export(sp_list_df)
