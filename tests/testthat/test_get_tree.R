@@ -50,3 +50,10 @@ test_that("Test user provided tree", {
   
   tt = get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant", show_grafted = T, tree_by_user = T)
 })
+
+test_that("Test user provided tree and other taxon", {
+  load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/GBOTB.extended.rda")))
+  tt = get_tree(sp_list = sp_list_phylomatic, tree = GBOTB.extended, taxon = "other", show_grafted = T, tree_by_user = T)
+})
+
+

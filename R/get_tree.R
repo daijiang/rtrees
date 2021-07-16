@@ -67,7 +67,7 @@
 #'                      scenario = "at_basal_node",
 #'                      show_grafted = TRUE)
 
-get_tree = function(sp_list, tree, taxon, 
+get_tree = function(sp_list, tree, taxon = NULL, 
                     # multiple_trees = TRUE,
                     scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
                     show_grafted = FALSE,
@@ -75,9 +75,9 @@ get_tree = function(sp_list, tree, taxon,
                     mc_cores = 1){
   scenario = match.arg(scenario)
   
-  if(missing(tree) & missing(taxon))
+  if(missing(tree) & is.null(taxon))
     stop("Please specify at least a tree or a taxon group.")
-  if(missing(tree) & !missing(taxon)){# pick default tree
+  if(missing(tree) & !is.null(taxon)){# pick default tree
     tree = switch(taxon,
                   plant = rtrees::tree_plant_otl,
                   fish = rtrees::tree_fish,

@@ -68,12 +68,21 @@ get_one_tree = function(sp_list, tree, taxon,
   all_genus_in_tree = all(unique(sp_list$genus) %in% tree_genus)
   # if TRUE, no taxon is required
   if(!all_genus_in_tree){
-    if((!"family" %in% names(sp_list))){
+    if((!"family" %in% names(sp_list))){ # no family info
       if(missing(taxon)) stop("Please specify `taxon`.")
       sp_list = sp_list_df(sp_list$species, taxon) # add family information
     }
   }
   sp_list = unique(sp_list) # remove duplications
+  
+  # add new classification data to classification data frame
+  if(!is.null(taxon)){
+    if(!taxon %in% c("plant", "fish", "bird", "mammal") & !all_genus_in_tree){
+      new_cls = unique(dplyr::select(sp_list, genus, family))
+      new_cls$taxon = taxon
+      classifications <- dplyr::bind_rows(rtrees::classifications, new_cls)
+    }
+  } 
   
   sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
   
@@ -119,14 +128,18 @@ get_one_tree = function(sp_list, tree, taxon,
                            genus_list = unique(sp_out_tree$genus), show_warning = FALSE)
     } else { # some genus not in the tree
       if(missing(taxon)) stop("Please specify `taxon`.")
+      warning("For user provided phylogeny, without a classification for all genus of species in the phylogeny,
+              it is unlikely to find the most recent ancestor for genus and family; 
+              we recommend to prepare the phylogeny using `add_root_info() with a classification
+              data frame with all tips first.", call. = FALSE, immediate. = TRUE)
       genus_not_in_tree = dplyr::filter(sp_out_tree, !genus %in% tree_genus)
       # add root information for species not in the tree
       tree = add_root_info(
         tree, 
-        classification = rtrees::classifications[rtrees::classifications$taxon == taxon, ], 
+        classification = unique(classifications[classifications$taxon == taxon, ]), 
         process_all_tips = FALSE,
-        genus_list = setdiff(sp_out_tree$genus, genus_not_in_tree$genus),
-        family_list = ifelse(nrow(genus_not_in_tree) > 0, unique(genus_not_in_tree$family), NULL),
+        genus_list = if(length(setdiff(sp_out_tree$genus, genus_not_in_tree$genus))) setdiff(sp_out_tree$genus, genus_not_in_tree$genus) else NULL,
+        family_list = if(nrow(genus_not_in_tree) > 0) unique(genus_not_in_tree$family) else NULL,
         show_warning = FALSE)
     }
   }
