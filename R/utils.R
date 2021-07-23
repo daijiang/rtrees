@@ -206,3 +206,46 @@ rm_stars = function(tree){
   tree$tip.label = gsub("[*]*$", "", tree$tip.label)
   tree
 }
+
+# copied from plyr
+progress_text <- function(style = 3, ...) {
+  n <- 0
+  txt <- NULL
+  
+  list(
+    init = function(x) {
+      txt <<- utils::txtProgressBar(max = x, style = style, ...)
+      utils::setTxtProgressBar(txt, 0)
+    },
+    step = function() {
+      n <<- n + 1
+      utils::setTxtProgressBar(txt, n)
+    },
+    term = function() close(txt)
+  )
+}
+
+progress_none <- function() {
+  list(
+    init = function(x) NULL,
+    step = function()  NULL,
+    term = function()  NULL
+  )
+}
+
+create_progress_bar <- function(name = "text", ...) {
+  if (!is.character(name)) return(name)
+  name <- paste("progress", name, sep="_")
+  
+  if (!exists(name, mode = "function")) {
+    warning("Cannot find progress bar ", name, call. = FALSE)
+    progress_none()
+  } else {
+    match.fun(name)(...)
+  }
+}
+
+
+
+
+

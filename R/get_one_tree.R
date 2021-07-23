@@ -49,7 +49,8 @@ get_one_tree = function(sp_list, tree, taxon,
                     # scenario = c("S1", "S2", "S3"), 
                     scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
                     show_grafted = FALSE,
-                    tree_by_user = FALSE) {
+                    tree_by_user = FALSE,
+                    .progress = "text") {
   if(tree_by_user & all(!grepl("_", tree$tip.label)))
     stop("Please change the tree's tip labels to be the format of genus_sp.")
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
@@ -157,14 +158,19 @@ get_one_tree = function(sp_list, tree, taxon,
                                 tree$genus_family_root$root_node))
   
   if(nrow(sp_out_tree) > 100){
-    progbar = utils::txtProgressBar(min = 0, max = nrow(sp_out_tree), initial = 0, style = 3)
+    progress <- create_progress_bar(.progress)
+    progress$init(nrow(sp_out_tree))
+    on.exit(progress$term())
   }
   
   for(i in 1:nrow(sp_out_tree)){
-    if(nrow(sp_out_tree) > 100){
-      utils::setTxtProgressBar(progbar, i)
-    }
+    # if(nrow(sp_out_tree) > 100){
+    #   utils::setTxtProgressBar(progbar, i)
+    # }
     # cat(i, "\t")
+    if(nrow(sp_out_tree) > 100)
+      progress$step()
+    
     where_loc_i = where_loc_i2 = NA
     
     if(close_sp_specified){
@@ -338,9 +344,9 @@ get_one_tree = function(sp_list, tree, taxon,
     tree$genus_family_root$n_spp[idx_row] = tree$genus_family_root$n_spp[idx_row] + 1
   }
   
-  if(nrow(sp_out_tree) > 100){
-    close(progbar)
-  }
+  # if(nrow(sp_out_tree) > 100){
+  #   close(progbar)
+  # }
   
   if(any(sp_out_tree$status == "*")) {
     message(sum(sp_out_tree$status == "*"), " species added at genus level (*) \n")
