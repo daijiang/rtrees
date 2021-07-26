@@ -49,7 +49,8 @@ get_one_tree = function(sp_list, tree, taxon,
                     # scenario = c("S1", "S2", "S3"), 
                     scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
                     show_grafted = FALSE,
-                    tree_by_user = FALSE) {
+                    tree_by_user = FALSE,
+                    .progress = "text") {
   if(tree_by_user & all(!grepl("_", tree$tip.label)))
     stop("Please change the tree's tip labels to be the format of genus_sp.")
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
@@ -68,12 +69,21 @@ get_one_tree = function(sp_list, tree, taxon,
   all_genus_in_tree = all(unique(sp_list$genus) %in% tree_genus)
   # if TRUE, no taxon is required
   if(!all_genus_in_tree){
-    if((!"family" %in% names(sp_list))){
+    if((!"family" %in% names(sp_list))){ # no family info
       if(missing(taxon)) stop("Please specify `taxon`.")
       sp_list = sp_list_df(sp_list$species, taxon) # add family information
     }
   }
   sp_list = unique(sp_list) # remove duplications
+  
+  # add new classification data to classification data frame
+  if(!is.null(taxon)){
+    if(!taxon %in% c("plant", "fish", "bird", "mammal") & !all_genus_in_tree){
+      new_cls = unique(dplyr::select(sp_list, genus, family))
+      new_cls$taxon = taxon
+      classifications <- dplyr::bind_rows(rtrees::classifications, new_cls)
+    }
+  } 
   
   sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
   
@@ -119,14 +129,18 @@ get_one_tree = function(sp_list, tree, taxon,
                            genus_list = unique(sp_out_tree$genus), show_warning = FALSE)
     } else { # some genus not in the tree
       if(missing(taxon)) stop("Please specify `taxon`.")
+      warning("For user provided phylogeny, without a classification for all genus of species in the phylogeny,
+              it is unlikely to find the most recent ancestor for genus and family; 
+              we recommend to prepare the phylogeny using `add_root_info() with a classification
+              data frame with all tips first.", call. = FALSE, immediate. = TRUE)
       genus_not_in_tree = dplyr::filter(sp_out_tree, !genus %in% tree_genus)
       # add root information for species not in the tree
       tree = add_root_info(
         tree, 
-        classification = rtrees::classifications[rtrees::classifications$taxon == taxon, ], 
+        classification = unique(classifications[classifications$taxon == taxon, ]), 
         process_all_tips = FALSE,
-        genus_list = setdiff(sp_out_tree$genus, genus_not_in_tree$genus),
-        family_list = ifelse(nrow(genus_not_in_tree) > 0, unique(genus_not_in_tree$family), NULL),
+        genus_list = if(length(setdiff(sp_out_tree$genus, genus_not_in_tree$genus))) setdiff(sp_out_tree$genus, genus_not_in_tree$genus) else NULL,
+        family_list = if(nrow(genus_not_in_tree) > 0) unique(genus_not_in_tree$family) else NULL,
         show_warning = FALSE)
     }
   }
@@ -144,14 +158,19 @@ get_one_tree = function(sp_list, tree, taxon,
                                 tree$genus_family_root$root_node))
   
   if(nrow(sp_out_tree) > 100){
-    progbar = utils::txtProgressBar(min = 0, max = nrow(sp_out_tree), initial = 0, style = 3)
+    progress <- create_progress_bar(.progress)
+    progress$init(nrow(sp_out_tree))
+    on.exit(progress$term())
   }
   
   for(i in 1:nrow(sp_out_tree)){
-    if(nrow(sp_out_tree) > 100){
-      utils::setTxtProgressBar(progbar, i)
-    }
+    # if(nrow(sp_out_tree) > 100){
+    #   utils::setTxtProgressBar(progbar, i)
+    # }
     # cat(i, "\t")
+    if(nrow(sp_out_tree) > 100)
+      progress$step()
+    
     where_loc_i = where_loc_i2 = NA
     
     if(close_sp_specified){
@@ -325,9 +344,9 @@ get_one_tree = function(sp_list, tree, taxon,
     tree$genus_family_root$n_spp[idx_row] = tree$genus_family_root$n_spp[idx_row] + 1
   }
   
-  if(nrow(sp_out_tree) > 100){
-    close(progbar)
-  }
+  # if(nrow(sp_out_tree) > 100){
+  #   close(progbar)
+  # }
   
   if(any(sp_out_tree$status == "*")) {
     message(sum(sp_out_tree$status == "*"), " species added at genus level (*) \n")

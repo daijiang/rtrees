@@ -44,7 +44,8 @@ sp_list_df = function(sp_list, taxon){
   if(!taxon %in% groups_supported) 
     stop("Sorry but only the following taxon groups are supported: ", 
          paste(groups_supported, collapse = ", "),
-         "\n You need to prepare the classification data frame by yourself.")
+         "\n You need to prepare the classification data frame by yourself,", 
+         "\n which should have at least three columns: species, genus, family")
   utils::data("classifications", envir = environment())
   clsf = rtrees::classifications[rtrees::classifications$taxon == taxon, ]
   if(any(!out$genus %in% clsf$genus)){
@@ -98,12 +99,15 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
     # add family information
     tips = dplyr::left_join(tips, classification, by = "genus")
   } else { # only need for a subset of genus/family
-    if(is.null(genus_list))
-      stop("When `process_all_tips = FALSE`, `genus_list` must be specified.")
     if(!is.null(family_list)) { # both genus and family
       # add family information
       family_list = family_list[!is.na(family_list)]
-      tips = dplyr::left_join(tips, classification, by = "genus")
+      # classification will be filtered to the taxon in `get_one_tree()`
+      # need family infor for genus in the phylogeny !!
+      tips = dplyr::left_join(tips, classification, by = "genus") 
+      if(all(is.na(tips$family))) 
+        stop("No tips in the user provided tree can get family information from classification,
+             please use `add_root_info()` to prepare the tree first.")
       if(any(!family_list %in% tips$family) & show_warning)
         warning("Some family_list are not in the tree; these species will be ignored.")
       tips_family = tips[tips$family %in% family_list, ]
@@ -113,6 +117,8 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
       tips_genus = tips[tips$genus %in% genus_list, ]
       tips = unique(dplyr::bind_rows(tips_genus, tips_family))
     } else { # only genus
+      if(is.null(genus_list))
+        stop("When `process_all_tips = FALSE`, `genus_list` must be specified.")
       if(any(!genus_list %in% tips$genus) & show_warning)
         warning("Some genus_list are not in the tree.")
       tips = tips[tips$genus %in% genus_list, ] # no family column
@@ -200,3 +206,46 @@ rm_stars = function(tree){
   tree$tip.label = gsub("[*]*$", "", tree$tip.label)
   tree
 }
+
+# copied from plyr
+progress_text <- function(style = 3, ...) {
+  n <- 0
+  txt <- NULL
+  
+  list(
+    init = function(x) {
+      txt <<- utils::txtProgressBar(max = x, style = style, ...)
+      utils::setTxtProgressBar(txt, 0)
+    },
+    step = function() {
+      n <<- n + 1
+      utils::setTxtProgressBar(txt, n)
+    },
+    term = function() close(txt)
+  )
+}
+
+progress_none <- function() {
+  list(
+    init = function(x) NULL,
+    step = function()  NULL,
+    term = function()  NULL
+  )
+}
+
+create_progress_bar <- function(name = "text", ...) {
+  if (!is.character(name)) return(name)
+  name <- paste("progress", name, sep="_")
+  
+  if (!exists(name, mode = "function")) {
+    warning("Cannot find progress bar ", name, call. = FALSE)
+    progress_none()
+  } else {
+    match.fun(name)(...)
+  }
+}
+
+
+
+
+

@@ -67,17 +67,17 @@
 #'                      scenario = "at_basal_node",
 #'                      show_grafted = TRUE)
 
-get_tree = function(sp_list, tree, taxon, 
+get_tree = function(sp_list, tree, taxon = NULL, 
                     # multiple_trees = TRUE,
                     scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE,
-                    mc_cores = 1){
+                    mc_cores = 1, .progress = "text"){
   scenario = match.arg(scenario)
   
-  if(missing(tree) & missing(taxon))
+  if(missing(tree) & is.null(taxon))
     stop("Please specify at least a tree or a taxon group.")
-  if(missing(tree) & !missing(taxon)){# pick default tree
+  if(missing(tree) & !is.null(taxon)){# pick default tree
     tree = switch(taxon,
                   plant = rtrees::tree_plant_otl,
                   fish = rtrees::tree_fish,
@@ -87,7 +87,7 @@ get_tree = function(sp_list, tree, taxon,
   }
   
   if(inherits(tree, "phylo")){ # one phylo
-    return(get_one_tree(sp_list, tree, taxon, scenario, show_grafted, tree_by_user))
+    return(get_one_tree(sp_list, tree, taxon, scenario, show_grafted, tree_by_user, .progress))
   }
   
   if((inherits(tree, "multiPhylo") | inherits(tree, "list")) & 
@@ -104,13 +104,15 @@ get_tree = function(sp_list, tree, taxon,
       if(mc_cores > future::availableCores()) 
         stop("mc_cores is larger than available cores")
       future::plan(future::multisession, workers = mc_cores)
+      .progress = "none" # hide progress bar
       out = furrr::future_map(tree, function(i){
-       rtrees::get_one_tree(sp_list, tree = i, taxon, scenario, show_grafted, tree_by_user)
+       rtrees::get_one_tree(sp_list, tree = i, taxon, scenario, show_grafted, tree_by_user, .progress)
       })
     } else {
+      ## TO DO: test .progress issue with lapply()
       out = lapply(tree, get_one_tree, sp_list = sp_list, taxon = taxon, 
                    scenario = scenario, show_grafted = show_grafted, 
-                   tree_by_user = tree_by_user)
+                   tree_by_user = tree_by_user, .progress = .progress)
     }
     class(out) = "multiPhylo"
     return(out)
