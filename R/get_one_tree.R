@@ -349,7 +349,7 @@ get_one_tree = function(sp_list, tree, taxon,
   # }
   
   if(any(sp_out_tree$status == "*")) {
-    message(sum(sp_out_tree$status == "*"), " species added at genus level (*) \n")
+    message("\n", sum(sp_out_tree$status == "*"), " species added at genus level (*) \n")
   }
   
   if(any(sp_out_tree$status == "**")) {
