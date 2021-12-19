@@ -244,7 +244,7 @@ get_one_tree = function(sp_list, tree, taxon,
         }
       } else { # more than 1 species in the genus
         where_loc = root_sub$basal_node # scenarioes 1 and 3, no new node added
-        if(scenario == "S2"){ # randomly select a node in the genus and attach to it, no new node added
+        if(scenario %in% c("S2", "random_below_basal")){ # randomly select a node in the genus and attach to it, no new node added
           tree_df_sub = dplyr::filter(tidytree::offspring(tree_df, where_loc), !is_tip)
           if(nrow(tree_df_sub) > 0){
             potential_locs = c(where_loc, tree_df_sub$label)
@@ -285,7 +285,7 @@ get_one_tree = function(sp_list, tree, taxon,
                                                  )
       } else { # more than 1 species; can be the same genus or different genus
         where_loc = root_sub$basal_node # for scenario 1, no new node added
-        if(scenario == "S2"){ # randomly select a node in the family, no new node added
+        if(scenario %in% c("S2", "random_below_basal")){ # randomly select a node in the family, no new node added
           tree_df_sub = dplyr::filter(tidytree::offspring(tree_df, where_loc), !is_tip)
           if(nrow(tree_df_sub) > 0){
             # only bind to genus/family basal node, not within genus nodes
@@ -299,7 +299,7 @@ get_one_tree = function(sp_list, tree, taxon,
             where_loc = sample(potential_locs, 1, prob = prob)
           }
         }
-        if(scenario == "S3"){ # insert new node and bind tip above family basal node
+        if(scenario %in% c("S3", "at_or_above_basal")){ # insert new node and bind tip above family basal node
           add_above_node = TRUE
           if(2 * root_sub$root_time / 3 > root_sub$basal_time){
             fraction = (2 * root_sub$root_time / 3 - root_sub$basal_time) /
