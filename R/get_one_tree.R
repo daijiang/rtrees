@@ -46,7 +46,6 @@
 #' @export
 #' 
 get_one_tree = function(sp_list, tree, taxon, 
-                    # scenario = c("S1", "S2", "S3"), 
                     scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE,
@@ -129,10 +128,14 @@ get_one_tree = function(sp_list, tree, taxon,
                            genus_list = unique(sp_out_tree$genus), show_warning = FALSE)
     } else { # some genus not in the tree
       if(missing(taxon)) stop("Please specify `taxon`.")
-      warning("For user provided phylogeny, without a classification for all genus of species in the phylogeny,
-              it is unlikely to find the most recent ancestor for genus and family; 
-              we recommend to prepare the phylogeny using `add_root_info() with a classification
+      message("Not all genus can be found in the phylogeny.")
+      if(is.null(tree$genus_family_root)){
+        warning("For user provided phylogeny, without a classification for all genus of species in the phylogeny,
+              it is unlikely to find the most recent ancestor for genus and family; here we proceed the phylogeny
+              by adding root information for genus and family that can be found in the phylogeny but
+              we recommend to prepare the phylogeny using `add_root_info()` with a classification
               data frame with all tips first.", call. = FALSE, immediate. = TRUE)
+      }
       genus_not_in_tree = dplyr::filter(sp_out_tree, !genus %in% tree_genus)
       # add root information for species not in the tree
       tree = add_root_info(
