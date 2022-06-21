@@ -256,6 +256,10 @@ classifications = tibble::add_row(classifications,
 classifications = unique(classifications)
 classifications = filter(classifications, !(genus == "Nyssa" & family == "Cornaceae"))
 
+classifications = add_row(classifications,
+                          genus = c("Podagrostis", "Hesperostipa"), family = c("Poaceae", "Poaceae"),
+                          taxon = c("plant", "plant"))
+
 usethis::use_data(classifications, overwrite = T, compress = "xz")
 
 # duplicated genera ----
