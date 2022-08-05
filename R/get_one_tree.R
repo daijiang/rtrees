@@ -5,8 +5,8 @@
 #' 
 #' @param sp_list A data frame with at least three columns: species, genus, family. Species column
 #' holds the species for which we want to have a phylogeny. It can also have two optional columns:
-#' close_sp and close_genus. We can specify the cloest species/genus of the species based on
-#' expert knowledgement. If specified, the new species will be grafted to that particular location.
+#' close_sp and close_genus. We can specify the closest species/genus of the species based on
+#' expert knowledge. If specified, the new species will be grafted to that particular location.
 #' 
 #' It can also be a string vector if `taxon` is specified. Though it probably is a better idea
 #' to prepare your data frame with [sp_list_df()].
@@ -132,15 +132,22 @@ get_one_tree = function(sp_list, tree, taxon,
       if(is.null(tree$genus_family_root)){
         warning("For user provided phylogeny, without a classification for all genus of species in the phylogeny,
               it is unlikely to find the most recent ancestor for genus and family; here we proceed the phylogeny
-              by adding root information for genus and family that can be found in the phylogeny but
+              by adding root information for genus and family that can be found in the phylogeny or species list but
               we recommend to prepare the phylogeny using `add_root_info()` with a classification
               data frame with all tips first.", call. = FALSE, immediate. = TRUE)
       }
       genus_not_in_tree = dplyr::filter(sp_out_tree, !genus %in% tree_genus)
+ 
       # add root information for species not in the tree
       tree = add_root_info(
         tree, 
-        classification = unique(classifications[classifications$taxon == taxon, ]), 
+        classification = if(is.null(taxon) & 
+                              inherits(sp_list, "data.frame") & 
+                              all(c("genus", "family") %in% names(sp_list))){
+          unique(sp_list[, c("genus", "family")])
+        } else {
+          unique(classifications[classifications$taxon == taxon, ])
+        }, 
         process_all_tips = FALSE,
         genus_list = if(length(setdiff(sp_out_tree$genus, genus_not_in_tree$genus))) setdiff(sp_out_tree$genus, genus_not_in_tree$genus) else NULL,
         family_list = if(nrow(genus_not_in_tree) > 0) unique(genus_not_in_tree$family) else NULL,
