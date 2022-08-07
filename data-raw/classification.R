@@ -221,6 +221,7 @@ names_mammal = unique(select(names_mammal, species = Binomial.1.2, genus = Genus
 classification_mammal = unique(select(names_mammal, genus, family)) %>% mutate(taxon = "mammal")
 any(duplicated(classification_mammal$genus))
 
+
 # combine classifications ----
 classifications = bind_rows(mutate(classification_plants, taxon = "plant"),
                             mutate(classification_fish, taxon = "fish"))
@@ -235,6 +236,11 @@ classifications = add_row(classifications,
 
 classifications = add_row(classifications,
                           genus = "Rumex", family = "Polygonaceae", taxon = "plant")
+
+classifications = bind_rows(classifications, 
+                            read_csv("genus,family,taxon\nParacoelops,Hipposideridae,mammal\nDesmalopex,Pteropodidae,mammal\nSubmyotodon,Vespertilionidae,mammal\nEudiscoderma,Megadermatidae,mammal\nParastrellus,Vespertilionidae,mammal\nDryadonycteris,Phyllostomidae,mammal\nHsunycteris,Phyllostomidae,mammal\nPseudalopex,Canidae,mammal\nLeontocebus,Cebidae,mammal\nCallibella,Callitrichidae,mammal\nPipanacoctomys,Octodontidae,mammal\nLiomys,Heteromyidae,mammal\nMusseromys,Muridae,mammal\nMirzamys,Muridae,mammal\nHalmaheramys,Muridae,mammal\nWaiomys,Muridae,mammal\nDrymoreomys,Cricetidae,mammal\nCalassomys,Cricetidae,mammal\nParalomys,Cricetidae,mammal\n")) %>% 
+  unique() %>% 
+  arrange(taxon, genus)
 
 # taxonlookup ----
 # devtools::install_github("wcornwell/taxonlookup")
@@ -432,5 +438,76 @@ classifications = bind_rows(class_plant,
 tools::showNonASCII(classifications$genus)
 # classifications$genus[15153] = "Leptochloopsis" # "Leptochloöpsis"
 # classifications$genus = stringi::stri_trans_general(classifications$genus, "Latin-ASCII")
+
+
+# amphibians ----
+amph0 = read_csv("https://data.vertlife.org/amphibiantree/download/amph_shl_new_Classification.csv")
+xfun::download_file("https://data.vertlife.org/amphibiantree/download/amph_shl_new_Classification.csv", tempf)
+amph = filter(amph0, Taxon != "Outgroup") %>% 
+  dplyr::select(sp = `Scientific Name`, family = Family) %>% 
+  mutate(genus = str_extract(sp, "^[^ ]*")) %>% 
+  select(genus, family) %>% 
+  distinct() %>% 
+  mutate(taxon = "amphibian") %>% 
+  arrange(genus) %>% 
+  filter(genus != "")
+unlink(tempf)
+
+classifications = bind_rows(amph, classifications) %>% 
+  as_tibble() %>% 
+  distinct()
+
+# mammal vertlife ---
+mammal_class_vertlife = read_csv("https://data.vertlife.org/mammaltree/taxonomy_mamPhy_5911species.csv")
+mammal_class_vertlife = dplyr::select(mammal_class_vertlife, genus = gen, family = fam) %>% 
+  distinct() %>% 
+  mutate(family = cap_first_letter(tolower(family)))
+setdiff(mammal_class_vertlife$genus, 
+filter(classifications, taxon == "mammal")$genus)
+left_join(mammal_class_vertlife,
+rename(filter(classifications, taxon == "mammal"), f = family)) %>% 
+  mutate(same = family == f) %>% 
+  filter(!same) %>% View()
+# it seems the vertlife classification is more accurate
+classifications = filter(classifications, !(taxon == "mammal" & genus %in% mammal_class_vertlife$genus))
+classifications = bind_rows(mammal_class_vertlife, classifications) %>% 
+  distinct() %>% 
+  arrange(taxon, genus)
+
+
+# shark ---
+
+sharks = read_csv("https://data.vertlife.org/sharktree/Species.list.csv")
+shark_genus = sort(unique(str_extract(sharks$Species_list, "^[^_]*")))
+setdiff(shark_genus, classifications$genus) # no...
+shark_class = vector("list", length(shark_genus))
+for(i in 144:length(shark_genus)){
+  shark_class[[i]] = taxize::tax_name(shark_genus[i], get = "family", db = "ncbi")
+  if(i %% 10 == 0) Sys.sleep(time = 2)
+}
+
+shark_class = bind_rows(shark_class)
+filter(shark_class, is.na(family))
+
+x = taxize::tax_name(filter(shark_class, is.na(family))$query, get = "family", db = "itis")
+x$family[x$query == "Electrolux"] = "Narkidae"
+x$family[x$query == "Makararaja"] = "Dasyatidae"
+x$family[x$query == "Spiniraja"] = "Rajidae"
+x$family[x$query == "Taeniurops"] = "Dasyatidae"
+ss = ape::read.nexus("shark_10.cal.tree.nex")
+ss1 = ss[[1]]
+setdiff(sharks$Species_list, ss1$tip.label)
+setdiff(ss1$tip.label, sharks$Species_list)
+
+shark_class = bind_rows(shark_class, x) %>% 
+  filter(!is.na(family))
+
+shark_class = dplyr::select(shark_class, -db, genus = query, family) %>% 
+  mutate(taxon = "shark_ray") %>% 
+  arrange(genus)
+
+classifications = bind_rows(classifications, shark_class) %>% 
+  arrange(taxon, genus) %>% 
+  distinct()
                           
 usethis::use_data(classifications, overwrite = T, compress = "xz")

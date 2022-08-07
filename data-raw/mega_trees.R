@@ -96,7 +96,42 @@ usethis::use_data(tree_mammal_phylacine, overwrite = T, compress = "xz")
 
 # from vertlife
 "https://data.vertlife.org/"
+# node dating exponential
 "https://data.vertlife.org/mammaltree/Completed_5911sp_topoCons_NDexp.zip"
+# Fossilized birth-death, 5911 species + 76 fossil tips, backbone topology as in Zhou et al. (2013)
+"https://data.vertlife.org/mammaltree/Completed_5911sp_topoCons_FBDasZhouEtAl.zip"
+
+options(timeout = 2000)
+tempf = tempfile(fileext = ".zip")
+download.file("https://data.vertlife.org/mammaltree/Completed_5911sp_topoCons_NDexp.zip", tempf)
+sample(unzip(tempf, list = T)$Name[-1], 10)
+unzip(tempf, file = sample(unzip(tempf, list = T)$Name[-1], 5), exdir = "trees", junkpaths = T)
+unlink(tempf)
+tree = read.tree("~/Documents/trees/MamPhy_BDvr_Completed_5911sp_topoCons_NDexp_v2_tree1760.tre")
+
+tree = ape::read.nexus(file = "https://github.com/n8upham/MamPhy_v1/blob/master/_DATA/MamPhy_fullPosterior_BDvr_Completed_5911sp_topoCons_NDexp_MCC_v2_target.tre")
+xfun::download_file("https://github.com/n8upham/MamPhy_v1/blob/master/_DATA/MamPhy_fullPosterior_BDvr_Completed_5911sp_topoCons_NDexp_MCC_v2_target.tre")
+tr = ape::read.tree("https://github.com/n8upham/MamPhy_v1/blob/master/_DATA/MamPhy_fullPosterior_BDvr_Completed_5911sp_topoCons_FBDasZhouEtAl_MCC_v2_target.tre")
+
+tree2 = add_root_info(tree = tree, classification = rtrees::classifications)
+
+get_vertlife_post_trees = function(taxon = c("amphibian", "bird", "mammal", "shark", "reptile"),
+                              n_trees = 100,
+                              save_trees = TRUE,
+                              ext_dir = "vertlife_trees"
+){
+  # url to the phylogenies
+  taxon = match.arg(taxon)
+  url_link = switch(taxon, 
+                    amphibian = "https://data.vertlife.org/amphibiantree/download/amph_shl_new_Posterior_7238.1000-10000.trees.zip")
+  
+}
+
+# amphibian ----
+# consensus tree
+tree_amphibian_consensus = ape::read.tree("https://data.vertlife.org/amphibiantree/download/amph_shl_new_Consensus_7238.tre")
+ggtree::ggtree(tree_amphibian_consensus, layout = "circular")
+usethis::use_data(tree_amphibian_consensus, overwrite = T)
 
 
 # butterfly ----
