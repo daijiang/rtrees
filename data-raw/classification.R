@@ -470,7 +470,8 @@ rename(filter(classifications, taxon == "mammal"), f = family)) %>%
   filter(!same) %>% View()
 # it seems the vertlife classification is more accurate
 classifications = filter(classifications, !(taxon == "mammal" & genus %in% mammal_class_vertlife$genus))
-classifications = bind_rows(mammal_class_vertlife, classifications) %>% 
+classifications = bind_rows(mutate(mammal_class_vertlife, taxon = "mammal"), 
+                            classifications) %>% 
   distinct() %>% 
   arrange(taxon, genus)
 
@@ -508,6 +509,90 @@ shark_class = dplyr::select(shark_class, -db, genus = query, family) %>%
 
 classifications = bind_rows(classifications, shark_class) %>% 
   arrange(taxon, genus) %>% 
+  distinct()
+
+
+# reptile ----
+rept = read_csv("https://data.vertlife.org/squamatetree/sqamate_names.csv", col_names = F)
+rept_genus = sort(unique(str_extract(rept$X1, "^[^ ]*")))
+setdiff(rept_genus, rtrees::classifications$genus) # no...
+rept_class = vector("list", length(rept_genus))
+for(i in 1:length(rept_genus)){
+  rept_class[[i]] = taxize::tax_name(rept_genus[i], get = "family", db = "ncbi", ask = F)
+  if(i %% 10 == 0) Sys.sleep(time = 30)
+}
+rept_class = bind_rows(rept_class)
+
+x_rep = taxize::tax_name(filter(rept_class, is.na(family))$query, get = "family", db = "ncbi")
+
+rept_class = read_csv("~/Documents/rept_class.csv")
+n_distinct(rept_class$family) # 62
+
+# get from wikipedia https://en.wikipedia.org/wiki/List_of_reptile_genera
+rep_2 = readLines("~/Documents/reptile.txt")
+f2 = grep("Family", rep_2, value = T)
+rept_class_wiki = vector("list", length = length(f2))
+names(rept_class_wiki) = f2
+j = 1
+for(i in 2:length(rep_2)){
+  cat("i = ", i, "\t")
+  if(rep_2[i] %in% names(rept_class_wiki)){
+    j = j + 1
+    cat("j = ", j, "\n")
+    next()
+  }
+  if(!grepl(pattern = "Family", x = rep_2[i])){
+    rept_class_wiki[[j]] = c(rept_class_wiki[[j]], rep_2[i])
+  }
+}
+
+
+
+rept_class_wiki = bind_rows(lapply(rept_class_wiki, as.data.frame), .id = "family") %>% 
+  set_names(c("family", "genus")) %>% 
+  filter(genus != "") %>% 
+  as_tibble() %>% 
+  mutate(family = gsub("Family ", "", family),
+         family = str_trim(family),
+         genus = str_trim(genus))
+
+setdiff(rept_class$genus, rept_class_wiki$genus)
+setdiff(rept_class_wiki$genus, rept_class$genus)
+
+rept_class_wiki2 = set_names(rept_class_wiki, c("family_wiki", "genus"))
+
+xx = full_join(rept_class, rept_class_wiki2) %>% 
+  mutate(same = family == family_wiki)
+
+xx = mutate(xx, family_wiki = ifelse(is.na(family_wiki), family, family_wiki))
+
+reptile_class = select(xx, genus, family = family_wiki) %>% 
+  mutate(taxon = "reptile") %>% 
+  distinct()
+reptile_class[which(duplicated(reptile_class$genus)),]
+reptile_class = filter(reptile_class, !genus %in% c("Homoroselaps", "Xylophis"))
+reptile_class = add_row(reptile_class,
+                        genus = c("Homoroselaps", "Xylophis"),
+                        family = c("Atractaspididae", "Pareidae"),
+                        taxon = "reptile")
+
+classifications = bind_rows(classifications, reptile_class) %>% 
+  arrange(taxon, genus) %>% 
+  distinct()
+
+classifications = add_row(classifications,
+                          genus = c("Elachistodon", "Thalesius", "Parahelicops", "Pararhabdophis", "Vietnascincus",  
+                                    "Haackgreerius", "Geomyersia", "Geoscincus", "Tachygyia",  "Leptoseps", "Chabanaudia",
+                                    "Scolecoseps", "Chalcidoseps", "Sepsophis", "Nessia", "Jarujinia", "Barkudia", "Rhinogecko"),
+                          family = c("Colubridae", "Colubridae", "Colubridae", "Colubridae", "Scincidae",
+                                     "Scincidae",  "Scincidae",  "Scincidae", "Scincidae",  "Scincidae",  "Scincidae", 
+                                     "Scincidae",  "Scincidae",  "Scincidae", "Scincidae",  "Scincidae",  "Scincidae", "Gekkonidae"
+                          ),
+                          taxon = "reptile")
+
+filter(classifications, taxon == "amphibian", genus == "Homo")
+
+classifications = arrange(classifications, taxon, genus) %>% 
   distinct()
                           
 usethis::use_data(classifications, overwrite = T, compress = "xz")
