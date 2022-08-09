@@ -7,11 +7,12 @@
 get_tree(
   sp_list,
   tree,
-  taxon,
+  taxon = NULL,
   scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"),
   show_grafted = FALSE,
   tree_by_user = FALSE,
-  mc_cores = 1
+  mc_cores = 1,
+  .progress = "text"
 )
 }
 \arguments{

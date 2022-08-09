@@ -10,14 +10,15 @@ get_one_tree(
   taxon,
   scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"),
   show_grafted = FALSE,
-  tree_by_user = FALSE
+  tree_by_user = FALSE,
+  .progress = "text"
 )
 }
 \arguments{
 \item{sp_list}{A data frame with at least three columns: species, genus, family. Species column
 holds the species for which we want to have a phylogeny. It can also have two optional columns:
-close_sp and close_genus. We can specify the cloest species/genus of the species based on
-expert knowledgement. If specified, the new species will be grafted to that particular location.
+close_sp and close_genus. We can specify the closest species/genus of the species based on
+expert knowledge. If specified, the new species will be grafted to that particular location.
 
 It can also be a string vector if \code{taxon} is specified. Though it probably is a better idea
 to prepare your data frame with \code{\link[=sp_list_df]{sp_list_df()}}.
