@@ -11,7 +11,7 @@ get_tree(
   scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"),
   show_grafted = FALSE,
   tree_by_user = FALSE,
-  mc_cores = 1,
+  mc_cores = future::availableCores() - 2,
   .progress = "text",
   fish_tree = c("timetree", "all-taxon"),
   mammal_tree = c("vertlife", "phylacine")
@@ -70,7 +70,7 @@ the same genus; \verb{**} will be appended if it was grafted within the same fam
 \item{tree_by_user}{Is the mega-tree provided by user? Default is \code{FALSE} but it will be automatically set to \code{TRUE} when the class of \code{tree} is
 \code{multiPhylo} since we don't provide any such mega-trees here.}
 
-\item{mc_cores}{Number of cores to parallel processing when \code{tree} is a list of large number of trees.}
+\item{mc_cores}{Number of cores to parallel processing when \code{tree} is a list of large number of trees. The default is the number of available cores minus 2.}
 
 \item{.progress}{Form of progress bar, default to be text.}
 

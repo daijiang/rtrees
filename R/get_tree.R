@@ -55,7 +55,7 @@
 #' the same genus; `**` will be appended if it was grafted within the same family.
 #' @param tree_by_user Is the mega-tree provided by user? Default is `FALSE` but it will be automatically set to `TRUE` when the class of `tree` is 
 #' `multiPhylo` since we don't provide any such mega-trees here.
-#' @param mc_cores Number of cores to parallel processing when `tree` is a list of large number of trees.
+#' @param mc_cores Number of cores to parallel processing when `tree` is a list of large number of trees. The default is the number of available cores minus 2.
 #' @param .progress Form of progress bar, default to be text.
 #' @param fish_tree Which fish tree do you want to use? If it is "timetree" (default), it will be the smaller time tree with 11638 species
 #' that all have sequence data; if it is "all-taxon", then it will be the 100 larger posterior phylogenies with 31516 soecues.
@@ -78,7 +78,7 @@ get_tree = function(sp_list, tree, taxon = NULL,
                     scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE,
-                    mc_cores = 1, .progress = "text",
+                    mc_cores = future::availableCores() - 2, .progress = "text",
                     fish_tree = c("timetree", "all-taxon"),
                     mammal_tree = c("vertlife", "phylacine")
                     ){

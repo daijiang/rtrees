@@ -331,7 +331,8 @@ get_one_tree = function(sp_list, tree, taxon,
   
   if(any(sp_out_tree$status == "No co-family species in the mega-tree")) {
     sp_no_family = sp_out_tree$species[sp_out_tree$status == "No co-family species in the mega-tree"]
-    message(length(sp_no_family), " species have no co-family species in the mega-tree, skipped: \n",
+    message(length(sp_no_family), " species have no co-family species in the mega-tree, skipped 
+            (if you know their family, prepare and edit species list with `rtrees::sp_list_df()` may help): \n",
             paste(sp_no_family, collapse = ", "))
   }
   
