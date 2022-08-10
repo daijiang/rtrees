@@ -32,12 +32,12 @@ test_that("Test get tree for fish", {
 
 test_that("Test get tree for bird", {
   tt = get_tree(test_bird_list, taxon = "bird", show_grafted = T)
-  expect_equal(ape::Ntip(tt), nrow(test_bird_list))
+  expect_equal(ape::Ntip(tt[[1]]), nrow(test_bird_list))
 })
 
 test_that("Test get tree for mammal", {
   tt = get_tree(test_mammal_list, taxon = "mammal", show_grafted = T)
-  expect_equal(ape::Ntip(tt), nrow(test_mammal_list))
+  expect_equal(ape::Ntip(tt[[1]]), nrow(test_mammal_list))
   # plot(ape::ladderize(tt))
 })
 
@@ -46,14 +46,13 @@ test_that("Test user provided tree", {
   expect_error(get_tree(sp_list = test_tree_sp, tree = test_tree, tree_by_user = T))
   tt = get_tree(sp_list = test_tree_sp, tree = test_tree, taxon = "plant", tree_by_user = T) # this should work
   tt = get_tree(sp_list = test_tree_sp2, tree = test_tree, tree_by_user = T) # this should work
-  expect_error(get_tree(sp_list = test_tree_sp, tree = test_tree, tree_by_user = T))
   
   tt = get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant", show_grafted = T, tree_by_user = T)
 })
 
-test_that("Test user provided tree and other taxon", {
-  load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/GBOTB.extended.rda")))
-  tt = get_tree(sp_list = sp_list_phylomatic, tree = GBOTB.extended, taxon = "other", show_grafted = T, tree_by_user = T)
-})
+# test_that("Test user provided tree and other taxon", {
+#   load(rawConnection(RCurl::getBinaryURL("https://raw.githubusercontent.com/jinyizju/V.PhyloMaker/master/data/GBOTB.extended.rda")))
+#   tt = get_tree(sp_list = sp_list_phylomatic, tree = GBOTB.extended, taxon = "other", show_grafted = T, tree_by_user = T)
+# })
 
 

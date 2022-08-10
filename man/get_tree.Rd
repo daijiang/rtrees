@@ -12,7 +12,9 @@ get_tree(
   show_grafted = FALSE,
   tree_by_user = FALSE,
   mc_cores = 1,
-  .progress = "text"
+  .progress = "text",
+  fish_tree = c("timetree", "all-taxon"),
+  mammal_tree = c("vertlife", "phylacine")
 )
 }
 \arguments{
@@ -28,16 +30,19 @@ In all cases, species names should be separated by \verb{_} between genus and sp
 
 \item{tree}{A mega-tree with class \code{phylo} or a list of mega-trees with class \code{multiPhylo}.
 Optional if \code{taxon} is specified, in which case, a default
-mega-phylogeny will be used (see their own documentations for details).
+mega-phylogeny (or a set of 100 randomly selected posterior phylogenies) will be used
+(see their own documentations from the \code{megatrees} package).
 \itemize{
-\item For plant, the mega-tree is \link{tree_plant_otl}.
-\item For fish, the mega-tree is \link{tree_fish}.
-\item For bird, the mega-trees are \link{tree_bird_ericson} and \link{tree_bird_hackett}. \link{tree_bird_ericson} will be the
-default if no \code{tree} is specified and \code{taxon} is \code{bird}.
-\item For mammal, the mega-tree is \link{tree_mammal}.
+\item For amphibian, the mega-trees are \link[megatrees:tree_amphibian_n100]{megatrees::tree_amphibian_n100}.
+\item For bird, the mega-trees are \link[megatrees:tree_bird_n100]{megatrees::tree_bird_n100}.
+\item For fish, the mega-tree is \link[megatrees:tree_fish_12k]{megatrees::tree_fish_12k}, with \link[megatrees:tree_fish_32k_n100]{megatrees::tree_fish_32k_n100} be the other option.
+\item For mammal, the default mega-trees are \link[megatrees:tree_mammal_n100_vertlife]{megatrees::tree_mammal_n100_vertlife}, with \link[megatrees:tree_mammal_n100_phylacine]{megatrees::tree_mammal_n100_phylacine} be the other option.
+\item For plant, the mega-tree is \link[megatrees:tree_plant_otl]{megatrees::tree_plant_otl}.
+\item For reptile, the mega-trees are \link[megatrees:tree_reptile_n100]{megatrees::tree_reptile_n100}.
+\item For shark, ray, and chimaeras, the mega-trees are \link[megatrees:tree_shark_ray_n100]{megatrees::tree_shark_ray_n100}.
 }}
 
-\item{taxon}{The taxon of species in the \code{sp_list}. Currently, can be \code{plant}, \code{fish}, \code{bird}, or \code{mammal}.}
+\item{taxon}{The taxon of species in the \code{sp_list}. Currently, can be \code{amphibian}, \code{bird}, \code{fish}, \code{mammal}, \code{plant}, \code{reptile}, or \code{shark_ray}.}
 
 \item{scenario}{How to insert a species into the mega-tree?
 \itemize{
@@ -66,6 +71,14 @@ the same genus; \verb{**} will be appended if it was grafted within the same fam
 \code{multiPhylo} since we don't provide any such mega-trees here.}
 
 \item{mc_cores}{Number of cores to parallel processing when \code{tree} is a list of large number of trees.}
+
+\item{.progress}{Form of progress bar, default to be text.}
+
+\item{fish_tree}{Which fish tree do you want to use? If it is "timetree" (default), it will be the smaller time tree with 11638 species
+that all have sequence data; if it is "all-taxon", then it will be the 100 larger posterior phylogenies with 31516 soecues.}
+
+\item{mammal_tree}{Which set of mammal trees to use? If it is "vertlife" (default), then 100 randomly selected posterior phylogenies provided
+by Vertlife will be used; if it is "phylacine", then 100 randomly selected posterior phylogenies provided by PHYLACINE will be used.}
 }
 \value{
 A phylogeny for the species required, with class \code{phylo};
@@ -88,8 +101,6 @@ test_sp = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii",
 "Knipowitschia_croatica", "Rhamphochromis_lucius", "Neolissochilus_tweediei", 
 "Haplochromis_nyanzae", "Astronesthes_micropogon", "Sanopus_reticulatus")
 test_tree = get_tree(sp_list = test_sp,
-                     tree = tree_fish, # either 
-                     taxon = "fish", # or
-                     scenario = "at_basal_node",
+                     taxon = "fish",
                      show_grafted = TRUE)
 }

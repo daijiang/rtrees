@@ -40,7 +40,8 @@ sp_list_df = function(sp_list, taxon){
                  genus = gsub("^([-A-Za-z]*)_.*$", "\\1", sp_list))
   if(missing(taxon)) return(out)
   
-  groups_supported = c("plant", "fish", "bird", "mammal")
+  groups_supported = c("amphibian", "bird", "fish", "mammal", "plant", "reptile", "shark_ray")
+  
   if(!taxon %in% groups_supported) 
     stop("Sorry but only the following taxon groups are supported: ", 
          paste(groups_supported, collapse = ", "),

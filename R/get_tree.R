@@ -22,15 +22,18 @@
 #' In all cases, species names should be separated by `_` between genus and species, i.e. genus_sp.
 #' @param tree A mega-tree with class `phylo` or a list of mega-trees with class `multiPhylo`.
 #'  Optional if `taxon` is specified, in which case, a default
-#' mega-phylogeny will be used (see their own documentations for details).
+#' mega-phylogeny (or a set of 100 randomly selected posterior phylogenies) will be used 
+#' (see their own documentations from the `megatrees` package).
 #' 
-#' - For plant, the mega-tree is [tree_plant_otl].
-#' - For fish, the mega-tree is [tree_fish].
-#' - For bird, the mega-trees are [tree_bird_ericson] and [tree_bird_hackett]. [tree_bird_ericson] will be the 
-#' default if no `tree` is specified and `taxon` is `bird`.
-#' - For mammal, the mega-tree is [tree_mammal].
+#' - For amphibian, the mega-trees are [megatrees::tree_amphibian_n100].
+#' - For bird, the mega-trees are [megatrees::tree_bird_n100].
+#' - For fish, the mega-tree is [megatrees::tree_fish_12k], with [megatrees::tree_fish_32k_n100] be the other option.
+#' - For mammal, the default mega-trees are [megatrees::tree_mammal_n100_vertlife], with [megatrees::tree_mammal_n100_phylacine] be the other option.
+#' - For plant, the mega-tree is [megatrees::tree_plant_otl].
+#' - For reptile, the mega-trees are [megatrees::tree_reptile_n100].
+#' - For shark, ray, and chimaeras, the mega-trees are [megatrees::tree_shark_ray_n100].
 #' 
-#' @param taxon The taxon of species in the `sp_list`. Currently, can be `plant`, `fish`, `bird`, or `mammal`.
+#' @param taxon The taxon of species in the `sp_list`. Currently, can be `amphibian`, `bird`, `fish`, `mammal`, `plant`, `reptile`, or `shark_ray`.
 #' @param scenario How to insert a species into the mega-tree? 
 #' - In all scenarioes, if there is only 1 species in the genus or family, a new node will be inserted to
 #' the middle point of this only species' branch length and the new species will be attached to this new 
@@ -53,6 +56,11 @@
 #' @param tree_by_user Is the mega-tree provided by user? Default is `FALSE` but it will be automatically set to `TRUE` when the class of `tree` is 
 #' `multiPhylo` since we don't provide any such mega-trees here.
 #' @param mc_cores Number of cores to parallel processing when `tree` is a list of large number of trees.
+#' @param .progress Form of progress bar, default to be text.
+#' @param fish_tree Which fish tree do you want to use? If it is "timetree" (default), it will be the smaller time tree with 11638 species
+#' that all have sequence data; if it is "all-taxon", then it will be the 100 larger posterior phylogenies with 31516 soecues.
+#' @param mammal_tree Which set of mammal trees to use? If it is "vertlife" (default), then 100 randomly selected posterior phylogenies provided
+#' by Vertlife will be used; if it is "phylacine", then 100 randomly selected posterior phylogenies provided by PHYLACINE will be used.
 #' @return A phylogeny for the species required, with class `phylo`; 
 #' or a list of phylogenies with class `multiPhylo` depends on the input `tree`. 
 #' @export
@@ -62,9 +70,7 @@
 #' "Knipowitschia_croatica", "Rhamphochromis_lucius", "Neolissochilus_tweediei", 
 #' "Haplochromis_nyanzae", "Astronesthes_micropogon", "Sanopus_reticulatus")
 #' test_tree = get_tree(sp_list = test_sp,
-#'                      tree = tree_fish, # either 
-#'                      taxon = "fish", # or
-#'                      scenario = "at_basal_node",
+#'                      taxon = "fish",
 #'                      show_grafted = TRUE)
 
 get_tree = function(sp_list, tree, taxon = NULL, 
@@ -72,22 +78,36 @@ get_tree = function(sp_list, tree, taxon = NULL,
                     scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE,
-                    mc_cores = 1, .progress = "text"){
+                    mc_cores = 1, .progress = "text",
+                    fish_tree = c("timetree", "all-taxon"),
+                    mammal_tree = c("vertlife", "phylacine")
+                    ){
   scenario = match.arg(scenario)
   
   if(missing(tree) & is.null(taxon))
     stop("Please specify at least a tree or a taxon group.")
   if(missing(tree) & !is.null(taxon)){# pick default tree
-    tree = switch(taxon,
-                  plant = rtrees::tree_plant_otl,
-                  fish = rtrees::tree_fish,
-                  bird = rtrees::tree_bird_ericson,
-                  mammal = rtrees::tree_mammal
-    )
+    if(taxon == "plant") tree = megatrees::tree_plant_otl
+    if(taxon == "bird") tree = megatrees::tree_bird_n100
+    if(taxon == "amphibian") tree = megatrees::tree_amphibian_n100
+    if(taxon == "reptile") tree = megatrees::tree_reptile_n100
+    if(taxon == "shark_ray") tree = megatrees::tree_shark_ray_n100
+    if(taxon == "mammal"){
+      mammal_tree = match.arg(mammal_tree)
+      if (mammal_tree == "vertlife") tree = megatrees::tree_mammal_n100_vertlife
+      if (mammal_tree == "phylacine") tree = megatrees::tree_mammal_n100_phylacine
+    }
+    if(taxon == "fish"){
+      fish_tree = match.arg(fish_tree)
+      if (fish_tree == "timetree") tree = megatrees::tree_fish_12k
+      if (fish_tree == "all-taxon") tree = megatrees::tree_fish_32k_n100
+    }
   }
   
   if(inherits(tree, "phylo")){ # one phylo
-    return(get_one_tree(sp_list, tree, taxon, scenario, show_grafted, tree_by_user, .progress))
+    return(get_one_tree(sp_list = sp_list, tree = tree, taxon = taxon, 
+                        scenario = scenario, show_grafted = tree_by_user,
+                        tree_by_user = tree_by_user, .progress = .progress))
   }
   
   if((inherits(tree, "multiPhylo") | inherits(tree, "list")) & 
@@ -106,7 +126,10 @@ get_tree = function(sp_list, tree, taxon = NULL,
       future::plan(future::multisession, workers = mc_cores)
       .progress = "none" # hide progress bar
       out = furrr::future_map(tree, function(i){
-       rtrees::get_one_tree(sp_list, tree = i, taxon, scenario, show_grafted, tree_by_user, .progress)
+       rtrees::get_one_tree(sp_list, tree = i, taxon = taxon, 
+                            scenario = scenario, show_grafted = show_grafted,
+                            tree_by_user = tree_by_user, 
+                            .progress = .progress)
       })
     } else {
       ## TO DO: test .progress issue with lapply()
@@ -114,6 +137,7 @@ get_tree = function(sp_list, tree, taxon = NULL,
                    scenario = scenario, show_grafted = show_grafted, 
                    tree_by_user = tree_by_user, .progress = .progress)
     }
+    
     class(out) = "multiPhylo"
     return(out)
   } 

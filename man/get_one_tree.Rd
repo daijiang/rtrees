@@ -25,17 +25,21 @@ to prepare your data frame with \code{\link[=sp_list_df]{sp_list_df()}}.
 
 In all cases, species names should be separated by \verb{_} between genus and species, i.e. genus_sp.}
 
-\item{tree}{A mega-tree with class \code{phylo}. Optional if \code{taxon} is specified, in which case, a default
-mega-phylogeny will be used.
+\item{tree}{A mega-tree with class \code{phylo} or a list of mega-trees with class \code{multiPhylo}.
+Optional if \code{taxon} is specified, in which case, a default
+mega-phylogeny (or a set of 100 randomly selected posterior phylogenies) will be used
+(see their own documentations from the \code{megatrees} package).
 \itemize{
-\item For plant, the mega-tree is \link{tree_plant_otl}.
-\item For fish, the mega-tree is \link{tree_fish}.
-\item For bird, the mega-trees are \link{tree_bird_ericson} and \link{tree_bird_hackett}. \link{tree_bird_ericson} will be the
-default if no \code{tree} is specified and \code{taxon} is \code{bird}.
-\item For mammal, the mega-tree is \link{tree_mammal}.
+\item For amphibian, the mega-trees are \link[megatrees:tree_amphibian_n100]{megatrees::tree_amphibian_n100}.
+\item For bird, the mega-trees are \link[megatrees:tree_bird_n100]{megatrees::tree_bird_n100}.
+\item For fish, the mega-tree is \link[megatrees:tree_fish_12k]{megatrees::tree_fish_12k}, with \link[megatrees:tree_fish_32k_n100]{megatrees::tree_fish_32k_n100} be the other option.
+\item For mammal, the default mega-trees are \link[megatrees:tree_mammal_n100_vertlife]{megatrees::tree_mammal_n100_vertlife}, with \link[megatrees:tree_mammal_n100_phylacine]{megatrees::tree_mammal_n100_phylacine} be the other option.
+\item For plant, the mega-tree is \link[megatrees:tree_plant_otl]{megatrees::tree_plant_otl}.
+\item For reptile, the mega-trees are \link[megatrees:tree_reptile_n100]{megatrees::tree_reptile_n100}.
+\item For shark, ray, and chimaeras, the mega-trees are \link[megatrees:tree_shark_ray_n100]{megatrees::tree_shark_ray_n100}.
 }}
 
-\item{taxon}{The taxon of species in the \code{sp_list}. Currently, can be \code{plant}, \code{fish}, \code{bird}, or \code{mammal}.}
+\item{taxon}{The taxon of species in the \code{sp_list}. Currently, can be \code{amphibian}, \code{bird}, \code{fish}, \code{mammal}, \code{plant}, \code{reptile}, or \code{shark_ray}.}
 
 \item{scenario}{How to insert a species into the mega-tree?
 \itemize{
@@ -60,7 +64,10 @@ into the middle point of the basal node and the root node of the family. I proba
 If \code{TRUE}, a \code{*} will be appended to the species name on the tip if it was grafted within
 the same genus; \verb{**} will be appended if it was grafted within the same family.}
 
-\item{tree_by_user}{Is the mega-tree provided by user?}
+\item{tree_by_user}{Is the mega-tree provided by user? Default is \code{FALSE} but it will be automatically set to \code{TRUE} when the class of \code{tree} is
+\code{multiPhylo} since we don't provide any such mega-trees here.}
+
+\item{.progress}{Form of progress bar, default to be text.}
 }
 \value{
 A phylogeny for the species required, with class \code{phylo}.

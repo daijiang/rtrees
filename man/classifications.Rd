@@ -5,7 +5,7 @@
 \alias{classifications}
 \title{Classifications of species}
 \format{
-A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}, \code{mammal}).
+A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}, \code{mammal}, \code{amphibian}, \code{reptile}, \code{shark_ray}).
 }
 \usage{
 classifications
@@ -26,7 +26,12 @@ Genus and family information of different groups of taxon.
 of the Jetz et al. 2012 phylogeny, there are additional 117 genus that are not in the file
 of BirdLife. Both are combined here, which leads to 2,508 genus.
 \item Mammal classification information was based on PHYLACINE, which has 1,400 genus.
-\url{https://github.com/MegaPast2Future/PHYLACINE_1.2/blob/master/Data/Taxonomy/Synonymy_table_valid_species_only.csv}
+\url{https://github.com/MegaPast2Future/PHYLACINE_1.2/blob/master/Data/Taxonomy/Synonymy_table_valid_species_only.csv} Additional
+genus from Vertlife were added too. For the same genus from both PHYLACINE and Vertlife that have different family information,
+I used the family from Vertlife as I found that they are mostly more accurate.
+\item Amphibian classification information was from \href{https://data.vertlife.org/amphibiantree/download/amph_shl_new_Classification.csv}{VertLife}.
+\item Reptile classification information was largely from \href{https://en.wikipedia.org/wiki/List_of_reptile_genera}{wikipedia}.
+\item Shark and Ray classification information was largely from NCBI.
 }
 }
 \keyword{datasets}
