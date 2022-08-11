@@ -106,7 +106,7 @@ get_tree = function(sp_list, tree, taxon = NULL,
   
   if(inherits(tree, "phylo")){ # one phylo
     return(get_one_tree(sp_list = sp_list, tree = tree, taxon = taxon, 
-                        scenario = scenario, show_grafted = tree_by_user,
+                        scenario = scenario, show_grafted = show_grafted,
                         tree_by_user = tree_by_user, .progress = .progress))
   }
   

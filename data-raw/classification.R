@@ -592,7 +592,12 @@ classifications = add_row(classifications,
 
 filter(classifications, taxon == "amphibian", genus == "Homo")
 
+
+classifications = add_row(classifications,
+                          genus = c("Psalidodon", "Curculionichthys"),
+                          family = c("Characidae", "Loricariidae"),
+                          taxon = "fish")
+                          
 classifications = arrange(classifications, taxon, genus) %>% 
   distinct()
-                          
 usethis::use_data(classifications, overwrite = T, compress = "xz")
