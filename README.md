@@ -8,6 +8,10 @@ a list of species from mega-trees. Basically, `Phylomatic` and more.
 
 # Installation
 
+It may take a while because one of its dependency
+[{megatrees}](https://github.com/daijiang/megatrees) is relatively
+large.
+
 ``` r
 devtools::install_github("daijiang/rtrees")
 ```
@@ -19,15 +23,23 @@ library(ape)
 
 # Mega-trees
 
-Currently, `rtrees` provides mega-trees for four taxon groups: plants,
-fishes, birds, and mammals.
+Currently, `rtrees` provides mega-trees for the following taxonomic
+groups: amphibian, bird, fish, mammal, plant, reptile, and shark_ray.
+The mega-trees (or subset of 100 posterior phylogenies) are saved in the
+data package [{megatrees}](https://github.com/daijiang/megatrees), which
+takes a while to install because of its relatively large size.
 
-| Taxon  | Mega\_tree                                           | Reference                                              |
-| :----- | :--------------------------------------------------- | :----------------------------------------------------- |
-| Plant  | `tree_plant_otl` (74,531 tips)                       | Open Tree of Life, Smith & Brown 2018; Jin & Qian 2019 |
-| Fish   | `tree_fish` (11,638 tips)                            | Fish Tree of Life, Rabosky et al. 2018                 |
-| Bird   | `tree_bird_ericon`, `tree_bird_hackett` (9,993 tips) | Bird Tree of Life, Jetz et al. 2018                    |
-| Mammal | `tree_mammal` (5,831 tips)                           | PHYLACINE, Faurby et al. 2018                          |
+| Taxon                    | \# of species | \# of trees | R object (in `{megatrees}`)  | Reference            |
+|--------------------------|---------------|-------------|------------------------------|----------------------|
+| Amphibian                | 7238          | 100         | `tree_amphibian_n100`        | Jetz and Pyron 2018  |
+| Bird                     | 9993          | 100         | `tree_bird_n100`             | Jetz et al. 2012     |
+| Fish                     | 11638         | 1           | `tree_fish_12k`              | Rabosky et al. 2018  |
+|                          | 31516         | 100         | `tree_fish_32k_n100`         | Rabosky et al. 2018  |
+| Mammal                   | 5831          | 100         | `tree_mammal_n100_phylacine` | Faurby et al. 2018   |
+|                          | 5911          | 100         | `tree_mammal_n100_vertlife`  | Upham et al. 2019    |
+| Plant                    | 74531         | 1           | `tree_plant_otl`             | Brown and Smith 2018 |
+| Reptile (Squamate)       | 9755          | 100         | `tree_reptile_n100`          | Tonini et al. 2016   |
+| Shark, Ray, and Chimaera | 1192          | 100         | `tree_shark_ray_n100`        | Stein et al. 2018    |
 
 # Usage examples
 
@@ -52,7 +64,7 @@ test_fish_list = tibble::tibble(
 
 ``` r
 test_fish_list
-#> # A tibble: 12 x 3
+#> # A tibble: 12 × 3
 #>    species                 genus          family        
 #>    <chr>                   <chr>          <chr>         
 #>  1 Serrasalmus_geryi       Serrasalmus    Serrasalmidae 
@@ -78,7 +90,7 @@ phylogeny).
 ``` r
 sp_list_df(sp_list = c("Periophthalmus_barbarus", "Barathronus_bicolor"),
            taxon = "fish")
-#> # A tibble: 2 x 3
+#> # A tibble: 2 × 3
 #>   species                 genus          family    
 #>   <chr>                   <chr>          <chr>     
 #> 1 Periophthalmus_barbarus Periophthalmus Gobiidae  
@@ -89,14 +101,32 @@ Then we can derive a phylogeny from `tree_fish`.
 
 ``` r
 test_tree = get_tree(sp_list = test_fish_list,
-                     tree = tree_fish, # either 
-                     taxon = "fish", # or
-                     scenario = "S1",
+                     taxon = "fish",
+                     scenario = "at_basal_node",
                      show_grafted = TRUE)
+#> 
 #> 6 species added at genus level (*)
-#> 1 species have no co-family species in the mega-tree, skipped: 
+#> 1 species have no co-family species in the mega-tree, skipped 
+#>             (if you know their family, prepare and edit species list with `rtrees::sp_list_df()` may help): 
 #> Barathronus_bicolor
-plot(ladderize(test_tree), no.margin = T)
+plot(test_tree, no.margin = T)
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
+If we want to use the 100 randomly selected posterior phylogenies that
+have \~32k fish species, we can add the `fish_tree = "all-taxon`.
+
+``` r
+test_tree2 = get_tree(sp_list = test_fish_list,
+                     taxon = "fish",
+                     scenario = "at_basal_node",
+                     show_grafted = TRUE,
+                     fish_tree = "all-taxon")
+#> Wow, all species are already in the mega-tree!
+test_tree2
+#> 100 phylogenetic trees
+plot(ladderize(test_tree2[[1]]), no.margin = T)
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
@@ -115,14 +145,21 @@ test_tree_sp = c("Rosa_sp", "Rubus_sp", "Amelanchier_sp", "Prunus_sp", "Sorbus_s
 
 plot(get_tree(sp_list = test_tree_sp, tree = test_tree, taxon = "plant",
               show_grafted = T, tree_by_user = T), type = "fan")
+#> Not all genus can be found in the phylogeny.
+#> Warning: For user provided phylogeny, without a classification for all genus of species in the phylogeny,
+#>               it is unlikely to find the most recent ancestor for genus and family; here we proceed the phylogeny
+#>               by adding root information for genus and family that can be found in the phylogeny or species list but
+#>               we recommend to prepare the phylogeny using `add_root_info()` with a classification
+#>               data frame with all tips first.
+#> 
 #> 5 species added at genus level (*)
 #> 1 species added at family level (**)
 ```
 
 <img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
-It is also possible to specify a particular speices to bind with by
-specifing columns `close_sp` and/or `close_genus`.
+It is also possible to specify a particular species to bind with by
+specifying columns `close_sp` and/or `close_genus`.
 
 ``` r
 test_tree_sp_df = sp_list_df(test_tree_sp, "plant")
@@ -130,6 +167,13 @@ test_tree_sp_df$close_sp = NA
 test_tree_sp_df$close_sp[1] = "Rosa_acicularis" # bind Rosa_sp to here
 plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
               show_grafted = T, tree_by_user = T), type = "fan")
+#> Not all genus can be found in the phylogeny.
+#> Warning: For user provided phylogeny, without a classification for all genus of species in the phylogeny,
+#>               it is unlikely to find the most recent ancestor for genus and family; here we proceed the phylogeny
+#>               by adding root information for genus and family that can be found in the phylogeny or species list but
+#>               we recommend to prepare the phylogeny using `add_root_info()` with a classification
+#>               data frame with all tips first.
+#> 
 #> 5 species added at genus level (*)
 #> 1 species added at family level (**)
 ```
@@ -138,26 +182,28 @@ plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
 
 Some notes:
 
-  - If `tree` is specified, then `taxon` can be ignored if all genus in
+-   If `tree` is specified, then `taxon` can be ignored if all genus in
     the species list are presented in the phylogeny.
-  - If a species does not have a co-family species in the mega-tree, it
+-   If a species does not have a co-family species in the mega-tree, it
     will be skipped.
-  - If `show_grafted = TRUE`, species that are grafted will have one or
+-   If `show_grafted = TRUE`, species that are grafted will have one or
     two `*` at the end of their names.
-      - If it is grafted at the genus level, one `*`.
-      - If it is grafted at the family level, two `*`s.
-  - The default scenario is `S1`, which will graft species at the
-    genus/family basal node.
-      - `S2` will randomly select a downstream node to attach the new
-        tip.
-      - `S3` will graft the new tip above the genus/family basal node if
-        no co-family species found.
-      - If only one species in the mega-tree that is in the same
+    -   If it is grafted at the genus level, one `*`.
+    -   If it is grafted at the family level, two `*`s.
+-   The default scenario is `at_basal_node`, which will graft species at
+    the genus/family basal node.
+    -   `random_below_basal` will randomly select a downstream node to
+        attach the new tip.
+    -   `at_or_above_basal` will graft the new tip above the
+        genus/family basal node if no co-family species found.
+    -   If only one species in the mega-tree that is in the same
         genus/family of the new tip, then the new tip will be grafted at
-        the middle of this species’ branch for all scenarioes.
-  - The `tree` can be a user provided tree, if so, set `tree_by_user =
-    TRUE`.
-  - See `?get_tree` for more details.
+        the middle of this species’ branch for all scenarios.
+-   The `tree` can be a user provided tree, if so, set
+    `tree_by_user = TRUE`.
+-   See `?get_tree` for more details.
 
-This package is still in very early stage. Feel free to test it.
-Contributions and suggestions are welcome.
+## Contribution
+
+Feel free to test it. Contributions and suggestions are welcome. You can
+open an issue or send a pull request.
