@@ -121,16 +121,25 @@ get_tree = function(sp_list, tree, taxon = NULL,
     if(is.null(tree[[1]]$genus_family_root)) tree_by_user = TRUE
     
     if(mc_cores > 1){
-      if(mc_cores > future::availableCores()) 
-        stop("mc_cores is larger than available cores")
+      if(mc_cores > future::availableCores()) {
+        message("The specified mc_cores is larger than what available")
+        mc_cores = future::availableCores() - 1
+      }
       future::plan(future::multisession, workers = mc_cores)
-      .progress = "none" # hide progress bar
+      # run it once just to get the messages, not ideal but I did not find another way
+      # to only show the message once yet.
+      rtrees::get_one_tree(sp_list, tree = tree[[1]], taxon = taxon, 
+                           scenario = scenario, show_grafted = show_grafted,
+                           tree_by_user = tree_by_user, 
+                           .progress = "none")
+      
       out = furrr::future_map(tree, function(i){
-       rtrees::get_one_tree(sp_list, tree = i, taxon = taxon, 
-                            scenario = scenario, show_grafted = show_grafted,
-                            tree_by_user = tree_by_user, 
-                            .progress = .progress)
-      })
+        suppressMessages(rtrees::get_one_tree(sp_list, tree = i, taxon = taxon, 
+                             scenario = scenario, show_grafted = show_grafted,
+                             tree_by_user = tree_by_user, 
+                             .progress = "none"))
+      # .progress = "none" # hide progress bar
+      }, .progress = TRUE, .options = furrr::furrr_options(seed = TRUE))
     } else {
       ## TO DO: test .progress issue with lapply()
       out = lapply(tree, get_one_tree, sp_list = sp_list, taxon = taxon, 
