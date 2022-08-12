@@ -304,7 +304,7 @@ get_one_tree = function(sp_list, tree, taxon,
     }
     
     # when the clade is large, tidytree::offspring() will take a long time
-    if(root_sub$n_spp > 100) use_castor = TRUE else use_castor = FALSE
+    if(root_sub$n_spp > 5) use_castor = TRUE else use_castor = FALSE
     # cat(where_loc)
     tree_df = bind_tip(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
                        new_node_above = add_above_node, tip_label = sp_out_tree$species[i], 
