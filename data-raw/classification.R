@@ -591,7 +591,53 @@ classifications = add_row(classifications,
                           taxon = "reptile")
 
 filter(classifications, taxon == "amphibian", genus == "Homo")
+o
 
+# plants world flora online ----
+xfun::download_file("http://104.198.143.165/files/WFO_Backbone/_WFOCompleteBackbone/WFO_Backbone.zip")
+unzip("WFO_Backbone.zip", list = T)
+unzip("WFO_Backbone.zip", file = "classification.txt")
+pfo = read_delim("classification.txt", delim = "\t")
+pfo2 = unique(select(filter(pfo, taxonomicStatus == "ACCEPTED", taxonRank == "SPECIES",
+                            majorGroup %in% c("A", "G", "P")), # Angiosperms, Gymnosperms, Pteridophytes
+                     genus, family, majorGroup))
+file.remove("classification.txt", "WFO_Backbone.zip")
+pfo2$genus[which(duplicated(pfo2$genus))] # genus with multiple family ...
+filter(pfo2, genus == "Athyrium")
+# use the family with higher frequency??
+pfo3 = filter(pfo, genus %in% pfo2$genus[which(duplicated(pfo2$genus))],
+              taxonomicStatus == "ACCEPTED", taxonRank == "SPECIES",
+              majorGroup %in% c("A", "G", "P")) %>% # Angiosperms, Gymnosperms, Pteridophytes
+  group_by(genus, family, majorGroup) %>% 
+  tally()
+# use the family with higher frequency!
+pfo4 = arrange(pfo3, genus, desc(n)) %>% 
+  group_by(genus) %>% 
+  slice_max(order_by = n) %>% 
+  select(-n)
+
+pfo5 = filter(pfo2, !genus %in% pfo2$genus[which(duplicated(pfo2$genus))])
+
+pfo_final = bind_rows(pfo5, pfo4) %>% 
+  arrange(genus)
+table(pfo_final$majorGroup)
+any(duplicated(pfo_final$genus))
+
+# check with existing data
+x = filter(classifications, taxon == "plant")
+setdiff(pfo_final$genus, x$genus) # 80
+filter(pfo_final, genus %in% x$genus) %>% 
+  left_join(x, by = "genus") %>% 
+  filter(family.x != family.y) %>% View()
+# keep the WFO version
+setdiff(x$genus, pfo_final$genus)
+
+pc1 = filter(x, !genus %in% pfo_final$genus) %>% 
+  bind_rows(select(pfo_final, -majorGroup) %>% 
+  mutate(taxon = "plant"))
+
+classifications = filter(classifications, taxon != "plant") %>% 
+  bind_rows(pc1)
 
 classifications = add_row(classifications,
                           genus = c("Psalidodon", "Curculionichthys"),
