@@ -643,6 +643,33 @@ classifications = add_row(classifications,
                           genus = c("Psalidodon", "Curculionichthys"),
                           family = c("Characidae", "Loricariidae"),
                           taxon = "fish")
+
+# V.PhyloMaker2
+xv = mutate(V.PhyloMaker2::tips.info.TPL, genus2 = str_extract(species, "^[^_]+"),
+            same = genus == genus2) %>% filter(same) %>% 
+  as_tibble() %>% 
+  select(group, genus, family) %>% 
+  distinct()
+
+xc = filter(classifications, taxon == "plant")
+
+# v phylomaker only
+xv2 = filter(xv, genus %in% setdiff(xv$genus, xc$genus)) %>% 
+  select(-group) %>% 
+  mutate(taxon = "plant")
+
+# some genus in V.PhyloMaker2 have diff family as the World Flora online,
+# I keep the World Flora Online version here
+
+classifications = bind_rows(classifications, xv2) 
+
+group_by(classifications, taxon) %>% 
+  summarise(dup = any(duplicated(genus)))
+
+xa = filter(classifications, taxon == "amphibian")
+filter(xa, duplicated(genus))
+filter(xa, genus == "Ingerana")
+classifications = filter(classifications, !(genus == "Ingerana" & family == "Ceratobatrachidae"))
                           
 classifications = arrange(classifications, taxon, genus) %>% 
   distinct()
