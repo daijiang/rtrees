@@ -25,7 +25,8 @@ Imports:
     furrr,
     future,
     megatrees,
-    fastmatch
+    fastmatch,
+    data.table
 Suggests: 
     testthat
 Remotes:
