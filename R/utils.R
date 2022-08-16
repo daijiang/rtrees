@@ -1,3 +1,26 @@
+#' Faster match of vectors
+#'
+#' See \code{fastmatch::\link[fastmatch:fmatch]{\%fin\%}} for details.
+#'
+#' @name %fin%
+#' @rdname fmatch
+#' @keywords internal
+#' @export
+#' @importFrom fastmatch %fin%
+NULL
+
+#' #' Faster match of character vectors
+#' #'
+#' #' See \code{data.table::\link[data.table:chmatch]{\%chin\%}} for details.
+#' #'
+#' #' @name %chin%
+#' #' @rdname chmatch
+#' #' @keywords internal
+#' #' @export
+#' #' @importFrom data.table %chin%
+#' NULL
+
+
 #' Captize the first letter of a word.
 #' @param x A word.
 #' @return The same word with the first letter captized.
@@ -42,21 +65,21 @@ sp_list_df = function(sp_list, taxon){
   
   groups_supported = c("amphibian", "bird", "fish", "mammal", "plant", "reptile", "shark_ray")
   
-  if(!taxon %in% groups_supported) 
+  if(!taxon %fin% groups_supported) 
     stop("Sorry but only the following taxon groups are supported: ", 
          paste(groups_supported, collapse = ", "),
          "\n You need to prepare the classification data frame by yourself,", 
          "\n which should have at least three columns: species, genus, family")
   # utils::data("classifications", envir = environment())
   clsf = rtrees::classifications[rtrees::classifications$taxon == taxon, ]
-  if(any(!out$genus %in% clsf$genus)){
+  if(any(!out$genus %fin% clsf$genus)){
     warning("The following genus are not in our classification database: ", 
             paste(setdiff(out$genus, clsf$genus), collapse = ", "),
             call. = FALSE)
     # not necessary to be a problem, if tree has same genus species, 
     # then no family info needed
   }
-  if(mean(out$genus %in% clsf$genus) < 0.8)
+  if(mean(out$genus %fin% clsf$genus) < 0.8)
     warning("Are you sure that you specified the right taxon group?", call. = FALSE)
   out = dplyr::left_join(out, clsf, by = "genus")
   out$taxon = NULL
@@ -95,7 +118,7 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
   if(process_all_tips){
     if(!is.null(genus_list))
       stop("When `process_all_tips = TRUE`, `genus_list` must be NULL.")
-    if(any(!tips$genus %in% classification$genus) & show_warning)
+    if(any(!tips$genus %fin% classification$genus) & show_warning)
       warning("Some genus are not in the classification.")
     # add family information
     tips = dplyr::left_join(tips, classification, by = "genus")
@@ -109,24 +132,24 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
       if(all(is.na(tips$family))) 
         stop("No tips in the user provided tree can get family information from classification,
              please use `add_root_info()` to prepare the tree first.")
-      if(any(!family_list %in% tips$family) & show_warning)
+      if(any(!family_list %fin% tips$family) & show_warning)
         warning("Some family_list are not in the tree; these species will be ignored.")
-      tips_family = tips[tips$family %in% family_list, ]
-      # if(any(!genus_list %in% tips$genus) & show_warning)
+      tips_family = tips[tips$family %fin% family_list, ]
+      # if(any(!genus_list %fin% tips$genus) & show_warning)
       #   warning("Some genus_list are not in the tree.") 
       ## these genus' family will be in the family_list
-      tips_genus = tips[tips$genus %in% genus_list, ]
+      tips_genus = tips[tips$genus %fin% genus_list, ]
       tips = unique(dplyr::bind_rows(tips_genus, tips_family))
     } else { # only genus
       if(is.null(genus_list))
         stop("When `process_all_tips = FALSE`, `genus_list` must be specified.")
-      if(any(!genus_list %in% tips$genus) & show_warning)
+      if(any(!genus_list %fin% tips$genus) & show_warning)
         warning("Some genus_list are not in the tree.")
-      tips = tips[tips$genus %in% genus_list, ] # no family column
+      tips = tips[tips$genus %fin% genus_list, ] # no family column
     }
   }
   
-  if("family" %in% names(tips)){
+  if("family" %fin% names(tips)){
     family_summ = dplyr::mutate(
       dplyr::summarise(dplyr::group_by(tips, family), 
                        n_genus = dplyr::n_distinct(genus), 
@@ -158,7 +181,7 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
     }
     sp_names = sp_names[!is.na(sp_names)]
     # cat(sp_names)
-    tree_df_subset = tree_df[tree_df$label %in% sp_names, ]
+    tree_df_subset = tree_df[tree_df$label %fin% sp_names, ]
     basal_node = tidytree::MRCA(tree_df, min(tree_df_subset$node), max(tree_df_subset$node))
     if(basal_node$parent == basal_node$node){
       # root
@@ -247,6 +270,32 @@ create_progress_bar <- function(name = "text", ...) {
 }
 
 
+## original contributed by Bradley Jones and modified by Guangchuang Yu
+## copied from tidytree, modified to make it slightly faster
+as_tree <- function(x) {
+  edge <- x[, c("parent", "node")]
+  i <- which(edge[,1] != 0 & edge[,1] != edge[,2])
+  edge <- edge[i, ]
+  if (is.null(x[["branch.length"]])) {
+    edge.length <- NULL
+  } else {
+    edge.length <- x$branch.length[i]
+  }
+  tip.label <- as.character(x$label[x$isTip])
+  
+  phylo <- list(edge = as.matrix(edge),
+                edge.length = edge.length,
+                tip.label = tip.label)
+  
+  node.label <- as.character(x$label[!x$isTip])
+
+  if (!all(is.na(node.label))) {
+    phylo$node.label <- node.label
+  }
+  phylo$Nnode <- sum(!x[, "isTip"])
+  class(phylo) <- "phylo"
+  return(phylo)
+}
 
 
 

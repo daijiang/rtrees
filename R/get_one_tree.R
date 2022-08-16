@@ -22,15 +22,15 @@ get_one_tree = function(sp_list, tree, taxon,
   } else {
     if(!inherits(sp_list, "data.frame"))
       stop("`sp_list` must either be a string vector or a data frame")
-    if(any(!c("species", "genus") %in% names(sp_list)))
+    if(any(!c("species", "genus") %fin% names(sp_list)))
       stop("`sp_list` must has at least two columns: species, genus.")
     sp_list$species = cap_first_letter(gsub(" +", "_", sp_list$species)) # just in case
   }
   
-  all_genus_in_tree = all(unique(sp_list$genus) %in% tree_genus)
+  all_genus_in_tree = all(unique(sp_list$genus) %fin% tree_genus)
   # if TRUE, no taxon is required
   if(!all_genus_in_tree){
-    if((!"family" %in% names(sp_list))){ # no family info
+    if((!"family" %fin% names(sp_list))){ # no family info
       if(missing(taxon) | is.null(taxon)) 
         stop("Please specify `taxon` as not all genus are in the tree.")
       sp_list = sp_list_df(sp_list$species, taxon) # add family information
@@ -40,14 +40,14 @@ get_one_tree = function(sp_list, tree, taxon,
   
   # add new classification data to classification data frame
   if(!is.null(taxon)){
-    if(!taxon %in% c("plant", "fish", "bird", "mammal") & !all_genus_in_tree){
+    if(!taxon %fin% c("plant", "fish", "bird", "mammal") & !all_genus_in_tree){
       new_cls = unique(dplyr::select(sp_list, genus, family))
       new_cls$taxon = taxon
       classifications <- dplyr::bind_rows(rtrees::classifications, new_cls)
     }
   } 
   
-  sp_out_tree = sp_list[!sp_list$species %in% tree$tip.label, ]
+  sp_out_tree = sp_list[!sp_list$species %fin% tree$tip.label, ]
   
   # some tree tips has genus_sp_subsp
   subsp_in_tree = grep("^.*_.*_.*$", x = tree$tip.label, value = T)
@@ -70,12 +70,12 @@ get_one_tree = function(sp_list, tree, taxon,
         }
       }
     }
-    sp_out_tree = dplyr::distinct(sp_list[!sp_list$species %in% tree$tip.label, ])
+    sp_out_tree = dplyr::distinct(sp_list[!sp_list$species %fin% tree$tip.label, ])
   }
   
   close_sp_specified = close_genus_specified = FALSE
-  if("close_sp" %in% names(sp_out_tree)) close_sp_specified = TRUE
-  if("close_genus" %in% names(sp_out_tree)) close_genus_specified = TRUE
+  if("close_sp" %fin% names(sp_out_tree)) close_sp_specified = TRUE
+  if("close_genus" %fin% names(sp_out_tree)) close_genus_specified = TRUE
   
   if(nrow(sp_out_tree) == 0){
     message("Wow, all species are already in the mega-tree!")
@@ -99,14 +99,14 @@ get_one_tree = function(sp_list, tree, taxon,
               we recommend to prepare the phylogeny using `add_root_info()` with a classification
               data frame with all tips first.", call. = FALSE, immediate. = TRUE)
       }
-      genus_not_in_tree = dplyr::filter(sp_out_tree, !genus %in% tree_genus)
+      genus_not_in_tree = dplyr::filter(sp_out_tree, !genus %fin% tree_genus)
  
       # add root information for species not in the tree
       tree = add_root_info(
         tree, 
         classification = if(is.null(taxon) & 
                               inherits(sp_list, "data.frame") & 
-                              all(c("genus", "family") %in% names(sp_list))){
+                              all(c("genus", "family") %fin% names(sp_list))){
           unique(sp_list[, c("genus", "family")])
         } else {
           unique(classifications[classifications$taxon == taxon, ])
@@ -124,7 +124,7 @@ get_one_tree = function(sp_list, tree, taxon,
     stop("Did you use your own phylogeny? If so, please set `tree_by_user = TRUE`.")
   sp_out_tree$status = ""
   tree_df = tidytree::as_tibble(tree)
-  tree_df$is_tip = !(tree_df$node %in% tree_df$parent)
+  tree_df$is_tip = !(tree_df$node %fin% tree_df$parent)
   node_hts = ape::branching.times(tree)
   node_label_new = NULL
   all_eligible_nodes = unique(c(tree$genus_family_root$basal_node,
@@ -148,7 +148,7 @@ get_one_tree = function(sp_list, tree, taxon,
     
     if(close_sp_specified){
       if(!is.na(sp_out_tree$close_sp[i]) &
-         sp_out_tree$close_sp[i] %in% tree$tip.label){
+         sp_out_tree$close_sp[i] %fin% tree$tip.label){
         where_loc_i = sp_out_tree$close_sp[i]
       }
     }
@@ -156,7 +156,7 @@ get_one_tree = function(sp_list, tree, taxon,
     if(close_genus_specified){
       if(!is.na(sp_out_tree$close_genus[i]) &
          sp_out_tree$close_genus[i] != "" &
-         sp_out_tree$close_genus[i] %in% tree_genus){
+         sp_out_tree$close_genus[i] %fin% tree_genus){
         sp_out_tree$genus[i] = sp_out_tree$close_genus[i]
         where_loc_i2 = sp_out_tree$close_genus[i]
       } else {
@@ -168,7 +168,7 @@ get_one_tree = function(sp_list, tree, taxon,
     
     if(!all_genus_in_tree & is.na(where_loc_i) & is.na(where_loc_i2)){
       if(is.na(sp_out_tree$family[i]) | 
-         !sp_out_tree$family[i] %in% tree$genus_family_root$family){
+         !sp_out_tree$family[i] %fin% tree$genus_family_root$family){
         sp_out_tree$status[i] = "No co-family species in the mega-tree"
         next()
       }
@@ -177,7 +177,7 @@ get_one_tree = function(sp_list, tree, taxon,
     add_above_node = FALSE
     fraction = 1/2
     
-    if(sp_out_tree$genus[i] %in% tree$genus_family_root$genus |
+    if(sp_out_tree$genus[i] %fin% tree$genus_family_root$genus |
        !is.na(where_loc_i2) | !is.na(where_loc_i)){
       sp_out_tree$status[i] = "*"
       # tree has species in the same genus
@@ -192,7 +192,7 @@ get_one_tree = function(sp_list, tree, taxon,
           node_label_new = paste0("N", length(node_hts))
           names(node_hts)[1] = node_label_new
           all_eligible_nodes = c(all_eligible_nodes, node_label_new)
-          if(!sp_out_tree$genus[i] %in% tree$genus_family_root$genus){
+          if(!sp_out_tree$genus[i] %fin% tree$genus_family_root$genus){
             # this is a new genus that has not in the tree
             # cat("here")
             tree$genus_family_root = tibble::add_row(
@@ -263,7 +263,7 @@ get_one_tree = function(sp_list, tree, taxon,
           if(nrow(tree_df_sub) > 0){
             # only bind to genus/family basal node, not within genus nodes
             potential_locs = intersect(c(where_loc, tree_df_sub$label), all_eligible_nodes)
-            locs_bl = tree_df_sub[tree_df_sub$label %in% potential_locs, ]
+            locs_bl = tree_df_sub[tree_df_sub$label %fin% potential_locs, ]
             bls = locs_bl$branch.length
             names(bls) = locs_bl$label
             bls = c(root_sub$root_time - root_sub$basal_time, bls)
@@ -304,7 +304,7 @@ get_one_tree = function(sp_list, tree, taxon,
     }
     
     # when the clade is large, tidytree::offspring() will take a long time
-    if(root_sub$n_spp > 5) use_castor = TRUE else use_castor = FALSE
+    if(root_sub$n_spp > 1) use_castor = TRUE else use_castor = FALSE
     # cat(where_loc)
     tree_df = bind_tip(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
                        new_node_above = add_above_node, tip_label = sp_out_tree$species[i], 
@@ -339,9 +339,9 @@ get_one_tree = function(sp_list, tree, taxon,
   tree_sub = castor::get_subtree_with_tips(tidytree::as.phylo(tree_df), sp_list$species)$subtree
   
   if(show_grafted){
-    grafted = sp_out_tree[sp_out_tree$status %in% c("*", "**"), ]
+    grafted = sp_out_tree[sp_out_tree$status %fin% c("*", "**"), ]
     grafted$sp2 = paste0(grafted$species, grafted$status)
-    wid = which(tree_sub$tip.label %in% grafted$species)
+    wid = which(tree_sub$tip.label %fin% grafted$species)
     tree_sub$tip.label[wid] = dplyr::left_join(tibble::tibble(species = tree_sub$tip.label[wid]),
                                                grafted, by = "species")$sp2
   }

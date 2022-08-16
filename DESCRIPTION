@@ -24,7 +24,8 @@ Imports:
     castor,
     furrr,
     future,
-    megatrees
+    megatrees,
+    fastmatch
 Suggests: 
     testthat
 Remotes:
