@@ -38,7 +38,7 @@ if(getRversion() >= "2.15.1")
 
 #' Convert a vector of species names to a data frame
 #' 
-#' @param sp_list A string vector.
+#' @param sp_list A string vector or a data frame with at least one column named "species".
 #' @param taxon The taxon group of this species list. If not specified, only species and
 #' genus will be returned.
 #' @return A data frame with columns: species, genus, and family (if `taxon` is specified).
