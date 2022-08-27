@@ -16,16 +16,7 @@ get_one_tree = function(sp_list, tree, taxon,
     stop("Please change the tree's tip labels to be the format of genus_sp.")
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
   
-  sp_list = unique(sp_list) # remove duplications
-  if(is.vector(sp_list, mode = "character")){
-    sp_list = sp_list_df(sp_list)
-  } else {
-    if(!inherits(sp_list, "data.frame"))
-      stop("`sp_list` must either be a string vector or a data frame")
-    if(any(!c("species", "genus") %fin% names(sp_list)))
-      stop("`sp_list` must has at least two columns: species, genus.")
-    sp_list$species = cap_first_letter(gsub(" +", "_", sp_list$species)) # just in case
-  }
+  sp_list = sp_list_df(unique(sp_list)) # remove duplications and prep genus, family
   
   all_genus_in_tree = all(unique(sp_list$genus) %fin% tree_genus)
   # if TRUE, no taxon is required
