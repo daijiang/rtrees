@@ -7,7 +7,7 @@
 sp_list_df(sp_list, taxon)
 }
 \arguments{
-\item{sp_list}{A string vector.}
+\item{sp_list}{A string vector or a data frame with at least one column named "species".}
 
 \item{taxon}{The taxon group of this species list. If not specified, only species and
 genus will be returned.}

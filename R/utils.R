@@ -67,8 +67,6 @@ sp_list_df = function(sp_list, taxon){
     out = tibble::tibble(species = sp_list,
                          genus = gsub("^([-A-Za-z]*)_.*$", "\\1", sp_list))
     if(missing(taxon)) return(out)
-    
-    
   } else { # data frame
     if(!"species" %in% names(sp_list))
       stop("`sp_list` must has at least one column named species.")
@@ -78,7 +76,7 @@ sp_list_df = function(sp_list, taxon){
       if(missing(taxon)) return(sp_list)
     } else{ # no genus column
       sp_list$genus = gsub("^([-A-Za-z]*)_.*$", "\\1", sp_list$species)
-      if("family" %in% names(sp_list)) # already have family, nothing to do
+      if("family" %in% names(sp_list) | missing(taxon)) # already have family, nothing to do
         return(sp_list)
     }
     out = sp_list
