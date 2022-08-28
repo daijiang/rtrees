@@ -1,3 +1,8 @@
+
+taxa_supported = c("amphibian", "bird", "fish", "mammal", "plant", "reptile", "shark_ray")
+usethis::use_data(taxa_supported, overwrite = T)
+
+
 library(tidyverse)
 library(ape)
 library(tidytree)

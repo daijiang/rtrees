@@ -5,8 +5,8 @@
 #' @name %fin%
 #' @rdname fmatch
 #' @keywords internal
-#' @export
 #' @importFrom fastmatch %fin%
+#' @import data.table
 NULL
 
 #' #' Faster match of character vectors
@@ -34,7 +34,13 @@ if(getRversion() >= "2.15.1")
                            "tree_fish", "tree_plant_otl", "classifications",
                            "tree_bird_ericson", "tree_mammal", "taxon",
                            "family", "genus", "species", "grp",
-                           "root_node", "basal_node"))
+                           "root_node", "basal_node", "taxa_supported"))
+
+#' Taxonomic groups supported
+#' 
+#' @description Supported taxonomic groups with mega-trees provided in the {megatrees} package.
+#' 
+"taxa_supported"
 
 #' Convert a vector of species names to a data frame
 #' 
@@ -82,11 +88,9 @@ sp_list_df = function(sp_list, taxon){
     out = sp_list
   }
 
-  groups_supported = c("amphibian", "bird", "fish", "mammal", "plant", "reptile", "shark_ray")
-  
-  if(!taxon %fin% groups_supported) 
+  if(!taxon %fin% taxa_supported) 
     stop("Sorry but only the following taxon groups are supported: ", 
-         paste(groups_supported, collapse = ", "),
+         paste(taxa_supported, collapse = ", "),
          "\n You need to prepare the classification data frame by yourself,", 
          "\n which should have at least three columns: species, genus, family")
   # utils::data("classifications", envir = environment())
