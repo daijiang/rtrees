@@ -106,7 +106,7 @@ sp_list_df = function(sp_list, taxon){
     warning("Are you sure that you specified the right taxon group?", call. = FALSE)
   out = dplyr::left_join(out, clsf, by = "genus")
   out$taxon = NULL
-  out
+  unique(out)
 }
 
 #' Add genus and family basal/root node information to a phylogeny

@@ -27,11 +27,10 @@ get_one_tree = function(sp_list, tree, taxon,
       sp_list = sp_list_df(sp_list$species, taxon) # add family information
     }
   }
-  sp_list = unique(sp_list) # remove duplications
   
   # add new classification data to classification data frame
   if(!is.null(taxon)){
-    if(!taxon %fin% c("plant", "fish", "bird", "mammal") & !all_genus_in_tree){
+    if(!taxon %fin% taxa_supported & !all_genus_in_tree){
       new_cls = unique(dplyr::select(sp_list, genus, family))
       new_cls$taxon = taxon
       classifications <- dplyr::bind_rows(rtrees::classifications, new_cls)
@@ -208,7 +207,8 @@ get_one_tree = function(sp_list, tree, taxon,
         }
       } else { # more than 1 species in the genus
         where_loc = root_sub$basal_node # scenarioes 1 and 3, no new node added
-        if(scenario == "S2"){ # randomly select a node in the genus and attach to it, no new node added
+        if(scenario == "random_below_basal"){ # randomly select a node in the genus and attach to it, no new node added
+          # TO DO: speed up the line below
           tree_df_sub = dplyr::filter(tidytree::offspring(tree_df, where_loc), !is_tip)
           if(nrow(tree_df_sub) > 0){
             potential_locs = c(where_loc, tree_df_sub$label)
@@ -249,7 +249,8 @@ get_one_tree = function(sp_list, tree, taxon,
                                                  )
       } else { # more than 1 species; can be the same genus or different genus
         where_loc = root_sub$basal_node # for scenario 1, no new node added
-        if(scenario == "S2"){ # randomly select a node in the family, no new node added
+        if(scenario == "random_below_basal"){ # randomly select a node in the family, no new node added
+          # TO DO: speed up the line below
           tree_df_sub = dplyr::filter(tidytree::offspring(tree_df, where_loc), !is_tip)
           if(nrow(tree_df_sub) > 0){
             # only bind to genus/family basal node, not within genus nodes
