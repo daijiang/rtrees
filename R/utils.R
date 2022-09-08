@@ -304,6 +304,31 @@ as_tree <- function(x) {
   } else {
     edge.length <- x$branch.length[i]
   }
+  tip.label <- as.character(x$label[x$is_tip])
+  
+  phylo <- list(edge = as.matrix(edge),
+                edge.length = edge.length,
+                tip.label = tip.label)
+  
+  node.label <- as.character(x$label[!x$is_tip])
+
+  if (!all(is.na(node.label))) {
+    phylo$node.label <- node.label
+  }
+  phylo$Nnode <- sum(!x[, "is_tip"])
+  class(phylo) <- "phylo"
+  return(phylo)
+}
+
+as_tree_isTip <- function(x) {
+  edge <- x[, c("parent", "node")]
+  i <- which(edge[,1] != 0 & edge[,1] != edge[,2])
+  edge <- edge[i, ]
+  if (is.null(x[["branch.length"]])) {
+    edge.length <- NULL
+  } else {
+    edge.length <- x$branch.length[i]
+  }
   tip.label <- as.character(x$label[x$isTip])
   
   phylo <- list(edge = as.matrix(edge),
@@ -311,7 +336,7 @@ as_tree <- function(x) {
                 tip.label = tip.label)
   
   node.label <- as.character(x$label[!x$isTip])
-
+  
   if (!all(is.na(node.label))) {
     phylo$node.label <- node.label
   }
@@ -319,6 +344,5 @@ as_tree <- function(x) {
   class(phylo) <- "phylo"
   return(phylo)
 }
-
 
 

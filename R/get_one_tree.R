@@ -191,7 +191,7 @@ get_one_tree = function(sp_list, tree, taxon,
               genus = sp_out_tree$genus[i],
               basal_node = node_label_new,
               basal_time = new_ht,
-              root_node = tree_df$lable[tree_df$node == tree_df$parent[tree_df$label == where_loc_i]],
+              root_node = tree_df$label[tree_df$node == tree_df$parent[tree_df$label == where_loc_i]],
               root_time = tree_df$branch.length[tree_df$node == tree_df$parent[tree_df$label == where_loc_i]],
               n_genus = 1, n_spp = 1, only_sp = sp_out_tree$species[i])
           }
@@ -209,7 +209,8 @@ get_one_tree = function(sp_list, tree, taxon,
         where_loc = root_sub$basal_node # scenarioes 1 and 3, no new node added
         if(scenario == "random_below_basal"){ # randomly select a node in the genus and attach to it, no new node added
           # TO DO: speed up the line below
-          tree_df_sub = dplyr::filter(tidytree::offspring(tree_df, where_loc), !is_tip)
+          tree_df_sub = tidytree::offspring(tree_df, where_loc)
+          tree_df_sub= tree_df_sub[tree_df_sub$is_tip == FALSE,]
           if(nrow(tree_df_sub) > 0){
             potential_locs = c(where_loc, tree_df_sub$label)
             bls = tree_df_sub$branch.length
@@ -251,7 +252,8 @@ get_one_tree = function(sp_list, tree, taxon,
         where_loc = root_sub$basal_node # for scenario 1, no new node added
         if(scenario == "random_below_basal"){ # randomly select a node in the family, no new node added
           # TO DO: speed up the line below
-          tree_df_sub = dplyr::filter(tidytree::offspring(tree_df, where_loc), !is_tip)
+          tree_df_sub = tidytree::offspring(tree_df, where_loc)
+          tree_df_sub= tree_df_sub[tree_df_sub$is_tip == FALSE,]
           if(nrow(tree_df_sub) > 0){
             # only bind to genus/family basal node, not within genus nodes
             potential_locs = intersect(c(where_loc, tree_df_sub$label), all_eligible_nodes)
@@ -264,7 +266,7 @@ get_one_tree = function(sp_list, tree, taxon,
             where_loc = sample(potential_locs, 1, prob = prob)
           }
         }
-        if(scenario == "S3"){ # insert new node and bind tip above family basal node
+        if(scenario == "at_or_above_basal"){ # insert new node and bind tip above family basal node
           add_above_node = TRUE
           if(2 * root_sub$root_time / 3 > root_sub$basal_time){
             fraction = (2 * root_sub$root_time / 3 - root_sub$basal_time) /
