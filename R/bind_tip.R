@@ -50,10 +50,14 @@ bind_tip = function(tree = NULL, where, tip_label,
   # tree_tbl_node$isTip = !tree_tbl_node$node %fin% tree_tbl$parent
   # tree_tbl_node$isTip = tree_tbl_node$is_tip
   
+  node_orig = tree_tbl_node$node # original node number of target location
+  parent_orig = tree_tbl_node$parent
+  at_root = tree_tbl_node$parent == tree_tbl_node$node
+  
   # tree_tbl$isTip = !(tree_tbl$node %fin% tree_tbl$parent)
   # setkey(tree_tbl, label)
   # tree_tbl_node = tree_tbl[label == where, ]
-  if(!tree_tbl_node$isTip){
+  if(!tree_tbl_node$isTip & !at_root){
     if(use_castor){
       where_offspring = tree_tbl[tree_tbl$label %fin% 
                                    castor::get_subtree_at_node(as_tree_isTip(tree_tbl), node = where)$subtree$tip.label, ]
@@ -66,44 +70,44 @@ bind_tip = function(tree = NULL, where, tip_label,
     }
     node_height = node_heights[where]
   }
-  node_orig = tree_tbl_node$node # original node number of target location
-  at_root = tree_tbl_node$parent == tree_tbl_node$node
+
   # tree_tbl = copy(tree_tbl) # to hold results
   # tree_tbl = as.data.table(tree_tbl)
   tree_tbl_2 = as.data.table(tree_tbl)
   # tree_tbl_2[, isTip := !node %fin% parent]
-  if(!inherits(tree_tbl_2, "tbl_tree")) class(tree_tbl_2) = c(class(tree_tbl_2), "tbl_tree")
   
   if(!tree_tbl_node$is_tip) { # the target is a node
     if(at_root & new_node_above) message("New tip cannot be inserted above the root; attached instead.")
     if(new_node_above & !at_root){ # insert above the target location node
       # add node first, push the numbers of nodes if they are after the inserted one
+      # including the node_orig
       tree_tbl_2[parent >= node_orig, parent := parent + 1L]
       tree_tbl_2[node >= node_orig, node := node + 1L]
       # tree_tbl$parent[tree_tbl$parent >= node_orig] = tree_tbl$parent[tree_tbl$parent >= node_orig] + 1L
       # tree_tbl$node[tree_tbl$node >= node_orig] = tree_tbl$node[tree_tbl$node >= node_orig] + 1L
       # insert the new node
-      tree_tbl_new = data.table(parent = tree_tbl_2$parent[tree_tbl_2$label == where], 
-                                node = node_orig,
+      tree_tbl_new = data.table(parent = parent_orig, 
+                                node = node_orig, # the new node takes the node number of the original one
                                 branch.length = tree_tbl_node$branch.length * frac,
                                 label = node_label,
                                 is_tip = FALSE, isTip = FALSE)
       tree_tbl_2 = rbindlist(list(tree_tbl_2, tree_tbl_new))
-      # add tip
-      tree_tbl_2[, parent := parent + 1L] # all nodes will be added 1
-      # tree_tbl$parent = tree_tbl$parent + 1L # all nodes will be added 1
-      tree_tbl_2[node > max_offspring, node := node + 1L]
-      # tree_tbl$node = data.table::fifelse(tree_tbl$node > max_offspring, tree_tbl$node + 1L, tree_tbl$node)
-      # update orginal node, which will have the inserted node as its parent
-      tree_tbl_2$parent[tree_tbl_2$label == where] =
-        tree_tbl_2$node[tree_tbl_2$label == node_label]
+      # update original node, which will have the inserted node (which takes the original node number) as its parent
+      tree_tbl_2$parent[tree_tbl_2$label == where] = node_orig
+        # tree_tbl_2$node[tree_tbl_2$label == node_label]
       tree_tbl_2$branch.length[tree_tbl_2$label == where] =
         tree_tbl_node$branch.length * (1 - frac)
       
-      tree_tbl_new = data.table(parent = tree_tbl_2$node[tree_tbl_2$label == node_label],
+      # add tip
+      tree_tbl_2[, parent := parent + 1L] # all nodes will be added 1
+      # tree_tbl$parent = tree_tbl$parent + 1L # all nodes will be added 1
+      tree_tbl_2[node > max_offspring, node := node + 1L] # all tips behind will be added 1
+      # tree_tbl$node = data.table::fifelse(tree_tbl$node > max_offspring, tree_tbl$node + 1L, tree_tbl$node)
+      
+      tree_tbl_new = data.table(parent = node_orig + 1L, # added 1 
                                 node = max_offspring + 1L,
-                                branch.length = tree_tbl_2$branch.length[tree_tbl_2$label == where] +
-                                  node_height,
+                                branch.length = tree_tbl_node$branch.length * (1 - frac) +
+                                  node_height, # the original node branch length (updated) and its node height
                                 label = tip_label,
                                 is_tip = TRUE, isTip = TRUE)
       tree_tbl_2 = rbindlist(list(tree_tbl_2, tree_tbl_new))
@@ -118,7 +122,7 @@ bind_tip = function(tree = NULL, where, tip_label,
       } else { # an internal node
         tree_tbl_2[, parent := parent + 1L]
         tree_tbl_2[node > max_offspring, node := node + 1L]
-        tree_tbl_new = data.table(parent = tree_tbl_2$node[tree_tbl_2$label == where],
+        tree_tbl_new = data.table(parent = node_orig + 1L, # added 1 above
                                   node = max_offspring + 1L,
                                   branch.length = node_height,
                                   label = tip_label,
@@ -127,7 +131,6 @@ bind_tip = function(tree = NULL, where, tip_label,
       }
     }
   } else { # the target is a tip
-    parent_orig = tree_tbl_node$parent
     # add node first, push the numbers of nodes if they are after the inserted one
     tree_tbl_2[parent > parent_orig, parent := parent + 1L]
     tree_tbl_2[node > parent_orig, node := node + 1L]
@@ -139,21 +142,21 @@ bind_tip = function(tree = NULL, where, tip_label,
                               label = node_label,
                               is_tip = FALSE, isTip = FALSE)
     tree_tbl_2 = rbindlist(list(tree_tbl_2, tree_tbl_new))
+    # update orginal node, which will have the inserted node as its parent
+    tree_tbl_2$parent[tree_tbl_2$label == where] = parent_orig + 1L
+    tree_tbl_2$branch.length[tree_tbl_2$label == where] =
+      tree_tbl_node$branch.length * (1 - frac)
     # add tip
     tree_tbl_2[, parent := parent + 1L] # all nodes will be added 1
     tree_tbl_2[node > node_orig, node := node + 1L]
     # tree_tbl$node = data.table::fifelse(tree_tbl$node > node_orig, tree_tbl$node + 1L, tree_tbl$node)
-    tree_tbl_new = data.table(parent = tree_tbl_2$node[tree_tbl_2$label == node_label],
+    tree_tbl_new = data.table(parent = parent_orig + 2L, # one new node and one new tip
                               node = node_orig + 1L,
                               branch.length = tree_tbl_node$branch.length * (1 - frac),
                               label = tip_label,
                               is_tip = TRUE, isTip = TRUE)
     tree_tbl_2 = rbindlist(list(tree_tbl_2, tree_tbl_new))
-    # update orginal node, which will have the inserted node as its parent
-    tree_tbl_2$parent[tree_tbl_2$label == where] =
-      tree_tbl_2$node[tree_tbl_2$label == node_label]
-    tree_tbl_2$branch.length[tree_tbl_2$label == where] =
-      tree_tbl_2$branch.length[tree_tbl_2$label == tip_label]
+
     
     # # another way
     # tree_tbl_above = tree_tbl[1:node_orig, ]
