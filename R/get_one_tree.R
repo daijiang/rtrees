@@ -8,10 +8,10 @@
 #' @export
 #' 
 get_one_tree = function(sp_list, tree, taxon, 
-                    scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
-                    show_grafted = FALSE,
-                    tree_by_user = FALSE,
-                    .progress = "text") {
+                        scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
+                        show_grafted = FALSE,
+                        tree_by_user = FALSE,
+                        .progress = "text", dt = TRUE) {
   if(tree_by_user & all(!grepl("_", tree$tip.label)))
     stop("Please change the tree's tip labels to be the format of genus_sp.")
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
@@ -90,13 +90,13 @@ get_one_tree = function(sp_list, tree, taxon,
               data frame with all tips first.", call. = FALSE, immediate. = TRUE)
       }
       genus_not_in_tree = dplyr::filter(sp_out_tree, !genus %fin% tree_genus)
- 
+      
       # add root information for species not in the tree
       tree = add_root_info(
         tree, 
         classification = if(is.null(taxon) & 
-                              inherits(sp_list, "data.frame") & 
-                              all(c("genus", "family") %fin% names(sp_list))){
+                            inherits(sp_list, "data.frame") & 
+                            all(c("genus", "family") %fin% names(sp_list))){
           unique(sp_list[, c("genus", "family")])
         } else {
           unique(classifications[classifications$taxon == taxon, ])
@@ -247,7 +247,7 @@ get_one_tree = function(sp_list, tree, taxon,
                                                  n_genus = 1,
                                                  n_spp = 1, 
                                                  only_sp = sp_out_tree$species[i]
-                                                 )
+        )
       } else { # more than 1 species; can be the same genus or different genus
         where_loc = root_sub$basal_node # for scenario 1, no new node added
         if(scenario == "random_below_basal"){ # randomly select a node in the family, no new node added
@@ -300,12 +300,20 @@ get_one_tree = function(sp_list, tree, taxon,
     # when the clade is large, tidytree::offspring() will take a long time
     if(root_sub$n_spp > 1) use_castor = TRUE else use_castor = FALSE
     # cat(where_loc)
-    tree_df = bind_tip(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
-                       new_node_above = add_above_node, tip_label = sp_out_tree$species[i], 
-                       frac = fraction, return_tree = FALSE, node_label = node_label_new,
-                       use_castor = use_castor)
-    tree_df$is_tip[tree_df$label == sp_out_tree$species[i]] = TRUE
-    tree_df$is_tip[is.na(tree_df$is_tip)] = FALSE
+    if(dt){
+      tree_df = bind_tip(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
+                         new_node_above = add_above_node, tip_label = sp_out_tree$species[i], 
+                         frac = fraction, return_tree = FALSE, node_label = node_label_new,
+                         use_castor = use_castor)
+    } else {
+      tree_df = bind_tip_df(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
+                            new_node_above = add_above_node, tip_label = sp_out_tree$species[i], 
+                            frac = fraction, return_tree = FALSE, node_label = node_label_new,
+                            use_castor = use_castor)
+    }
+    
+    # tree_df$is_tip[tree_df$label == sp_out_tree$species[i]] = TRUE
+    # tree_df$is_tip[is.na(tree_df$is_tip)] = FALSE
     # tree_df = dplyr::distinct(tree_df)
     # update n_spp in tree$genus_family_root
     tree$genus_family_root$n_spp[idx_row] = tree$genus_family_root$n_spp[idx_row] + 1

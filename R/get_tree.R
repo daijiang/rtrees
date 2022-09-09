@@ -61,6 +61,7 @@
 #' that all have sequence data; if it is "all-taxon", then it will be the 100 larger posterior phylogenies with 31516 soecues.
 #' @param mammal_tree Which set of mammal trees to use? If it is "vertlife" (default), then 100 randomly selected posterior phylogenies provided
 #' by Vertlife will be used; if it is "phylacine", then 100 randomly selected posterior phylogenies provided by PHYLACINE will be used.
+#' @param dt Whether to use data.table version to bind tips [bind_tip]. The default is `TRUE` as it maybe slightly faster.
 #' @return A phylogeny for the species required, with class `phylo`; 
 #' or a list of phylogenies with class `multiPhylo` depends on the input `tree`. 
 #' @export
@@ -80,7 +81,8 @@ get_tree = function(sp_list, tree, taxon = NULL,
                     tree_by_user = FALSE,
                     mc_cores = future::availableCores() - 2, .progress = "text",
                     fish_tree = c("timetree", "all-taxon"),
-                    mammal_tree = c("vertlife", "phylacine")
+                    mammal_tree = c("vertlife", "phylacine"),
+                    dt = TRUE
                     ){
   scenario = match.arg(scenario)
   
@@ -107,7 +109,8 @@ get_tree = function(sp_list, tree, taxon = NULL,
   if(inherits(tree, "phylo")){ # one phylo
     return(get_one_tree(sp_list = sp_list, tree = tree, taxon = taxon, 
                         scenario = scenario, show_grafted = show_grafted,
-                        tree_by_user = tree_by_user, .progress = .progress))
+                        tree_by_user = tree_by_user, .progress = .progress, 
+                        dt = dt))
   }
   
   if((inherits(tree, "multiPhylo") | inherits(tree, "list")) & 
@@ -131,20 +134,20 @@ get_tree = function(sp_list, tree, taxon = NULL,
       rtrees::get_one_tree(sp_list, tree = tree[[1]], taxon = taxon, 
                            scenario = scenario, show_grafted = show_grafted,
                            tree_by_user = tree_by_user, 
-                           .progress = "none")
+                           .progress = "none", dt = dt)
       
       out = furrr::future_map(tree, function(i){
         suppressMessages(rtrees::get_one_tree(sp_list, tree = i, taxon = taxon, 
                              scenario = scenario, show_grafted = show_grafted,
                              tree_by_user = tree_by_user, 
-                             .progress = "none"))
+                             .progress = "none", dt = dt))
       # .progress = "none" # hide progress bar
       }, .progress = TRUE, .options = furrr::furrr_options(seed = TRUE))
     } else {
       ## TO DO: test .progress issue with lapply()
       out = lapply(tree, get_one_tree, sp_list = sp_list, taxon = taxon, 
                    scenario = scenario, show_grafted = show_grafted, 
-                   tree_by_user = tree_by_user, .progress = .progress)
+                   tree_by_user = tree_by_user, .progress = .progress, dt = dt)
     }
     
     class(out) = "multiPhylo"

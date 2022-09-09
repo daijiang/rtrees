@@ -11,7 +11,8 @@ get_one_tree(
   scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"),
   show_grafted = FALSE,
   tree_by_user = FALSE,
-  .progress = "text"
+  .progress = "text",
+  dt = TRUE
 )
 }
 \arguments{
@@ -68,6 +69,8 @@ the same genus; \verb{**} will be appended if it was grafted within the same fam
 \code{multiPhylo} since we don't provide any such mega-trees here.}
 
 \item{.progress}{Form of progress bar, default to be text.}
+
+\item{dt}{Whether to use data.table version to bind tips \link{bind_tip}. The default is \code{TRUE} as it maybe slightly faster.}
 }
 \value{
 A phylogeny for the species required, with class \code{phylo}.

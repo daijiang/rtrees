@@ -33,7 +33,7 @@ if(getRversion() >= "2.15.1")
   utils::globalVariables(c(".", "isTip", "is_tip", "node",
                            "tree_fish", "tree_plant_otl", "classifications",
                            "tree_bird_ericson", "tree_mammal", "taxon",
-                           "family", "genus", "species", "grp",
+                           "family", "genus", "species", "grp", "parent",
                            "root_node", "basal_node", "taxa_supported"))
 
 #' Taxonomic groups supported
@@ -321,21 +321,21 @@ as_tree <- function(x) {
 }
 
 as_tree_isTip <- function(x) {
-  edge <- x[, c("parent", "node")]
-  i <- which(edge[,1] != 0 & edge[,1] != edge[,2])
-  edge <- edge[i, ]
+  # x = as.data.frame(x)
+  i <- which(x$parent != 0 & x$parent != x$node)
+  edge <- x[i, c("parent", "node")]
   if (is.null(x[["branch.length"]])) {
     edge.length <- NULL
   } else {
     edge.length <- x$branch.length[i]
   }
-  tip.label <- as.character(x$label[x$isTip])
+  tip.label <- x$label[x$isTip]
   
-  phylo <- list(edge = as.matrix(edge),
+  phylo <- list(edge = edge,
                 edge.length = edge.length,
                 tip.label = tip.label)
   
-  node.label <- as.character(x$label[!x$isTip])
+  node.label <- x$label[!x$isTip]
   
   if (!all(is.na(node.label))) {
     phylo$node.label <- node.label
