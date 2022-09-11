@@ -194,7 +194,7 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
   
   gf_summ$grp = 1:nrow(gf_summ)
   
-  find_root = function(xdf, tips, tree_df){
+  find_root = function(xdf, tips, tree_df, show_warning){
     target = xdf$genus
     if(fam <- is.na(target)) target = xdf$family
     if(fam){ # members of this genus or family
@@ -205,7 +205,17 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
     sp_names = sp_names[!is.na(sp_names)]
     # cat(sp_names)
     tree_df_subset = tree_df[tree_df$label %fin% sp_names, ]
-    basal_node = tidytree::MRCA(tree_df, min(tree_df_subset$node), max(tree_df_subset$node))
+    # basal_node = tidytree::MRCA(tree_df, range(tree_df_subset$node))
+    basal_node = tidytree::MRCA(tree_df, tree_df_subset$node) # same
+    # if a genus / family is not monophyletic, the most inclusive ancestor will be returned
+    if(show_warning){
+      descts = tidytree::offspring(tree_df, basal_node$node, tiponly = T)$label
+      if(!setequal(sp_names, descts)){
+        cat("Caution: Species in", if(fam) "family" else "genus", target,
+            "do not form a monophyletic clade.\n")
+      }
+    }
+    
     if(basal_node$parent == basal_node$node){
       # root
       root_node = basal_node
