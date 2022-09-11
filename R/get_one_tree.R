@@ -116,11 +116,11 @@ get_one_tree = function(sp_list, tree, taxon,
   tree_df = tidytree::as_tibble(tree)
   tree_df$is_tip = !(tree_df$node %fin% tree_df$parent)
   node_hts = ape::branching.times(tree)
-  node_label_new = NULL
   all_eligible_nodes = unique(c(tree$genus_family_root$basal_node,
                                 tree$genus_family_root$root_node))
   
-  if(nrow(sp_out_tree) > 100){
+  n_spp_to_show_progress = 200
+  if(nrow(sp_out_tree) > n_spp_to_show_progress){
     progress <- create_progress_bar(.progress)
     progress$init(nrow(sp_out_tree))
     on.exit(progress$term())
@@ -131,7 +131,7 @@ get_one_tree = function(sp_list, tree, taxon,
     #   utils::setTxtProgressBar(progbar, i)
     # }
     # cat(i, "\t")
-    if(nrow(sp_out_tree) > 100)
+    if(nrow(sp_out_tree) > n_spp_to_show_progress)
       progress$step()
     
     where_loc_i = where_loc_i2 = NA
@@ -164,6 +164,7 @@ get_one_tree = function(sp_list, tree, taxon,
       }
     }
     
+    node_label_new = NULL
     add_above_node = FALSE
     fraction = 1/2
     
@@ -182,6 +183,7 @@ get_one_tree = function(sp_list, tree, taxon,
           node_label_new = paste0("N", length(node_hts))
           names(node_hts)[1] = node_label_new
           all_eligible_nodes = c(all_eligible_nodes, node_label_new)
+          add_above_node = TRUE
           if(!sp_out_tree$genus[i] %fin% tree$genus_family_root$genus){
             # this is a new genus that has not in the tree
             # cat("here")
@@ -203,6 +205,7 @@ get_one_tree = function(sp_list, tree, taxon,
           node_label_new = paste0("N", length(node_hts))
           names(node_hts)[1] = node_label_new
           all_eligible_nodes = c(all_eligible_nodes, node_label_new)
+          add_above_node = TRUE
           tree$genus_family_root$only_sp[idx_row] = NA # now will be more than 1 sp in this genus
         }
       } else { # more than 1 species in the genus
@@ -237,6 +240,7 @@ get_one_tree = function(sp_list, tree, taxon,
         node_label_new = paste0("N", length(node_hts))
         names(node_hts)[1] = node_label_new
         all_eligible_nodes = c(all_eligible_nodes, node_label_new)
+        add_above_node = TRUE
         tree$genus_family_root = tibble::add_row(tree$genus_family_root,
                                                  family = sp_out_tree$family[i],
                                                  genus = sp_out_tree$genus[i],
@@ -318,6 +322,8 @@ get_one_tree = function(sp_list, tree, taxon,
     # update n_spp in tree$genus_family_root
     tree$genus_family_root$n_spp[idx_row] = tree$genus_family_root$n_spp[idx_row] + 1
   }
+  
+  tree_df = dplyr::arrange(tree_df, node)
   
   # if(nrow(sp_out_tree) > 100){
   #   close(progbar)
