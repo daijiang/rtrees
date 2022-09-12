@@ -5,8 +5,8 @@
 #' @name %fin%
 #' @rdname fmatch
 #' @keywords internal
-#' @export
 #' @importFrom fastmatch %fin%
+#' @import data.table
 NULL
 
 #' #' Faster match of character vectors
@@ -33,8 +33,14 @@ if(getRversion() >= "2.15.1")
   utils::globalVariables(c(".", "isTip", "is_tip", "node",
                            "tree_fish", "tree_plant_otl", "classifications",
                            "tree_bird_ericson", "tree_mammal", "taxon",
-                           "family", "genus", "species", "grp",
-                           "root_node", "basal_node"))
+                           "family", "genus", "species", "grp", "parent",
+                           "root_node", "basal_node", "taxa_supported"))
+
+#' Taxonomic groups supported
+#' 
+#' @description Supported taxonomic groups with mega-trees provided in the {megatrees} package.
+#' 
+"taxa_supported"
 
 #' Convert a vector of species names to a data frame
 #' 
@@ -82,11 +88,9 @@ sp_list_df = function(sp_list, taxon){
     out = sp_list
   }
 
-  groups_supported = c("amphibian", "bird", "fish", "mammal", "plant", "reptile", "shark_ray")
-  
-  if(!taxon %fin% groups_supported) 
+  if(!taxon %fin% taxa_supported) 
     stop("Sorry but only the following taxon groups are supported: ", 
-         paste(groups_supported, collapse = ", "),
+         paste(taxa_supported, collapse = ", "),
          "\n You need to prepare the classification data frame by yourself,", 
          "\n which should have at least three columns: species, genus, family")
   # utils::data("classifications", envir = environment())
@@ -102,7 +106,7 @@ sp_list_df = function(sp_list, taxon){
     warning("Are you sure that you specified the right taxon group?", call. = FALSE)
   out = dplyr::left_join(out, clsf, by = "genus")
   out$taxon = NULL
-  out
+  unique(out)
 }
 
 #' Add genus and family basal/root node information to a phylogeny
@@ -190,7 +194,7 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
   
   gf_summ$grp = 1:nrow(gf_summ)
   
-  find_root = function(xdf, tips, tree_df){
+  find_root = function(xdf, tips, tree_df, show_warning){
     target = xdf$genus
     if(fam <- is.na(target)) target = xdf$family
     if(fam){ # members of this genus or family
@@ -201,7 +205,17 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
     sp_names = sp_names[!is.na(sp_names)]
     # cat(sp_names)
     tree_df_subset = tree_df[tree_df$label %fin% sp_names, ]
-    basal_node = tidytree::MRCA(tree_df, min(tree_df_subset$node), max(tree_df_subset$node))
+    # basal_node = tidytree::MRCA(tree_df, range(tree_df_subset$node))
+    basal_node = tidytree::MRCA(tree_df, tree_df_subset$node) # same
+    # if a genus / family is not monophyletic, the most inclusive ancestor will be returned
+    if(show_warning){
+      descts = tidytree::offspring(tree_df, basal_node$node, tiponly = T)$label
+      if(!setequal(sp_names, descts)){
+        cat("Caution: Species in", if(fam) "family" else "genus", target,
+            "do not form a monophyletic clade.\n")
+      }
+    }
+    
     if(basal_node$parent == basal_node$node){
       # root
       root_node = basal_node
@@ -300,14 +314,39 @@ as_tree <- function(x) {
   } else {
     edge.length <- x$branch.length[i]
   }
-  tip.label <- as.character(x$label[x$isTip])
+  tip.label <- as.character(x$label[x$is_tip])
   
   phylo <- list(edge = as.matrix(edge),
                 edge.length = edge.length,
                 tip.label = tip.label)
   
-  node.label <- as.character(x$label[!x$isTip])
+  node.label <- as.character(x$label[!x$is_tip])
 
+  if (!all(is.na(node.label))) {
+    phylo$node.label <- node.label
+  }
+  phylo$Nnode <- sum(!x[, "is_tip"])
+  class(phylo) <- "phylo"
+  return(phylo)
+}
+
+as_tree_isTip <- function(x) {
+  # x = as.data.frame(x)
+  i <- which(x$parent != 0 & x$parent != x$node)
+  edge <- x[i, c("parent", "node")]
+  if (is.null(x[["branch.length"]])) {
+    edge.length <- NULL
+  } else {
+    edge.length <- x$branch.length[i]
+  }
+  tip.label <- x$label[x$isTip]
+  
+  phylo <- list(edge = edge,
+                edge.length = edge.length,
+                tip.label = tip.label)
+  
+  node.label <- x$label[!x$isTip]
+  
   if (!all(is.na(node.label))) {
     phylo$node.label <- node.label
   }
@@ -315,6 +354,5 @@ as_tree <- function(x) {
   class(phylo) <- "phylo"
   return(phylo)
 }
-
 
 

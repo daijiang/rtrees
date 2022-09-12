@@ -14,7 +14,8 @@ get_tree(
   mc_cores = future::availableCores() - 2,
   .progress = "text",
   fish_tree = c("timetree", "all-taxon"),
-  mammal_tree = c("vertlife", "phylacine")
+  mammal_tree = c("vertlife", "phylacine"),
+  dt = TRUE
 )
 }
 \arguments{
@@ -79,6 +80,8 @@ that all have sequence data; if it is "all-taxon", then it will be the 100 large
 
 \item{mammal_tree}{Which set of mammal trees to use? If it is "vertlife" (default), then 100 randomly selected posterior phylogenies provided
 by Vertlife will be used; if it is "phylacine", then 100 randomly selected posterior phylogenies provided by PHYLACINE will be used.}
+
+\item{dt}{Whether to use data.table version to bind tips \link{bind_tip}. The default is \code{TRUE} as it maybe slightly faster.}
 }
 \value{
 A phylogeny for the species required, with class \code{phylo};

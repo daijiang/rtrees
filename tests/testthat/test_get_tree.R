@@ -14,7 +14,7 @@ test_that("Test get tree for plants", {
   # expect_equal(ape::Ntip(tt), nrow(test_plant_list))
   
   # test bind_tip with output file above
-  tt2 = bind_tip(tt, where = "Acer_cordatum", tip_label = "Test_sp")
+  tt2 = bind_tip(tree = tt, where = "Acer_cordatum", tip_label = "Test_sp")
   expect_equal(ape::Ntip(tt2), nrow(test_plant_list) + 1)
   tt3 = bind_tip(tt, where = "N37580", tip_label = "Test_sp")
   expect_equal(ape::Ntip(tt3), nrow(test_plant_list) + 1)
@@ -31,7 +31,7 @@ test_that("Test get tree for fish", {
 })
 
 test_that("Test get tree for bird", {
-  tt = get_tree(test_bird_list, taxon = "bird", show_grafted = T)
+  tt = get_tree(sp_list = test_bird_list, taxon = "bird", show_grafted = T)
   expect_equal(ape::Ntip(tt[[1]]), nrow(test_bird_list))
 })
 
