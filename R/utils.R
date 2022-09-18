@@ -88,9 +88,9 @@ sp_list_df = function(sp_list, taxon){
     out = sp_list
   }
 
-  if(!taxon %fin% taxa_supported) 
+  if(!taxon %fin% rtrees::taxa_supported) 
     stop("Sorry but only the following taxon groups are supported: ", 
-         paste(taxa_supported, collapse = ", "),
+         paste(rtrees::taxa_supported, collapse = ", "),
          "\n You need to prepare the classification data frame by yourself,", 
          "\n which should have at least three columns: species, genus, family")
   # utils::data("classifications", envir = environment())
