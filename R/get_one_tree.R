@@ -30,7 +30,7 @@ get_one_tree = function(sp_list, tree, taxon,
   
   # add new classification data to classification data frame
   if(!is.null(taxon)){
-    if(!taxon %fin% taxa_supported & !all_genus_in_tree){
+    if(!taxon %fin% rtrees::taxa_supported & !all_genus_in_tree){
       new_cls = unique(dplyr::select(sp_list, genus, family))
       new_cls$taxon = taxon
       classifications <- dplyr::bind_rows(rtrees::classifications, new_cls)
