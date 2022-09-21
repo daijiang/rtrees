@@ -194,7 +194,7 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
   
   gf_summ$grp = 1:nrow(gf_summ)
   
-  find_root = function(xdf, tips, tree_df, show_warning){
+  find_root = function(xdf, tips, tree_df, show_warning = show_warning){
     target = xdf$genus
     if(fam <- is.na(target)) target = xdf$family
     if(fam){ # members of this genus or family
