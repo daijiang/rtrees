@@ -21,6 +21,10 @@ library(rtrees)
 library(ape)
 ```
 
+## Shiny app
+
+https://djli.shinyapps.io/rtrees_shiny/ 
+
 # Mega-trees
 
 Currently, `rtrees` provides mega-trees for the following taxonomic
