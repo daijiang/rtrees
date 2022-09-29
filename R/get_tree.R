@@ -27,7 +27,7 @@
 #' 
 #' - For amphibian, the mega-trees are [megatrees::tree_amphibian_n100].
 #' - For bird, the mega-trees are [megatrees::tree_bird_n100].
-#' - For fish, the mega-tree is [megatrees::tree_fish_12k], with [megatrees::tree_fish_32k_n100] be the other option.
+#' - For fish, the mega-tree is [megatrees::tree_fish_12k], with [megatrees::tree_fish_32k_n50] be the other option.
 #' - For mammal, the default mega-trees are [megatrees::tree_mammal_n100_vertlife], with [megatrees::tree_mammal_n100_phylacine] be the other option.
 #' - For plant, the mega-tree is [megatrees::tree_plant_otl].
 #' - For reptile, the mega-trees are [megatrees::tree_reptile_n100].
@@ -102,7 +102,7 @@ get_tree = function(sp_list, tree, taxon = NULL,
     if(taxon == "fish"){
       fish_tree = match.arg(fish_tree)
       if (fish_tree == "timetree") tree = megatrees::tree_fish_12k
-      if (fish_tree == "all-taxon") tree = megatrees::tree_fish_32k_n100
+      if (fish_tree == "all-taxon") tree = megatrees::tree_fish_32k_n50
     }
   }
   

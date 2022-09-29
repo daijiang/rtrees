@@ -40,7 +40,7 @@ Currently, `rtrees` provides mega-trees for the following taxonomic groups: amph
 | Amphibian                | 7238         | 100        | `tree_amphibian_n100`        | Jetz and Pyron 2018  |
 | Bird                     | 9993         | 100        | `tree_bird_n100`             | Jetz et al. 2012     |
 | Fish                     | 11638        | 1          | `tree_fish_12k`              | Rabosky et al. 2018  |
-|                          | 31516        | 100        | `tree_fish_32k_n100`         | Rabosky et al. 2018  |
+|                          | 31516        | 50         | `tree_fish_32k_n50`          | Rabosky et al. 2018  |
 | Mammal                   | 5831         | 100        | `tree_mammal_n100_phylacine` | Faurby et al. 2018   |
 |                          | 5911         | 100        | `tree_mammal_n100_vertlife`  | Upham et al. 2019    |
 | Plant                    | 74531        | 1          | `tree_plant_otl`             | Brown and Smith 2018 |
