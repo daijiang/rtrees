@@ -8,37 +8,39 @@ a list of species from mega-trees. Basically, `Phylomatic` and more.
 
 # Installation
 
-It may take a while because one of its dependency
-[{megatrees}](https://github.com/daijiang/megatrees) is relatively
-large.
-
 ``` r
+options(repos = c(options()$repos, rtrees = 'https://daijiang.r-universe.dev'))
+install.packages("rtrees")
+
+# or to install the latest version:
 devtools::install_github("daijiang/rtrees")
 ```
 
-``` r
-library(rtrees)
-library(ape)
-```
+The above code will also install one dependency
+[{megatrees}](https://github.com/daijiang/megatrees), an R data package
+that hosts the megatrees used here.
 
-## Shiny app
+## Shinny app
 
-https://djli.shinyapps.io/rtrees_shiny/ 
+There is also a [Shinny app](https://djli.shinyapps.io/rtrees_shiny/) to
+get phylogenies without using R. However, given that I can only afford
+the free plan, the number of species to be inserted to the megatrees
+here will be limited to 1,000.
 
 # Mega-trees
 
 Currently, `rtrees` provides mega-trees for the following taxonomic
 groups: amphibian, bird, fish, mammal, plant, reptile, and shark_ray.
-The mega-trees (or subset of 100 posterior phylogenies) are saved in the
-data package [{megatrees}](https://github.com/daijiang/megatrees), which
-takes a while to install because of its relatively large size.
+The mega-trees (or subset of 100 posterior phylogenies; 50 for fish to
+reduce the package size) are saved in the data package
+[{megatrees}](https://github.com/daijiang/megatrees).
 
 | Taxon                    | \# of species | \# of trees | R object (in `{megatrees}`)  | Reference            |
 |--------------------------|---------------|-------------|------------------------------|----------------------|
 | Amphibian                | 7238          | 100         | `tree_amphibian_n100`        | Jetz and Pyron 2018  |
 | Bird                     | 9993          | 100         | `tree_bird_n100`             | Jetz et al. 2012     |
 | Fish                     | 11638         | 1           | `tree_fish_12k`              | Rabosky et al. 2018  |
-|                          | 31516         | 100         | `tree_fish_32k_n100`         | Rabosky et al. 2018  |
+|                          | 31516         | 50          | `tree_fish_32k_n50`          | Rabosky et al. 2018  |
 | Mammal                   | 5831          | 100         | `tree_mammal_n100_phylacine` | Faurby et al. 2018   |
 |                          | 5911          | 100         | `tree_mammal_n100_vertlife`  | Upham et al. 2019    |
 | Plant                    | 74531         | 1           | `tree_plant_otl`             | Brown and Smith 2018 |
@@ -46,6 +48,11 @@ takes a while to install because of its relatively large size.
 | Shark, Ray, and Chimaera | 1192          | 100         | `tree_shark_ray_n100`        | Stein et al. 2018    |
 
 # Usage examples
+
+``` r
+library(rtrees)
+library(ape)
+```
 
 The species lists which we want to have a phylogeny should be provided
 as a data frame with at least 3 columns: `family`, `genus`, and
@@ -129,7 +136,7 @@ test_tree2 = get_tree(sp_list = test_fish_list,
                      fish_tree = "all-taxon")
 #> Wow, all species are already in the mega-tree!
 test_tree2
-#> 100 phylogenetic trees
+#> 50 phylogenetic trees
 plot(ladderize(test_tree2[[1]]), no.margin = T)
 ```
 
