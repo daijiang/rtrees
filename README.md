@@ -9,11 +9,7 @@ a list of species from mega-trees. Basically, `Phylomatic` and more.
 # Installation
 
 ``` r
-options(repos = c(options()$repos, rtrees = 'https://daijiang.r-universe.dev'))
-install.packages("rtrees")
-
-# or to install the latest version:
-devtools::install_github("daijiang/rtrees")
+install.packages("rtrees", repos = 'https://daijiang.r-universe.dev')
 ```
 
 The above code will also install one dependency
