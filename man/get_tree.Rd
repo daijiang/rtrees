@@ -85,7 +85,7 @@ by Vertlife will be used; if it is "phylacine", then 100 randomly selected poste
 }
 \value{
 A phylogeny for the species required, with class \code{phylo};
-or a list of phylogenies with class \code{multiPhylo} depends on the input \code{tree}.
+or a list of phylogenies with class \code{multiPhylo} depends on the input \code{tree}. Within each phylogeny, the grafted status of all species was saved as a data frame named as "graft_status".
 }
 \description{
 For some taxa groups, there are multiple posterior megatrees. It is a common

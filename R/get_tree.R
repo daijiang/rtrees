@@ -63,7 +63,7 @@
 #' by Vertlife will be used; if it is "phylacine", then 100 randomly selected posterior phylogenies provided by PHYLACINE will be used.
 #' @param dt Whether to use data.table version to bind tips [bind_tip]. The default is `TRUE` as it maybe slightly faster.
 #' @return A phylogeny for the species required, with class `phylo`; 
-#' or a list of phylogenies with class `multiPhylo` depends on the input `tree`. 
+#' or a list of phylogenies with class `multiPhylo` depends on the input `tree`. Within each phylogeny, the grafted status of all species was saved as a data frame named as "graft_status".
 #' @export
 #' @examples 
 #' test_sp = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii", 

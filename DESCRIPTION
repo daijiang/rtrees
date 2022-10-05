@@ -1,6 +1,6 @@
 Package: rtrees
 Title: Deriving Phylogenies from Synthesis Trees
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person(given = "Daijiang",
            family = "Li",

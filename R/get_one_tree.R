@@ -337,21 +337,36 @@ get_one_tree = function(sp_list, tree, taxon,
     message(sum(sp_out_tree$status == "**"), " species added at family level (**) \n")
   }
   
-  if(any(sp_out_tree$status == "No co-family species in the mega-tree")) {
-    sp_no_family = sp_out_tree$species[sp_out_tree$status == "No co-family species in the mega-tree"]
-    message(length(sp_no_family), " species have no co-family species in the mega-tree, skipped 
-            (if you know their family, prepare and edit species list with `rtrees::sp_list_df()` may help): \n",
-            paste(sp_no_family, collapse = ", "))
-  }
-  
   tree_sub = castor::get_subtree_with_tips(tidytree::as.phylo(tree_df), sp_list$species)$subtree
   
-  if(show_grafted){
-    grafted = sp_out_tree[sp_out_tree$status %fin% c("*", "**"), ]
-    grafted$sp2 = paste0(grafted$species, grafted$status)
-    wid = which(tree_sub$tip.label %fin% grafted$species)
-    tree_sub$tip.label[wid] = dplyr::left_join(tibble::tibble(species = tree_sub$tip.label[wid]),
-                                               grafted, by = "species")$sp2
+  # add trailing *
+  grafted = sp_out_tree[sp_out_tree$status %fin% c("*", "**"), ]
+  grafted$sp2 = paste0(grafted$species, grafted$status)
+  wid = which(tree_sub$tip.label %fin% grafted$species)
+  tree_sub$tip.label[wid] = dplyr::left_join(tibble::tibble(species = tree_sub$tip.label[wid]),
+                                             grafted, by = "species")$sp2
+  
+  graft_status = tibble::tibble(tip_label = tree_sub$tip.label)
+  graft_status$species = gsub("\\*", "", graft_status$tip_label)
+  graft_status$status = ifelse(grepl("\\*{2}$", graft_status$tip_label), "grafted at family level",
+                      ifelse(grepl("[^*]\\*{1}$", graft_status$tip_label), "grafted at genus level",
+                             "exisiting species in the megatree"))
+  
+  if(any(sp_out_tree$status == "No co-family species in the mega-tree")){
+    sp_no_family = sp_out_tree$species[sp_out_tree$status == "No co-family species in the mega-tree"]
+    message(length(sp_no_family), " species have no co-family species in the mega-tree, skipped\n(if you know their family, prepare and edit species list with `rtrees::sp_list_df()` may help): \n",
+            paste(sp_no_family, collapse = ", "))
+    graft_status = dplyr::bind_rows(graft_status, 
+                                    data.frame(species = sp_no_family, 
+                                                  status = rep("skipped as no co-family in the megatree", 
+                                                               length(sp_no_family)))
+    )
+  }
+  
+  tree_sub$graft_status = graft_status
+  
+  if(!show_grafted){
+    tree_sub = rm_stars(tree_sub)
   }
   
   return(ape::ladderize(tree_sub))
