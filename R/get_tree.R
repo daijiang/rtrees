@@ -131,18 +131,23 @@ get_tree = function(sp_list, tree, taxon = NULL,
       future::plan(future::multisession, workers = mc_cores)
       # run it once just to get the messages, not ideal but I did not find another way
       # to only show the message once yet.
-      rtrees::get_one_tree(sp_list, tree = tree[[1]], taxon = taxon, 
+      out0 = rtrees::get_one_tree(sp_list, tree = tree[[1]], taxon = taxon, 
                            scenario = scenario, show_grafted = show_grafted,
                            tree_by_user = tree_by_user, 
                            .progress = "none", dt = dt)
       
-      out = furrr::future_map(tree, function(i){
+      out = furrr::future_map(tree[-1], function(i){
         suppressMessages(rtrees::get_one_tree(sp_list, tree = i, taxon = taxon, 
                              scenario = scenario, show_grafted = show_grafted,
                              tree_by_user = tree_by_user, 
                              .progress = "none", dt = dt))
       # .progress = "none" # hide progress bar
       }, .progress = TRUE, .options = furrr::furrr_options(seed = TRUE))
+      
+      # put the first generated phylogeny back and in order
+      out[[length(tree)]] = out0
+      names(out)[length(tree)] = names(tree)[1]
+      out = c(out[length(tree)], out[-length(tree)])
     } else {
       ## TO DO: test .progress issue with lapply()
       out = lapply(tree, get_one_tree, sp_list = sp_list, taxon = taxon, 
