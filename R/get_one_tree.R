@@ -64,7 +64,11 @@ get_one_tree = function(sp_list, tree, taxon,
   }
   
   close_sp_specified = close_genus_specified = FALSE
-  if("close_sp" %fin% names(sp_out_tree)) close_sp_specified = TRUE
+  if("close_sp" %fin% names(sp_out_tree)) {
+    close_sp_specified = TRUE
+    # in case of white spaces in names
+    sp_out_tree$close_sp = cap_first_letter(gsub(" +", "_", sp_out_tree$close_sp))
+  }
   if("close_genus" %fin% names(sp_out_tree)) close_genus_specified = TRUE
   
   if(nrow(sp_out_tree) == 0){
