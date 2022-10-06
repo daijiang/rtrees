@@ -371,6 +371,7 @@ get_one_tree = function(sp_list, tree, taxon,
   
   if(!show_grafted){
     tree_sub = rm_stars(tree_sub)
+    graft_status$tip_label = gsub("\\*", "", graft_status$tip_label)
   }
   
   return(ape::ladderize(tree_sub))
