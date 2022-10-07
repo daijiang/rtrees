@@ -14,6 +14,7 @@ get_one_tree = function(sp_list, tree, taxon,
                         .progress = "text", dt = TRUE) {
   if(tree_by_user & all(!grepl("_", tree$tip.label)))
     stop("Please change the tree's tip labels to be the format of genus_sp.")
+  if(tree_by_user) tree = rm_stars(tree)
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
   
   sp_list = sp_list_df(unique(sp_list)) # remove duplications and prep genus, family
