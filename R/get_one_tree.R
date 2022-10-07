@@ -104,7 +104,11 @@ get_one_tree = function(sp_list, tree, taxon,
                             all(c("genus", "family") %fin% names(sp_list))){
           unique(sp_list[, c("genus", "family")])
         } else {
-          unique(classifications[classifications$taxon == taxon, ])
+          if((!taxon %fin% rtrees::taxa_supported) & !all_genus_in_tree){
+            unique(classifications[classifications$taxon == taxon, ])
+          } else {
+            unique(rtrees::classifications[rtrees::classifications$taxon == taxon, ])
+          }
         }, 
         process_all_tips = FALSE,
         genus_list = if(length(setdiff(sp_out_tree$genus, genus_not_in_tree$genus))) setdiff(sp_out_tree$genus, genus_not_in_tree$genus) else NULL,
