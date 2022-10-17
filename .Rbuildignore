@@ -4,3 +4,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^others$
+^CRAN-SUBMISSION$
+^cran-comments\.md$
