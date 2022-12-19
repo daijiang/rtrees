@@ -135,6 +135,9 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
   tree = ape::makeLabel(tree, tips = FALSE, node = TRUE)
   if(any(ww <- grepl("^[0-9]*$", tree$node.label)))
     tree$node.label[ww] = paste0("N", tree$node.label[ww])
+  if(any(duplicated(tree$node.label))){
+    tree$node.label <- make.unique(tree$node.label, sep = "_")
+  }
   tips = tibble::tibble(species = tree$tip.label, 
                         genus = gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
   
