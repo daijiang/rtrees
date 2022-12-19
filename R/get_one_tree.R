@@ -379,5 +379,5 @@ get_one_tree = function(sp_list, tree, taxon,
   
   tree_sub$graft_status = graft_status
   
-  return(ape::ladderize(tree_sub))
+  return(tree_sub)
 }
