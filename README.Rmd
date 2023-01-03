@@ -21,7 +21,10 @@ The goal of `rtrees` is to remove the barriers to derive phylogenies for a list 
 # Installation
 
 ```{r eval=FALSE}
-install.packages("rtrees", repos = 'https://daijiang.r-universe.dev')
+options(repos = c(
+  rtrees = 'https://daijiang.r-universe.dev',
+  CRAN = 'https://cloud.r-project.org'))
+install.packages("rtrees")
 ```
 
 The above code will also install one dependency [{megatrees}](https://github.com/daijiang/megatrees), an R data package that hosts the megatrees used here.
@@ -55,6 +58,8 @@ library(rtrees)
 library(ape)
 ```
 
+## Prepare species data frame (optional)
+
 The species lists which we want to have a phylogeny should be provided as a data frame with at least 3 columns: `family`, `genus`, and `species`. Their order does not matter. Here is an example for fish.
 
 ```{r echo = T}
@@ -83,6 +88,7 @@ sp_list_df(sp_list = c("Periophthalmus_barbarus", "Barathronus_bicolor"),
            taxon = "fish")
 ```
 
+## Get phylogeny from one megatree
 
 Then we can derive a phylogeny from `tree_fish`.
 
@@ -94,7 +100,16 @@ test_tree = get_tree(sp_list = test_fish_list,
 plot(test_tree, no.margin = T)
 ```
 
-If we want to use the 100 randomly selected posterior phylogenies that have ~32k fish species, we can add the `fish_tree = "all-taxon`.
+No matter whether `show_grafted` is 'TRUE' or 'FALSE', the grafting information was saved along with the phylogeny and can be extracted with the following code:
+
+```{r echo=TRUE}
+# or use rtrees::get_graft_status(test_tree)
+test_tree$graft_status
+```
+
+## Get a set of phylogenies from multiple posterior megatrees
+
+The function `rtrees::get_tree()` can also work with a set of posterior megatrees with the option to use parallel computing for the whole process. The default number of cores to be used will be the available number of cores minus 2 (so that users can still perform other tasks on their computers at the same time). The output will be a set of generated phylogenies with class `multiPhylo`; the number of derived phylogenies will be the same as the input megatrees. For this scenario, we can use exactly the same code described above. For example, if we want to use the 100 randomly selected posterior phylogenies that have ~32k fish species, we can add the `fish_tree = "all-taxon`.
 
 ```{r}
 test_tree2 = get_tree(sp_list = test_fish_list,
@@ -106,7 +121,6 @@ test_tree2
 plot(ladderize(test_tree2[[1]]), no.margin = T)
 ```
 
-  
 ## Add tips to user provided trees
 
 It is also possible to derive a phylogeny based on a user provided tree. This can be particularly useful if we have things like `Acer_spp` that we want to insert to the basal node of the genus.
@@ -121,6 +135,8 @@ plot(get_tree(sp_list = test_tree_sp, tree = test_tree, taxon = "plant",
               show_grafted = T, tree_by_user = T), type = "fan")
 ```
 
+## Bind missing species to specified places
+
 It is also possible to specify a particular species to bind with by specifying columns `close_sp` and/or `close_genus`.
 
 ```{r fig.width=9, fig.height=9}
@@ -131,13 +147,13 @@ plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
               show_grafted = T, tree_by_user = T), type = "fan")
 ```
 
-Some notes: 
+# Some notes 
 
 - If `tree` is specified, then `taxon` can be ignored if all genus in the species list are presented in the phylogeny.
 - If a species does not have a co-family species in the mega-tree, it will be skipped.
 - If `show_grafted = TRUE`, species that are grafted will have one or two `*` at the end of their names.
   + If it is grafted at the genus level, one `*`.
-  + If it is grafted at the family level, two `*`s.
+  + If it is grafted at the family level, two `*`s (i.e., `**`).
 - The default scenario is `at_basal_node`, which will graft species at the genus/family basal node.
   + `random_below_basal` will randomly select a downstream node to attach the new tip.
   + `at_or_above_basal` will graft the new tip above the genus/family basal node if no co-family species found.
@@ -145,7 +161,7 @@ Some notes:
 - The `tree` can be a user provided tree, if so, set `tree_by_user = TRUE`.
 - See `?get_tree` for more details.
   
-## Contribution
+# Contribution
 
 Feel free to test it. Contributions and suggestions are welcome. You can open an issue or send a pull request.
   

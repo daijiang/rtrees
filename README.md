@@ -9,7 +9,10 @@ a list of species from mega-trees. Basically, `Phylomatic` and more.
 # Installation
 
 ``` r
-install.packages("rtrees", repos = 'https://daijiang.r-universe.dev')
+options(repos = c(
+  rtrees = 'https://daijiang.r-universe.dev',
+  CRAN = 'https://cloud.r-project.org'))
+install.packages("rtrees")
 ```
 
 The above code will also install one dependency
@@ -49,6 +52,8 @@ reduce the package size) are saved in the data package
 library(rtrees)
 library(ape)
 ```
+
+## Prepare species data frame (optional)
 
 The species lists which we want to have a phylogeny should be provided
 as a data frame with at least 3 columns: `family`, `genus`, and
@@ -104,6 +109,8 @@ sp_list_df(sp_list = c("Periophthalmus_barbarus", "Barathronus_bicolor"),
 #> 2 Barathronus_bicolor     Barathronus    Aphyonidae
 ```
 
+## Get phylogeny from one megatree
+
 Then we can derive a phylogeny from `tree_fish`.
 
 ``` r
@@ -113,16 +120,50 @@ test_tree = get_tree(sp_list = test_fish_list,
                      show_grafted = TRUE)
 #> 
 #> 6 species added at genus level (*)
-#> 1 species have no co-family species in the mega-tree, skipped 
-#>             (if you know their family, prepare and edit species list with `rtrees::sp_list_df()` may help): 
+#> 1 species have no co-family species in the mega-tree, skipped
+#> (if you know their family, prepare and edit species list with `rtrees::sp_list_df()` may help): 
 #> Barathronus_bicolor
 plot(test_tree, no.margin = T)
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
-If we want to use the 100 randomly selected posterior phylogenies that
-have \~32k fish species, we can add the `fish_tree = "all-taxon`.
+No matter whether `show_grafted` is ‘TRUE’ or ‘FALSE’, the grafting
+information was saved along with the phylogeny and can be extracted with
+the following code:
+
+``` r
+# or use rtrees::get_graft_status(test_tree)
+test_tree$graft_status
+#> # A tibble: 12 × 3
+#>    tip_label                species                 status                      
+#>    <chr>                    <chr>                   <chr>                       
+#>  1 Prognichthys_glaphyrae   Prognichthys_glaphyrae  exisiting species in the me…
+#>  2 Rhamphochromis_lucius*   Rhamphochromis_lucius   grafted at genus level      
+#>  3 Haplochromis_nyanzae*    Haplochromis_nyanzae    grafted at genus level      
+#>  4 Knipowitschia_croatica*  Knipowitschia_croatica  grafted at genus level      
+#>  5 Periophthalmus_barbarus  Periophthalmus_barbarus exisiting species in the me…
+#>  6 Gobiomorphus_coxii       Gobiomorphus_coxii      exisiting species in the me…
+#>  7 Careproctus_reinhardti   Careproctus_reinhardti  exisiting species in the me…
+#>  8 Sanopus_reticulatus*     Sanopus_reticulatus     grafted at genus level      
+#>  9 Astronesthes_micropogon* Astronesthes_micropogon grafted at genus level      
+#> 10 Neolissochilus_tweediei* Neolissochilus_tweediei grafted at genus level      
+#> 11 Serrasalmus_geryi        Serrasalmus_geryi       exisiting species in the me…
+#> 12 <NA>                     Barathronus_bicolor     skipped as no co-family in …
+```
+
+## Get a set of phylogenies from multiple posterior megatrees
+
+The function `rtrees::get_tree()` can also work with a set of posterior
+megatrees with the option to use parallel computing for the whole
+process. The default number of cores to be used will be the available
+number of cores minus 2 (so that users can still perform other tasks on
+their computers at the same time). The output will be a set of generated
+phylogenies with class `multiPhylo`; the number of derived phylogenies
+will be the same as the input megatrees. For this scenario, we can use
+exactly the same code described above. For example, if we want to use
+the 100 randomly selected posterior phylogenies that have \~32k fish
+species, we can add the `fish_tree = "all-taxon`.
 
 ``` r
 test_tree2 = get_tree(sp_list = test_fish_list,
@@ -136,7 +177,7 @@ test_tree2
 plot(ladderize(test_tree2[[1]]), no.margin = T)
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
 ## Add tips to user provided trees
 
@@ -163,7 +204,9 @@ plot(get_tree(sp_list = test_tree_sp, tree = test_tree, taxon = "plant",
 #> 1 species added at family level (**)
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+
+## Bind missing species to specified places
 
 It is also possible to specify a particular species to bind with by
 specifying columns `close_sp` and/or `close_genus`.
@@ -185,32 +228,32 @@ plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
 #> 1 species added at family level (**)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
 
-Some notes:
+# Some notes
 
--   If `tree` is specified, then `taxon` can be ignored if all genus in
-    the species list are presented in the phylogeny.
--   If a species does not have a co-family species in the mega-tree, it
-    will be skipped.
--   If `show_grafted = TRUE`, species that are grafted will have one or
-    two `*` at the end of their names.
-    -   If it is grafted at the genus level, one `*`.
-    -   If it is grafted at the family level, two `*`s.
--   The default scenario is `at_basal_node`, which will graft species at
-    the genus/family basal node.
-    -   `random_below_basal` will randomly select a downstream node to
-        attach the new tip.
-    -   `at_or_above_basal` will graft the new tip above the
-        genus/family basal node if no co-family species found.
-    -   If only one species in the mega-tree that is in the same
-        genus/family of the new tip, then the new tip will be grafted at
-        the middle of this species’ branch for all scenarios.
--   The `tree` can be a user provided tree, if so, set
-    `tree_by_user = TRUE`.
--   See `?get_tree` for more details.
+- If `tree` is specified, then `taxon` can be ignored if all genus in
+  the species list are presented in the phylogeny.
+- If a species does not have a co-family species in the mega-tree, it
+  will be skipped.
+- If `show_grafted = TRUE`, species that are grafted will have one or
+  two `*` at the end of their names.
+  - If it is grafted at the genus level, one `*`.
+  - If it is grafted at the family level, two `*`s (i.e., `**`).
+- The default scenario is `at_basal_node`, which will graft species at
+  the genus/family basal node.
+  - `random_below_basal` will randomly select a downstream node to
+    attach the new tip.
+  - `at_or_above_basal` will graft the new tip above the genus/family
+    basal node if no co-family species found.
+  - If only one species in the mega-tree that is in the same
+    genus/family of the new tip, then the new tip will be grafted at the
+    middle of this species’ branch for all scenarios.
+- The `tree` can be a user provided tree, if so, set
+  `tree_by_user = TRUE`.
+- See `?get_tree` for more details.
 
-## Contribution
+# Contribution
 
 Feel free to test it. Contributions and suggestions are welcome. You can
 open an issue or send a pull request.

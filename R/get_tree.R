@@ -11,15 +11,14 @@
 #' provided mega-tree or mega-trees. If a species is
 #' not in the mega-tree, it will be grafted to the mega-tree with three scenarios.
 #' 
-#' @param sp_list A data frame with at least three columns: species, genus, family. Species column
+#' @param sp_list A character vector or a data frame with at least three columns: species, genus, family. Species column
 #' holds the species for which we want to have a phylogeny. It can also have two optional columns:
 #' close_sp and close_genus. We can specify the closest species/genus of the species based on
 #' expert knowledge. If specified, the new species will be grafted to that particular location.
 #' 
 #' It can also be a string vector if `taxon` is specified. Though it probably is a better idea
-#' to prepare your data frame with [sp_list_df()].
-#' 
-#' In all cases, species names should be separated by `_` between genus and species, i.e. genus_sp.
+#' to prepare your data frame with [sp_list_df()]. The string vector can also have the same format
+#' as that required by Phylomatic (i.e., family/genus/genus_sp).
 #' @param tree A mega-tree with class `phylo` or a list of mega-trees with class `multiPhylo`.
 #'  Optional if `taxon` is specified, in which case, a default
 #' mega-phylogeny (or a set of 100 randomly selected posterior phylogenies) will be used 

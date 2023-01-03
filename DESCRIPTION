@@ -28,6 +28,10 @@ Imports:
     fastmatch,
     data.table
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat
 Additional_repositories: 
     https://daijiang.r-universe.dev
+URL: https://daijiang.github.io/rtrees/
+VignetteBuilder: knitr

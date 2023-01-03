@@ -4,3 +4,5 @@
 .Ruserdata
 others
 .DS_Store
+docs
+inst/doc

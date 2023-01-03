@@ -17,7 +17,7 @@ get_one_tree = function(sp_list, tree, taxon,
   if(tree_by_user) tree = rm_stars(tree)
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
   
-  sp_list = sp_list_df(unique(sp_list)) # remove duplications and prep genus, family
+  sp_list = sp_list_df(unique(sp_list)) # remove duplication and prep genus, family
   
   all_genus_in_tree = all(unique(sp_list$genus) %fin% tree_genus)
   # if TRUE, no taxon is required
