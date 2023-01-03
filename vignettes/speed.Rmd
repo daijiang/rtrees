@@ -42,7 +42,6 @@ ggplot(speed_out, aes(x = n_sp_missing_k, y = time_s, color = expr, group = expr
   scale_y_continuous(breaks = c(0, 10, seq(25, 200, 25))) +
   geom_text(x = 4, y = 33, label = "rtrees: y = -0.09 + 15.6x", inherit.aes = FALSE, color = "#F8766D") +
   geom_text(x = 1.8, y = 123, label = "V.PhyloMaker: y = 11.80 + 34.8x", inherit.aes = FALSE, color = "#00BFC4") +
-  cowplot::theme_cowplot() +
   theme(legend.position = "none") 
 ```
 
