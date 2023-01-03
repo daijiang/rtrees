@@ -1,4 +1,21 @@
 url: https://daijiang.github.io/rtrees/
 template:
   bootstrap: 5
+reference:
+  - title: "Main function"
+    contents: 
+      - get_tree
+  - title: "Other helper functions"
+    contents: 
+      - sp_list_df
+      - add_root_info
+      - get_graft_status
+      - get_one_tree
+      - rm_stars
+      - bind_tip
+      - bind_tip_df
+  - title: "Taxonomic data"
+    contents:
+      - taxa_supported
+      - classifications
 
