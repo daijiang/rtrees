@@ -22,16 +22,17 @@ The R code used for the speed tests can be found [here](https://github.com/daiji
 
 
 ```{r, out.width='90%', fig.width=7, fig.height=5}
+if(!require("ggplot2")) install.packages("ggplot2")
 library(ggplot2)
-library(broom)
+# library(broom)
 temf = tempfile()
 download.file("https://raw.githubusercontent.com/daijiang/rtrees_ms/main/Data/rtrees_speed_out.rds", 
               destfile = temf)
 speed_out = readRDS(temf)
 speed_out = dplyr::mutate(speed_out, n_sp_missing_k = n_sp_missing / 1000, time_s = time/1e9)
-speed_lm = dplyr::group_by(speed_out, expr) |> 
-  dplyr::do(broom::tidy(lm(time_s ~ n_sp_missing_k, data = .))) |> 
-  dplyr::ungroup()
+# speed_lm = dplyr::group_by(speed_out, expr) |> 
+#   dplyr::do(broom::tidy(lm(time_s ~ n_sp_missing_k, data = .))) |> 
+#   dplyr::ungroup()
 ggplot(speed_out, aes(x = n_sp_missing_k, y = time_s, color = expr, group = expr)) +
   geom_point() +
   geom_smooth(method = "lm") +
