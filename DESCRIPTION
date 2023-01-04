@@ -26,7 +26,8 @@ Imports:
     future,
     megatrees,
     fastmatch,
-    data.table
+    data.table,
+    treeio
 Suggests: 
     knitr,
     rmarkdown,

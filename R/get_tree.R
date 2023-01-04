@@ -56,6 +56,7 @@
 #' @param mammal_tree Which set of mammal trees to use? If it is "vertlife" (default), then 100 randomly selected posterior phylogenies provided
 #' by Vertlife will be used; if it is "phylacine", then 100 randomly selected posterior phylogenies provided by PHYLACINE will be used.
 #' @param dt Whether to use data.table version to bind tips [bind_tip]. The default is `TRUE` as it maybe slightly faster.
+#' @param non_monophyletic For non-monophyletic groups, which MRCA to use? The default is inclusive (i.e., the MRCA of all species); alternatively, it can be "largest_cluster" (i.e., the MRCA of the largest cluster).
 #' @return A phylogeny for the species required, with class `phylo`; 
 #' or a list of phylogenies with class `multiPhylo` depends on the input `tree`. Within each phylogeny, the grafted status of all species was saved as a data frame named as "graft_status".
 #' @export
@@ -76,9 +77,11 @@ get_tree = function(sp_list, tree, taxon = NULL,
                     mc_cores = future::availableCores() - 2, .progress = "text",
                     fish_tree = c("timetree", "all-taxon"),
                     mammal_tree = c("vertlife", "phylacine"),
-                    dt = TRUE
+                    dt = TRUE,
+                    non_monophyletic = c("inclusive", "largest_cluster")
                     ){
   scenario = match.arg(scenario)
+  non_monophyletic = match.arg(non_monophyletic)
   
   if(missing(tree) & is.null(taxon))
     stop("Please specify at least a tree or a taxon group.")
@@ -104,7 +107,7 @@ get_tree = function(sp_list, tree, taxon = NULL,
     return(get_one_tree(sp_list = sp_list, tree = tree, taxon = taxon, 
                         scenario = scenario, show_grafted = show_grafted,
                         tree_by_user = tree_by_user, .progress = .progress, 
-                        dt = dt))
+                        dt = dt, non_monophyletic = non_monophyletic))
   }
   
   if((inherits(tree, "multiPhylo") | inherits(tree, "list")) & 
@@ -128,13 +131,15 @@ get_tree = function(sp_list, tree, taxon = NULL,
       out0 = rtrees::get_one_tree(sp_list, tree = tree[[1]], taxon = taxon, 
                            scenario = scenario, show_grafted = show_grafted,
                            tree_by_user = tree_by_user, 
-                           .progress = "none", dt = dt)
+                           .progress = "none", dt = dt, 
+                           non_monophyletic = non_monophyletic)
       
       out = furrr::future_map(tree[-1], function(i){
         suppressMessages(rtrees::get_one_tree(sp_list, tree = i, taxon = taxon, 
                              scenario = scenario, show_grafted = show_grafted,
                              tree_by_user = tree_by_user, 
-                             .progress = "none", dt = dt))
+                             .progress = "none", dt = dt,
+                             non_monophyletic = non_monophyletic))
       # .progress = "none" # hide progress bar
       }, .progress = TRUE, .options = furrr::furrr_options(seed = TRUE))
       
@@ -146,7 +151,8 @@ get_tree = function(sp_list, tree, taxon = NULL,
       ## TO DO: test .progress issue with lapply()
       out = lapply(tree, get_one_tree, sp_list = sp_list, taxon = taxon, 
                    scenario = scenario, show_grafted = show_grafted, 
-                   tree_by_user = tree_by_user, .progress = .progress, dt = dt)
+                   tree_by_user = tree_by_user, .progress = .progress, dt = dt,
+                   non_monophyletic = non_monophyletic)
     }
     
     class(out) = "multiPhylo"

@@ -211,12 +211,49 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
     # basal_node = tidytree::MRCA(tree_df, range(tree_df_subset$node))
     basal_node = tidytree::MRCA(tree_df, tree_df_subset$node) # same
     # if a genus / family is not monophyletic, the most inclusive ancestor will be returned
-    if(show_warning){
-      descts = tidytree::offspring(tree_df, basal_node$node, tiponly = T)$label
-      if(!setequal(sp_names, descts)){
-        cat("Caution: Species in", if(fam) "family" else "genus", target,
-            "do not form a monophyletic clade.\n")
-      }
+    descts = tidytree::offspring(tree_df, basal_node$node, tiponly = T)$label
+    
+    has_largest_cluster = FALSE
+    
+    if(!setequal(sp_names, descts)){
+      if(length(sp_names) > 1) {
+        monophyletic = "no"
+        if(show_warning)
+          cat("Caution: Species in", if(fam) "family" else "genus", target,
+              "do not form a monophyletic clade.\n")
+        
+        # TO DO: find the MRCA for the largest cluster?
+        # only for genus, not for family (not meaningful in my opinion)
+        if(!fam){
+          # cat(target, "\t")
+          sub_tdf = tidytree::as_tibble(treeio::tree_subset(tree, basal_node$node, levels_back = 0))
+          sub_nodes = sub_tdf[sub_tdf$node %in% sub_tdf$parent,]$label 
+          node_status = tibble::tibble(node_label = sub_nodes, n_desc = 0, n_genus = 0,
+                                       monophytic = FALSE, only_genus = NA_character_)
+          for(i in seq_along(sub_nodes)){
+            desc_i = tidytree::offspring(tree_df, dplyr::filter(tree_df, label == sub_nodes[i])$node,
+                                         tiponly = T)$label
+            genus_desc = unique(sub(pattern = "_.*$", replacement = "", desc_i))
+            node_status$n_desc[i] = length(desc_i)
+            node_status$n_genus[i] = length(genus_desc)
+            if(setequal(target, genus_desc)){
+              node_status$monophytic[i] = TRUE
+              node_status$only_genus[i] = genus_desc
+            } 
+          }
+          
+          if(any(node_status$monophytic)){
+            has_largest_cluster = TRUE
+            largest_cluster_node_label = dplyr::arrange(dplyr::filter(node_status, monophytic), 
+                                                        dplyr::desc(n_desc))$node_label[1]
+            largest_cluster_node_df = dplyr::filter(tree_df, label == largest_cluster_node_label)
+          }
+        }
+      } else {
+        monophyletic = "monotypic"
+      }  
+    } else {
+      monophyletic = "yes"
     }
     
     if(basal_node$parent == basal_node$node){
@@ -230,9 +267,29 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
       }
     }
     
-    tibble::tibble(basal_node = basal_node$label,
+    out = tibble::tibble(basal_node = basal_node$label,
                    root_node = root_node$label,
-                   only_sp = if(length(sp_names) == 1) sp_names else NA)
+                   only_sp = if(length(sp_names) == 1) sp_names else NA,
+                   monophyletic = monophyletic,
+                   inclusive = TRUE)
+    
+    if(monophyletic == "no" & !fam & has_largest_cluster){
+      if(largest_cluster_node_df$parent == largest_cluster_node_df$node){
+        # root
+        root_node = largest_cluster_node_df
+      } else {
+        root_node = tidytree::parent(tree_df, largest_cluster_node_df$node)
+      }
+      
+      out2 = tibble::tibble(basal_node = largest_cluster_node_df$label,
+                           root_node = root_node$label,
+                           only_sp = NA,
+                           monophyletic = monophyletic,
+                           inclusive = FALSE)
+      out = dplyr::bind_rows(out, out2)
+    }
+    
+    return(out)
   }
   
   # this takes time
@@ -247,7 +304,8 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
                            root_time = node_heights[root_node],
                            basal_time = node_heights[basal_node]) 
   gf_summ3 = gf_summ3[, c("family", "genus", "basal_node", "basal_time", 
-                          "root_node", "root_time", "n_genus", "n_spp", "only_sp")]
+                          "root_node", "root_time", "n_genus", "n_spp", "only_sp",
+                          "monophyletic", "inclusive")]
   
   tree$genus_family_root = gf_summ3
   

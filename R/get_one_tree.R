@@ -11,7 +11,8 @@ get_one_tree = function(sp_list, tree, taxon,
                         scenario = c("at_basal_node", "random_below_basal"), 
                         show_grafted = FALSE,
                         tree_by_user = FALSE,
-                        .progress = "text", dt = TRUE) {
+                        .progress = "text", dt = TRUE,
+                        non_monophyletic) {
   if(tree_by_user & all(!grepl("_", tree$tip.label)))
     stop("Please change the tree's tip labels to be the format of genus_sp.")
   if(tree_by_user) tree = rm_stars(tree)
@@ -121,6 +122,19 @@ get_one_tree = function(sp_list, tree, taxon,
   
   if(is.null(tree$genus_family_root))
     stop("Did you use your own phylogeny? If so, please set `tree_by_user = TRUE`.")
+  
+  
+  if(non_monophyletic == "inclusive"){
+    tree$genus_family_root = dplyr::filter(tree$genus_family_root, inclusive)
+  }
+  
+  if(non_monophyletic == "largest_cluster"){
+    lc = dplyr::filter(tree$genus_family_root, !inclusive)
+    tree$genus_family_root = dplyr::bind_rows(
+      dplyr::filter(tree$genus_family_root, is.na(genus) | !(genus %fin% lc$genus)),
+      lc) 
+  }
+  
   sp_out_tree$status = ""
   tree_df = tidytree::as_tibble(tree)
   tree_df$is_tip = !(tree_df$node %fin% tree_df$parent)

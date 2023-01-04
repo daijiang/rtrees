@@ -12,7 +12,8 @@ get_one_tree(
   show_grafted = FALSE,
   tree_by_user = FALSE,
   .progress = "text",
-  dt = TRUE
+  dt = TRUE,
+  non_monophyletic
 )
 }
 \arguments{
@@ -65,6 +66,8 @@ the same genus; \verb{**} will be appended if it was grafted within the same fam
 \item{.progress}{Form of progress bar, default to be text.}
 
 \item{dt}{Whether to use data.table version to bind tips \link{bind_tip}. The default is \code{TRUE} as it maybe slightly faster.}
+
+\item{non_monophyletic}{For non-monophyletic groups, which MRCA to use? The default is inclusive (i.e., the MRCA of all species); alternatively, it can be "largest_cluster" (i.e., the MRCA of the largest cluster).}
 }
 \value{
 A phylogeny for the species required, with class \code{phylo}.

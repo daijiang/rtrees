@@ -15,7 +15,8 @@ get_tree(
   .progress = "text",
   fish_tree = c("timetree", "all-taxon"),
   mammal_tree = c("vertlife", "phylacine"),
-  dt = TRUE
+  dt = TRUE,
+  non_monophyletic = c("inclusive", "largest_cluster")
 )
 }
 \arguments{
@@ -76,6 +77,8 @@ that all have sequence data; if it is "all-taxon", then it will be the 100 large
 by Vertlife will be used; if it is "phylacine", then 100 randomly selected posterior phylogenies provided by PHYLACINE will be used.}
 
 \item{dt}{Whether to use data.table version to bind tips \link{bind_tip}. The default is \code{TRUE} as it maybe slightly faster.}
+
+\item{non_monophyletic}{For non-monophyletic groups, which MRCA to use? The default is inclusive (i.e., the MRCA of all species); alternatively, it can be "largest_cluster" (i.e., the MRCA of the largest cluster).}
 }
 \value{
 A phylogeny for the species required, with class \code{phylo};
