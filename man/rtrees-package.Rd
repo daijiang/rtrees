@@ -9,6 +9,13 @@
 \description{
 To facilitate generating phylogenies from synthesis trees.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://daijiang.github.io/rtrees/}
+}
+
+}
 \author{
 Daijiang Li \href{mailto:daijianglee@gmail.com}{daijianglee@gmail.com}
 }

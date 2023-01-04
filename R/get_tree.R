@@ -34,7 +34,7 @@
 #' 
 #' @param taxon The taxon of species in the `sp_list`. Currently, can be `amphibian`, `bird`, `fish`, `mammal`, `plant`, `reptile`, or `shark_ray`.
 #' @param scenario How to insert a species into the mega-tree? 
-#' - In all scenarioes, if there is only 1 species in the genus or family, a new node will be inserted to
+#' - In both scenarioes, if there is only 1 species in the genus or family, a new node will be inserted to
 #' the middle point of this only species' branch length and the new species will be attached to this new 
 #' node.
 #' - If `scenario = "at_basal_node"`, a species is attached to the basal node of the same genus or the same family 
@@ -44,11 +44,6 @@
 #' The probability of node been selected is proportional to its branch length.
 #' Because of the random sampling involved, you may want to run several times to get a collection of 
 #' derived phylogenies.
-#' - If `scenario = "at_or_above_basal"`, a species is attached to the basal node of the same genus if the mega-tree has species 
-#' in the same genus; otherwise, a species is inserted to a new node above the basal node of the family.
-#' If the age of the basal node is less than 2/3 of the node above it (root node of the family), the new node will
-#' be added so that its age will be 2/3 of the root node of the family. Otherwise, a new node will be inserted 
-#' into the middle point of the basal node and the root node of the family. I probably won't use this scenario.
 #' @param show_grafted Whether to indicate which species was grafted onto the mega-tree. 
 #' If `TRUE`, a `*` will be appended to the species name on the tip if it was grafted within
 #' the same genus; `**` will be appended if it was grafted within the same family.
@@ -75,7 +70,7 @@
 
 get_tree = function(sp_list, tree, taxon = NULL, 
                     # multiple_trees = TRUE,
-                    scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
+                    scenario = c("at_basal_node", "random_below_basal"), 
                     show_grafted = FALSE,
                     tree_by_user = FALSE,
                     mc_cores = future::availableCores() - 2, .progress = "text",

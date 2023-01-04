@@ -8,7 +8,7 @@
 #' @export
 #' 
 get_one_tree = function(sp_list, tree, taxon, 
-                        scenario = c("at_basal_node", "random_below_basal", "at_or_above_basal"), 
+                        scenario = c("at_basal_node", "random_below_basal"), 
                         show_grafted = FALSE,
                         tree_by_user = FALSE,
                         .progress = "text", dt = TRUE) {
@@ -279,32 +279,32 @@ get_one_tree = function(sp_list, tree, taxon,
             where_loc = sample(potential_locs, 1, prob = prob)
           }
         }
-        if(scenario == "at_or_above_basal"){ # insert new node and bind tip above family basal node
-          add_above_node = TRUE
-          if(2 * root_sub$root_time / 3 > root_sub$basal_time){
-            fraction = (2 * root_sub$root_time / 3 - root_sub$basal_time) /
-              (root_sub$root_time - root_sub$basal_time)
-          }
-          new_ht = unname(root_sub$basal_time + (root_sub$root_time - root_sub$basal_time) * (1 - fraction))
-          # here is the node height, but in bind_tip, it is the length between a parent and a node,
-          # thus 1 - fraction
-          node_hts = c(new_ht, node_hts) # update node ages since added 1 new node
-          node_label_new = paste0("N", length(node_hts)) 
-          names(node_hts)[1] = node_label_new
-          all_eligible_nodes = c(all_eligible_nodes, node_label_new)
-          tree$genus_family_root$basal_node[idx_row] = node_label_new # new basal node
-          tree$genus_family_root$basal_time[idx_row] = new_ht
-          tree$genus_family_root = tibble::add_row(tree$genus_family_root,
-                                                   family = sp_out_tree$family[i],
-                                                   genus = sp_out_tree$genus[i],
-                                                   basal_node = node_label_new,
-                                                   basal_time = new_ht,
-                                                   root_node = root_sub$root_node,
-                                                   root_time = root_sub$root_time,
-                                                   n_genus = 1,
-                                                   n_spp = 1, 
-                                                   only_sp = sp_out_tree$species[i])
-        }
+        # if(scenario == "at_or_above_basal"){ # insert new node and bind tip above family basal node
+        #   add_above_node = TRUE
+        #   if(2 * root_sub$root_time / 3 > root_sub$basal_time){
+        #     fraction = (2 * root_sub$root_time / 3 - root_sub$basal_time) /
+        #       (root_sub$root_time - root_sub$basal_time)
+        #   }
+        #   new_ht = unname(root_sub$basal_time + (root_sub$root_time - root_sub$basal_time) * (1 - fraction))
+        #   # here is the node height, but in bind_tip, it is the length between a parent and a node,
+        #   # thus 1 - fraction
+        #   node_hts = c(new_ht, node_hts) # update node ages since added 1 new node
+        #   node_label_new = paste0("N", length(node_hts)) 
+        #   names(node_hts)[1] = node_label_new
+        #   all_eligible_nodes = c(all_eligible_nodes, node_label_new)
+        #   tree$genus_family_root$basal_node[idx_row] = node_label_new # new basal node
+        #   tree$genus_family_root$basal_time[idx_row] = new_ht
+        #   tree$genus_family_root = tibble::add_row(tree$genus_family_root,
+        #                                            family = sp_out_tree$family[i],
+        #                                            genus = sp_out_tree$genus[i],
+        #                                            basal_node = node_label_new,
+        #                                            basal_time = new_ht,
+        #                                            root_node = root_sub$root_node,
+        #                                            root_time = root_sub$root_time,
+        #                                            n_genus = 1,
+        #                                            n_spp = 1, 
+        #                                            only_sp = sp_out_tree$species[i])
+        # }
       }
       # update genus number
       tree$genus_family_root$n_genus[idx_row] = tree$genus_family_root$n_genus[idx_row] + 1
