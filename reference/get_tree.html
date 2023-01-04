@@ -55,7 +55,7 @@ task to derive a phylogeny from each of these (or a random subset of) megatrees.
 <span>  <span class="va">sp_list</span>,</span>
 <span>  <span class="va">tree</span>,</span>
 <span>  taxon <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"at_basal_node"</span>, <span class="st">"random_below_basal"</span>, <span class="st">"at_or_above_basal"</span><span class="op">)</span>,</span>
+<span>  scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"at_basal_node"</span>, <span class="st">"random_below_basal"</span><span class="op">)</span>,</span>
 <span>  show_grafted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  tree_by_user <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  mc_cores <span class="op">=</span> <span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://parallelly.futureverse.org/reference/availableCores.html" class="external-link">availableCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2</span>,</span>
@@ -69,13 +69,13 @@ task to derive a phylogeny from each of these (or a random subset of) megatrees.
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>sp_list</dt>
-<dd><p>A data frame with at least three columns: species, genus, family. Species column
+<dd><p>A character vector or a data frame with at least three columns: species, genus, family. Species column
 holds the species for which we want to have a phylogeny. It can also have two optional columns:
 close_sp and close_genus. We can specify the closest species/genus of the species based on
 expert knowledge. If specified, the new species will be grafted to that particular location.</p>
 <p>It can also be a string vector if <code>taxon</code> is specified. Though it probably is a better idea
-to prepare your data frame with <code><a href="sp_list_df.html">sp_list_df()</a></code>.</p>
-<p>In all cases, species names should be separated by <code>_</code> between genus and species, i.e. genus_sp.</p></dd>
+to prepare your data frame with <code><a href="sp_list_df.html">sp_list_df()</a></code>. The string vector can also have the same format
+as that required by Phylomatic (i.e., family/genus/genus_sp).</p></dd>
 
 
 <dt>tree</dt>
@@ -97,7 +97,7 @@ mega-phylogeny (or a set of 100 randomly selected posterior phylogenies) will be
 
 
 <dt>scenario</dt>
-<dd><p>How to insert a species into the mega-tree?</p><ul><li><p>In all scenarioes, if there is only 1 species in the genus or family, a new node will be inserted to
+<dd><p>How to insert a species into the mega-tree?</p><ul><li><p>In both scenarioes, if there is only 1 species in the genus or family, a new node will be inserted to
 the middle point of this only species' branch length and the new species will be attached to this new
 node.</p></li>
 <li><p>If <code>scenario = "at_basal_node"</code>, a species is attached to the basal node of the same genus or the same family
@@ -107,11 +107,6 @@ basal node of the same genus of the same family if the mega-tree does not have a
 The probability of node been selected is proportional to its branch length.
 Because of the random sampling involved, you may want to run several times to get a collection of
 derived phylogenies.</p></li>
-<li><p>If <code>scenario = "at_or_above_basal"</code>, a species is attached to the basal node of the same genus if the mega-tree has species
-in the same genus; otherwise, a species is inserted to a new node above the basal node of the family.
-If the age of the basal node is less than 2/3 of the node above it (root node of the family), the new node will
-be added so that its age will be 2/3 of the root node of the family. Otherwise, a new node will be inserted
-into the middle point of the basal node and the root node of the family. I probably won't use this scenario.</p></li>
 </ul></dd>
 
 
