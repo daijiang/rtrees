@@ -10,7 +10,7 @@ add_root_info(
   process_all_tips = TRUE,
   genus_list = NULL,
   family_list = NULL,
-  show_warning = TRUE
+  show_warning = FALSE
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ all genus the tips of the tree belong to.}
 \item{family_list}{An optinoal subset list of family to find root information.
 This should be for species that do not have co-genus in the tree.}
 
-\item{show_warning}{Whether to print warning information or not.}
+\item{show_warning}{Whether to print warning information about non-monophyletic clades or not.}
 }
 \value{
 A phylogeny with basal nodes information attached.
