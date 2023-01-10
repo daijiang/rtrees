@@ -45,3 +45,8 @@ ggplot(speed_out, aes(x = n_sp_missing_k, y = time_s, color = expr, group = expr
   theme(legend.position = "none") 
 ```
 
+Based on the figure above, the time used by `rtrees` (and other R packages such as `V.PhyloMaker` and `FishPhyloMaker`) increased linearly with the number of missing species. This is because of the sequential structure of the R `phylo` object, in which all tips and nodes of a phylogeny are labeled with continued integers. When a new node or tip needs to be inserted, all the numbers after the binding location need to be pushed one place after. Therefore, the binding of tips in an R `phylo` object is a sequential process, which cannot be conducted with parallel computing to take advantage of the multiple CPU cores a regular computer has nowadays. It is possible to speed it up by converting some core R code into C++. However, it takes a lot of effort to do this right. 
+
+Another potential resolution is to represent phylogenies in a non-sequential structure unlike `phylo` objects in R. One example is the [`treeman` package](https://github.com/DomBennett/treeman), which developed such a structure to perform tree manipulations. Because of the non-sequential structure (i.e., no continuous labeling of nodes and tips), it is possible to use parallel computing to process phylogenies. However, such a structure has not yet been adapted widely by the R community. Therefore, the infrastructure to support such a non-sequential structure in R is still missing, making it hard to use it here in `rtrees`. 
+
+Despite the limitations described above, `rtrees` is reasonably fast and user-friendly with informative messages. 

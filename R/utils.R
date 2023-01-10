@@ -123,13 +123,13 @@ sp_list_df = function(sp_list, taxon){
 #' @param genus_list An optinoal subset list of genus to find root information.
 #' @param family_list An optinoal subset list of family to find root information. 
 #' This should be for species that do not have co-genus in the tree.
-#' @param show_warning Whether to print warning information or not.
+#' @param show_warning Whether to print warning information about non-monophyletic clades or not.
 #' @return A phylogeny with basal nodes information attached.
 #' @export
 #' 
 add_root_info = function(tree, classification, process_all_tips = TRUE,
                          genus_list = NULL, family_list = NULL,
-                         show_warning = TRUE){
+                         show_warning = FALSE){
   if(is.null(tree$node.label))
     tree$node.label = paste0("N", 1:ape::Nnode(tree))
   tree = ape::makeLabel(tree, tips = FALSE, node = TRUE)
