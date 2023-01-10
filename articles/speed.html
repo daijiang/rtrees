@@ -41,6 +41,9 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/Non-monophyletic-groups.html">Non-monophyletic genera</a>
+    <a class="dropdown-item" href="../articles/Simple_example.html">Simple_example</a>
+    <a class="dropdown-item" href="../articles/grafting_scenarios.html">Grafting Scenarios</a>
     <a class="dropdown-item" href="../articles/speed.html">Speed comparisons</a>
   </div>
 </li>
@@ -114,6 +117,31 @@ iterations).</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; `geom_smooth()` using formula = 'y ~ x'</span></span></code></pre></div>
 <p><img src="speed_files/figure-html/unnamed-chunk-2-1.png" width="90%"></p>
+<p>Based on the figure above, the time used by <code>rtrees</code> (and
+other R packages such as <code>V.PhyloMaker</code> and
+<code>FishPhyloMaker</code>) increased linearly with the number of
+missing species. This is because of the sequential structure of the R
+<code>phylo</code> object, in which all tips and nodes of a phylogeny
+are labeled with continued integers. When a new node or tip needs to be
+inserted, all the numbers after the binding location need to be pushed
+one place after. Therefore, the binding of tips in an R
+<code>phylo</code> object is a sequential process, which cannot be
+conducted with parallel computing to take advantage of the multiple CPU
+cores a regular computer has nowadays. It is possible to speed it up by
+converting some core R code into C++. However, it takes a lot of effort
+to do this right.</p>
+<p>Another potential resolution is to represent phylogenies in a
+non-sequential structure unlike <code>phylo</code> objects in R. One
+example is the <a href="https://github.com/DomBennett/treeman" class="external-link"><code>treeman</code>
+package</a>, which developed such a structure to perform tree
+manipulations. Because of the non-sequential structure (i.e., no
+continuous labeling of nodes and tips), it is possible to use parallel
+computing to process phylogenies. However, such a structure has not yet
+been adapted widely by the R community. Therefore, the infrastructure to
+support such a non-sequential structure in R is still missing, making it
+hard to use it here in <code>rtrees</code>.</p>
+<p>Despite the limitations described above, <code>rtrees</code> is
+reasonably fast and user-friendly with informative messages.</p>
   </main>
 </div>
 
