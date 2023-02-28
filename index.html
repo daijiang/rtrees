@@ -218,7 +218,7 @@
 <div class="section level2">
 <h2 id="get-phylogeny-from-one-megatree">Get phylogeny from one megatree<a class="anchor" aria-label="anchor" href="#get-phylogeny-from-one-megatree"></a>
 </h2>
-<p>Then we can derive a phylogeny from <code>tree_fish</code>.</p>
+<p>Once we have the species list ready, we can then derive a phylogeny from <code>tree_fish</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_tree</span> <span class="op">=</span> <span class="fu"><a href="reference/get_tree.html">get_tree</a></span><span class="op">(</span>sp_list <span class="op">=</span> <span class="va">test_fish_list</span>,</span>
 <span>                     taxon <span class="op">=</span> <span class="st">"fish"</span>,</span>
@@ -289,6 +289,13 @@
 <span><span class="co">#&gt; 5 species added at genus level (*)</span></span>
 <span><span class="co">#&gt; 1 species added at family level (**)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
+<p><strong>Pay attention to the warning message there</strong>. Because not all genera in the species list are presented in the megatree, it is impossible to find the most recent ancestor for genus and family that are missing from the megatree. Therefore, <strong>for user-provided phylogenies, here is the recommended steps</strong>:</p>
+<ol style="list-style-type: decimal">
+<li>Get the classification information (a data frame with two columns: genus and family) for all genera presented in the species list and the megatree.</li>
+<li>Prepare the species list as a data frame with three columns: species, genus, and family using the classification information.</li>
+<li>Process the megatree using function <code>processed_tree = rtrees::add_root_infor(tree, classification)</code>.</li>
+<li>Pass the processed megatree to <code>rtrees::get_tree(sp_list_data_frame, processed_tree)</code> to derive the phylogeny for your species list.</li>
+</ol>
 </div>
 <div class="section level2">
 <h2 id="bind-missing-species-to-specified-places">Bind missing species to specified places<a class="anchor" aria-label="anchor" href="#bind-missing-species-to-specified-places"></a>
@@ -328,8 +335,6 @@
 <ul>
 <li>
 <code>random_below_basal</code> will randomly select a downstream node to attach the new tip.</li>
-<li>
-<code>at_or_above_basal</code> will graft the new tip above the genus/family basal node if no co-family species found.</li>
 <li>If only one species in the mega-tree that is in the same genus/family of the new tip, then the new tip will be grafted at the middle of this species’ branch for all scenarios.</li>
 </ul>
 </li>
@@ -341,6 +346,11 @@
 <h1 id="contribution">Contribution<a class="anchor" aria-label="anchor" href="#contribution"></a>
 </h1>
 <p>Feel free to test it. Contributions and suggestions are welcome. You can open an issue or send a pull request.</p>
+</div>
+<div class="section level1">
+<h1 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h1>
+<p>Li Daijiang. (2023). rtrees: an R package to assemble phylogenetic trees from megatrees. Ecography.</p>
 </div>
 
   </main><aside class="col-md-3"><div class="license">
