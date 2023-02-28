@@ -2,12 +2,12 @@ citHeader("To cite rtrees in publications use:")
 
 citEntry(
   entry    = "Article",
-  title    = "rtrees: an R package to assemble phylogenetic trees from mega-trees",
+  title    = "rtrees: an R package to assemble phylogenetic trees from megatrees",
   author   = "Daijiang Li",
-  journal  = "v0.0.1",
-  year     = "2022",
+  journal  = "Ecography",
+  year     = "2023",
   url      = "https://github.com/daijiang/rtrees",
   textVersion = paste(
-"Li Daijiang. rtrees: an R package to assemble phylogenetic trees from mega-trees. 2022. v0.0.1. https://github.com/daijiang/rtrees"
+"Li Daijiang. rtrees: an R package to assemble phylogenetic trees from mega-trees. 2023. Ecography. https://github.com/daijiang/rtrees"
   )
 )

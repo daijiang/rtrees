@@ -111,7 +111,8 @@ sp_list_df(sp_list = c("Periophthalmus_barbarus", "Barathronus_bicolor"),
 
 ## Get phylogeny from one megatree
 
-Then we can derive a phylogeny from `tree_fish`.
+Once we have the species list ready, we can then derive a phylogeny from
+`tree_fish`.
 
 ``` r
 test_tree = get_tree(sp_list = test_fish_list,
@@ -206,6 +207,23 @@ plot(get_tree(sp_list = test_tree_sp, tree = test_tree, taxon = "plant",
 
 <img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
+**Pay attention to the warning message there**. Because not all genera
+in the species list are presented in the megatree, it is impossible to
+find the most recent ancestor for genus and family that are missing from
+the megatree. Therefore, **for user-provided phylogenies, here is the
+recommended steps**:
+
+1.  Get the classification information (a data frame with two columns:
+    genus and family) for all genera presented in the species list and
+    the megatree.
+2.  Prepare the species list as a data frame with three columns:
+    species, genus, and family using the classification information.
+3.  Process the megatree using function
+    `processed_tree = rtrees::add_root_infor(tree, classification)`.
+4.  Pass the processed megatree to
+    `rtrees::get_tree(sp_list_data_frame, processed_tree)` to derive the
+    phylogeny for your species list.
+
 ## Bind missing species to specified places
 
 It is also possible to specify a particular species to bind with by
@@ -244,8 +262,6 @@ plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
   the genus/family basal node.
   - `random_below_basal` will randomly select a downstream node to
     attach the new tip.
-  - `at_or_above_basal` will graft the new tip above the genus/family
-    basal node if no co-family species found.
   - If only one species in the mega-tree that is in the same
     genus/family of the new tip, then the new tip will be grafted at the
     middle of this species’ branch for all scenarios.
@@ -257,3 +273,8 @@ plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
 
 Feel free to test it. Contributions and suggestions are welcome. You can
 open an issue or send a pull request.
+
+# Citation
+
+Li Daijiang. (2023). rtrees: an R package to assemble phylogenetic trees
+from megatrees. Ecography.

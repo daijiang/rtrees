@@ -164,7 +164,6 @@ plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
   + If it is grafted at the family level, two `*`s (i.e., `**`).
 - The default scenario is `at_basal_node`, which will graft species at the genus/family basal node.
   + `random_below_basal` will randomly select a downstream node to attach the new tip.
-  + `at_or_above_basal` will graft the new tip above the genus/family basal node if no co-family species found.
   + If only one species in the mega-tree that is in the same genus/family of the new tip, then the new tip will be grafted at the middle of this species' branch for all scenarios.
 - The `tree` can be a user provided tree, if so, set `tree_by_user = TRUE`.
 - See `?get_tree` for more details.
@@ -173,4 +172,8 @@ plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
 
 Feel free to test it. Contributions and suggestions are welcome. You can open an issue or send a pull request.
   
+# Citation
+
+Li Daijiang. (2023). rtrees: an R package to assemble phylogenetic trees from megatrees. Ecography.
+
 
