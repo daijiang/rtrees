@@ -9,7 +9,7 @@
 #' 
 #' For a list of species, generate a phylogeny or multiple phylogenies from a 
 #' provided mega-tree or mega-trees. If a species is
-#' not in the mega-tree, it will be grafted to the mega-tree with three scenarios.
+#' not in the mega-tree, it will be grafted to the mega-tree with two scenarios.
 #' 
 #' @param sp_list A character vector or a data frame with at least three columns: species, genus, family. Species column
 #' holds the species for which we want to have a phylogeny. It can also have two optional columns:
