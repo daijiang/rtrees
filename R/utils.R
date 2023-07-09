@@ -211,7 +211,7 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
     # basal_node = tidytree::MRCA(tree_df, range(tree_df_subset$node))
     basal_node = tidytree::MRCA(tree_df, tree_df_subset$node) # same
     # if a genus / family is not monophyletic, the most inclusive ancestor will be returned
-    if(show_warning){
+    if(show_warning & length(sp_names) > 1){
       descts = tidytree::offspring(tree_df, basal_node$node, tiponly = T)$label
       if(!setequal(sp_names, descts)){
         cat("Caution: Species in", if(fam) "family" else "genus", target,
@@ -248,6 +248,17 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
                            basal_time = node_heights[basal_node]) 
   gf_summ3 = gf_summ3[, c("family", "genus", "basal_node", "basal_time", 
                           "root_node", "root_time", "n_genus", "n_spp", "only_sp")]
+  
+  # when a family only have 1 species, we need the branch length to be basal_time and root_time
+  
+  brl = dplyr::mutate(tree_df[tree_df$label %in% gf_summ3$only_sp[is.na(gf_summ3$genus) & is.na(gf_summ3$basal_time)], ],
+                basal_time = branch.length, root_time = branch.length, only_sp = label)[, c("only_sp", "basal_time", "root_time")]
+  
+  brl = dplyr::left_join(data.frame(only_sp = gf_summ3$only_sp[is.na(gf_summ3$genus) & is.na(gf_summ3$basal_time)]), 
+                   brl, by = "only_sp")
+  
+  gf_summ3$basal_time[is.na(gf_summ3$genus) & is.na(gf_summ3$basal_time)] = brl$basal_time
+  gf_summ3$root_time[is.na(gf_summ3$genus) & is.na(gf_summ3$root_time)] = brl$root_time
   
   tree$genus_family_root = gf_summ3
   
