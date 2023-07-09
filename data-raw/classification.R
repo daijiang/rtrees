@@ -462,6 +462,10 @@ classifications = bind_rows(amph, classifications) %>%
   as_tibble() %>% 
   distinct()
 
+classifications = tibble::add_row(classifications, genus = "Ooeidozyga",
+                                  family = "Dicroglossidae", taxon = "amphibian")
+classifications = dplyr::arrange(classifications, taxon, genus)
+
 # mammal vertlife ---
 mammal_class_vertlife = read_csv("https://data.vertlife.org/mammaltree/taxonomy_mamPhy_5911species.csv")
 mammal_class_vertlife = dplyr::select(mammal_class_vertlife, genus = gen, family = fam) %>% 

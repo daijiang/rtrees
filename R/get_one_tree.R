@@ -312,7 +312,7 @@ get_one_tree = function(sp_list, tree, taxon,
     }
     
     # when the clade is large, tidytree::offspring() will take a long time
-    if(root_sub$n_spp > 1) use_castor = TRUE else use_castor = FALSE
+    if(root_sub$n_spp > 3) use_castor = TRUE else use_castor = FALSE
     # cat(where_loc)
     if(dt){
       tree_df = bind_tip(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
@@ -379,6 +379,8 @@ get_one_tree = function(sp_list, tree, taxon,
   }
   
   tree_sub$graft_status = graft_status
+  
+  tree_sub = ape::ladderize(tree_sub)
   
   return(tree_sub)
 }
