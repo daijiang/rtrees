@@ -90,7 +90,7 @@ Derive a phylogeny from a mega-tree
 
 For a list of species, generate a phylogeny or multiple phylogenies from a
 provided mega-tree or mega-trees. If a species is
-not in the mega-tree, it will be grafted to the mega-tree with three scenarios.
+not in the mega-tree, it will be grafted to the mega-tree with two scenarios.
 }
 \examples{
 test_sp = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii", 

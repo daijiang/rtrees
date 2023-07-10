@@ -217,6 +217,7 @@ get_one_tree = function(sp_list, tree, taxon,
           add_above_node = TRUE
           tree$genus_family_root$only_sp[idx_row] = NA # now will be more than 1 sp in this genus
           tree$genus_family_root$basal_node[idx_row] = node_label_new
+          tree$genus_family_root$basal_time[idx_row] = unname(new_ht)
         }
       } else { # more than 1 species in the genus
         where_loc = root_sub$basal_node # scenarioes 1 and 3, no new node added

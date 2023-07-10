@@ -223,14 +223,10 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
       # root
       root_node = basal_node
     } else {
-      if(length(sp_names) == 1){ # only 1 sp
-        root_node = basal_node
-      } else {
-        root_node = tidytree::parent(tree_df, basal_node$node)
-      }
+      root_node = tidytree::parent(tree_df, basal_node$node)
     }
     
-    tibble::tibble(basal_node = basal_node$label,
+    tibble::tibble(basal_node = if(length(sp_names) == 1) root_node$label else basal_node$label,
                    root_node = root_node$label,
                    only_sp = if(length(sp_names) == 1) sp_names else NA)
   }
@@ -248,18 +244,6 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
                            basal_time = node_heights[basal_node]) 
   gf_summ3 = gf_summ3[, c("family", "genus", "basal_node", "basal_time", 
                           "root_node", "root_time", "n_genus", "n_spp", "only_sp")]
-  
-  # when a family only have 1 species, we need the branch length to be basal_time and root_time
-  
-  brl = dplyr::mutate(tree_df[tree_df$label %in% gf_summ3$only_sp[is.na(gf_summ3$basal_time)], ],
-                basal_time = branch.length, root_time = branch.length, only_sp = label)[, c("only_sp", "basal_time", "root_time")]
-  brl$only_sp = as.character(brl$only_sp)
-  
-  brl = dplyr::left_join(data.frame(only_sp = gf_summ3$only_sp[is.na(gf_summ3$basal_time)], stringsAsFactors = FALSE), 
-                   brl, by = "only_sp")
-  
-  gf_summ3$basal_time[is.na(gf_summ3$basal_time)] = brl$basal_time
-  gf_summ3$root_time[is.na(gf_summ3$root_time)] = brl$root_time
   
   tree$genus_family_root = gf_summ3
   
