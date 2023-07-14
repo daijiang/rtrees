@@ -12,6 +12,8 @@
 #' - Fish classification information was based on FishBase. There are 4,825 genus in this file.
 #' <https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz>
 #' 
+#' - Bee classification information was from [Bee Tree of Life](http://beetreeoflife.org/nomenclature/). Note that we used 'Subfamily' in their nomenclature file as "family" here. If a genus' Subfamily is missing, we used its Family.
+#' 
 #' - Bird classification information was based on BirdLife, which resulted in 2,391 genus.
 #' <http://datazone.birdlife.org/species/taxonomy> However, based on the 
 #' [taxonomy file](https://data.vertlife.org/birdtree/BLIOCPhyloMasterTax.csv)
@@ -29,6 +31,6 @@
 #' 
 #' - Shark and Ray classification information was largely from NCBI.
 #' 
-#' @format A data frame with three columns: genus, family, and taxon (`plant`, `fish`, `bird`, `mammal`, `amphibian`, `reptile`, `shark_ray`). 
+#' @format A data frame with three columns: genus, family, and taxon (`plant`, `fish`, `bird`, `mammal`, `amphibian`, `reptile`, `shark_ray`, `bee`). 
 #' 
 "classifications"

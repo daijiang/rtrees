@@ -1,5 +1,5 @@
 
-taxa_supported = c("amphibian", "bird", "fish", "mammal", "plant", "reptile", "shark_ray")
+taxa_supported = c("amphibian", "bird", "fish", "mammal", "plant", "reptile", "shark_ray", "bee")
 usethis::use_data(taxa_supported, overwrite = T)
 
 
@@ -679,7 +679,25 @@ xa = filter(classifications, taxon == "amphibian")
 filter(xa, duplicated(genus))
 filter(xa, genus == "Ingerana")
 classifications = filter(classifications, !(genus == "Ingerana" & family == "Ceratobatrachidae"))
-                          
+
+# bee ----
+readxl::read_excel("http://beetreeoflife.org/downloads/files/BEE_taxonomic_database.xlsx", sheet = 2)
+xfun::download_file("http://beetreeoflife.org/downloads/files/BEE_taxonomic_database.xlsx", 
+                    "~/Downloads/BEE_taxonomic_database.xlsx")
+
+bees_class = readxl::read_excel("~/Downloads/BEE_taxonomic_database.xlsx", sheet = 2) |>
+  dplyr::select(genus = Genus, family = Subfamily, Family) |>
+  unique() |> 
+  mutate(taxon = "bee",
+         family = ifelse(is.na(family), Family, family)) |> 
+  dplyr::select(-Family)
+# used subfamily!!
+bees_class = add_row(bees_class, genus = "Micralictoides", family = "Rophitinae", taxon = "bee") |> 
+  add_row(genus = "Neopasites", family = "Nomadinae", taxon = "bee")
+
+classifications = bind_rows(classifications, bees_class) 
+
+# all together and save ----
 classifications = arrange(classifications, taxon, genus) %>% 
   distinct()
 usethis::use_data(classifications, overwrite = T, compress = "xz")

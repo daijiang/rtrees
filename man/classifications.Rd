@@ -5,7 +5,7 @@
 \alias{classifications}
 \title{Classifications of species}
 \format{
-A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}, \code{mammal}, \code{amphibian}, \code{reptile}, \code{shark_ray}).
+A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}, \code{mammal}, \code{amphibian}, \code{reptile}, \code{shark_ray}, \code{bee}).
 }
 \usage{
 classifications
@@ -20,6 +20,7 @@ Genus and family information of different groups of taxon.
 + \href{http://plantsoftheworldonline.org/}{Plants of the World online}
 \item Fish classification information was based on FishBase. There are 4,825 genus in this file.
 \url{https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz}
+\item Bee classification information was from \href{http://beetreeoflife.org/nomenclature/}{Bee Tree of Life}. Note that we used 'Subfamily' in their nomenclature file as "family" here. If a genus' Subfamily is missing, we used its Family.
 \item Bird classification information was based on BirdLife, which resulted in 2,391 genus.
 \url{http://datazone.birdlife.org/species/taxonomy} However, based on the
 \href{https://data.vertlife.org/birdtree/BLIOCPhyloMasterTax.csv}{taxonomy file}

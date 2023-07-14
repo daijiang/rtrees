@@ -5,7 +5,7 @@
 \alias{taxa_supported}
 \title{Taxonomic groups supported}
 \format{
-An object of class \code{character} of length 7.
+An object of class \code{character} of length 8.
 }
 \usage{
 taxa_supported

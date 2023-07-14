@@ -34,17 +34,19 @@ The mega-trees (or subset of 100 posterior phylogenies; 50 for fish to
 reduce the package size) are saved in the data package
 [{megatrees}](https://github.com/daijiang/megatrees).
 
-| Taxon                    | \# of species | \# of trees | R object (in `{megatrees}`)  | Reference            |
-|--------------------------|---------------|-------------|------------------------------|----------------------|
-| Amphibian                | 7238          | 100         | `tree_amphibian_n100`        | Jetz and Pyron 2018  |
-| Bird                     | 9993          | 100         | `tree_bird_n100`             | Jetz et al. 2012     |
-| Fish                     | 11638         | 1           | `tree_fish_12k`              | Rabosky et al. 2018  |
-|                          | 31516         | 50          | `tree_fish_32k_n50`          | Rabosky et al. 2018  |
-| Mammal                   | 5831          | 100         | `tree_mammal_n100_phylacine` | Faurby et al. 2018   |
-|                          | 5911          | 100         | `tree_mammal_n100_vertlife`  | Upham et al. 2019    |
-| Plant                    | 74531         | 1           | `tree_plant_otl`             | Brown and Smith 2018 |
-| Reptile (Squamate)       | 9755          | 100         | `tree_reptile_n100`          | Tonini et al. 2016   |
-| Shark, Ray, and Chimaera | 1192          | 100         | `tree_shark_ray_n100`        | Stein et al. 2018    |
+| Taxon                    | \# of species | \# of trees | R object (in `{megatrees}`)  | Reference                       |
+|--------------------------|---------------|-------------|------------------------------|---------------------------------|
+| Amphibian                | 7238          | 100         | `tree_amphibian_n100`        | Jetz and Pyron 2018             |
+| Bee                      | 4651          | 1           | `tree_bee`                   | Henríquez-Piskulich et al. 2023 |
+|                          | 4651          | 100         | `tree_bee_n100`              | Henríquez-Piskulich et al. 2023 |
+| Bird                     | 9993          | 100         | `tree_bird_n100`             | Jetz et al. 2012                |
+| Fish                     | 11638         | 1           | `tree_fish_12k`              | Rabosky et al. 2018             |
+|                          | 31516         | 50          | `tree_fish_32k_n50`          | Rabosky et al. 2018             |
+| Mammal                   | 5831          | 100         | `tree_mammal_n100_phylacine` | Faurby et al. 2018              |
+|                          | 5911          | 100         | `tree_mammal_n100_vertlife`  | Upham et al. 2019               |
+| Plant                    | 74531         | 1           | `tree_plant_otl`             | Brown and Smith 2018            |
+| Reptile (Squamate)       | 9755          | 100         | `tree_reptile_n100`          | Tonini et al. 2016              |
+| Shark, Ray, and Chimaera | 1192          | 100         | `tree_shark_ray_n100`        | Stein et al. 2018               |
 
 # Usage examples
 
@@ -102,11 +104,11 @@ phylogeny).
 ``` r
 sp_list_df(sp_list = c("Periophthalmus_barbarus", "Barathronus_bicolor"),
            taxon = "fish")
-#> # A tibble: 2 × 3
-#>   species                 genus          family    
-#>   <chr>                   <chr>          <chr>     
-#> 1 Periophthalmus_barbarus Periophthalmus Gobiidae  
-#> 2 Barathronus_bicolor     Barathronus    Aphyonidae
+#> # A tibble: 2 × 4
+#>   species                 genus          family     Family
+#>   <chr>                   <chr>          <chr>      <chr> 
+#> 1 Periophthalmus_barbarus Periophthalmus Gobiidae   <NA>  
+#> 2 Barathronus_bicolor     Barathronus    Aphyonidae <NA>
 ```
 
 ## Get phylogeny from one megatree
@@ -163,7 +165,7 @@ their computers at the same time). The output will be a set of generated
 phylogenies with class `multiPhylo`; the number of derived phylogenies
 will be the same as the input megatrees. For this scenario, we can use
 exactly the same code described above. For example, if we want to use
-the 100 randomly selected posterior phylogenies that have \~32k fish
+the 100 randomly selected posterior phylogenies that have ~32k fish
 species, we can add the `fish_tree = "all-taxon`.
 
 ``` r

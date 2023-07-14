@@ -15,6 +15,7 @@ get_tree(
   .progress = "text",
   fish_tree = c("timetree", "all-taxon"),
   mammal_tree = c("vertlife", "phylacine"),
+  bee_tree = c("maximum-likelihood", "bootstrap"),
   dt = TRUE
 )
 }
@@ -34,6 +35,7 @@ mega-phylogeny (or a set of 100 randomly selected posterior phylogenies) will be
 (see their own documentations from the \code{megatrees} package).
 \itemize{
 \item For amphibian, the mega-trees are \link[megatrees:tree_amphibian_n100]{megatrees::tree_amphibian_n100}.
+\item For bee, the mega-tree is \link[megatrees:tree_bee]{megatrees::tree_bee}, with \link[megatrees:tree_bee_n100]{megatrees::tree_bee_n100} be the other option.
 \item For bird, the mega-trees are \link[megatrees:tree_bird_n100]{megatrees::tree_bird_n100}.
 \item For fish, the mega-tree is \link[megatrees:tree_fish_12k]{megatrees::tree_fish_12k}, with \link[megatrees:tree_fish_32k_n50]{megatrees::tree_fish_32k_n50} be the other option.
 \item For mammal, the default mega-trees are \link[megatrees:tree_mammal_n100_vertlife]{megatrees::tree_mammal_n100_vertlife}, with \link[megatrees:tree_mammal_n100_phylacine]{megatrees::tree_mammal_n100_phylacine} be the other option.
@@ -74,6 +76,8 @@ that all have sequence data; if it is "all-taxon", then it will be the 100 large
 
 \item{mammal_tree}{Which set of mammal trees to use? If it is "vertlife" (default), then 100 randomly selected posterior phylogenies provided
 by Vertlife will be used; if it is "phylacine", then 100 randomly selected posterior phylogenies provided by PHYLACINE will be used.}
+
+\item{bee_tree}{Which bee tree to use? If it is "maximum-likelihood" (default), the a single maximum likelihood tree will be used. If it is "bootstrap", then a set of 100 randomly selected posterior phylogenies will be used. All trees are provided by the \href{http://beetreeoflife.org}{Bee Tree of Life}.}
 
 \item{dt}{Whether to use data.table version to bind tips \link{bind_tip}. The default is \code{TRUE} as it maybe slightly faster.}
 }

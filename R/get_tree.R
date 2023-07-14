@@ -25,6 +25,7 @@
 #' (see their own documentations from the `megatrees` package).
 #' 
 #' - For amphibian, the mega-trees are [megatrees::tree_amphibian_n100].
+#' - For bee, the mega-tree is [megatrees::tree_bee], with [megatrees::tree_bee_n100] be the other option.
 #' - For bird, the mega-trees are [megatrees::tree_bird_n100].
 #' - For fish, the mega-tree is [megatrees::tree_fish_12k], with [megatrees::tree_fish_32k_n50] be the other option.
 #' - For mammal, the default mega-trees are [megatrees::tree_mammal_n100_vertlife], with [megatrees::tree_mammal_n100_phylacine] be the other option.
@@ -55,6 +56,7 @@
 #' that all have sequence data; if it is "all-taxon", then it will be the 100 larger posterior phylogenies with 31516 soecues.
 #' @param mammal_tree Which set of mammal trees to use? If it is "vertlife" (default), then 100 randomly selected posterior phylogenies provided
 #' by Vertlife will be used; if it is "phylacine", then 100 randomly selected posterior phylogenies provided by PHYLACINE will be used.
+#' @param bee_tree Which bee tree to use? If it is "maximum-likelihood" (default), the a single maximum likelihood tree will be used. If it is "bootstrap", then a set of 100 randomly selected posterior phylogenies will be used. All trees are provided by the [Bee Tree of Life](http://beetreeoflife.org).
 #' @param dt Whether to use data.table version to bind tips [bind_tip]. The default is `TRUE` as it maybe slightly faster.
 #' @return A phylogeny for the species required, with class `phylo`; 
 #' or a list of phylogenies with class `multiPhylo` depends on the input `tree`. Within each phylogeny, the grafted status of all species was saved as a data frame named as "graft_status".
@@ -76,6 +78,7 @@ get_tree = function(sp_list, tree, taxon = NULL,
                     mc_cores = future::availableCores() - 2, .progress = "text",
                     fish_tree = c("timetree", "all-taxon"),
                     mammal_tree = c("vertlife", "phylacine"),
+                    bee_tree = c("maximum-likelihood", "bootstrap"),
                     dt = TRUE
                     ){
   scenario = match.arg(scenario)
@@ -97,6 +100,11 @@ get_tree = function(sp_list, tree, taxon = NULL,
       fish_tree = match.arg(fish_tree)
       if (fish_tree == "timetree") tree = megatrees::tree_fish_12k
       if (fish_tree == "all-taxon") tree = megatrees::tree_fish_32k_n50
+    }
+    if(taxon == "bee"){
+      bee_tree = match.arg(bee_tree)
+      if (bee_tree == "maximum-likelihood") tree = megatrees::tree_bee
+      if (bee_tree == "bootstrap") tree = megatrees::tree_bee_n100
     }
   }
   
