@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">rtrees</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,13 +83,13 @@
 <h1 id="mega-trees">Mega-trees<a class="anchor" aria-label="anchor" href="#mega-trees"></a>
 </h1>
 <p>Currently, <code>rtrees</code> provides mega-trees for the following taxonomic groups: amphibian, bird, fish, mammal, plant, reptile, and shark_ray. The mega-trees (or subset of 100 posterior phylogenies; 50 for fish to reduce the package size) are saved in the data package <a href="https://github.com/daijiang/megatrees" class="external-link">{megatrees}</a>.</p>
-<table class="table">
+<table style="width:100%;" class="table">
 <colgroup>
-<col width="24%">
-<col width="14%">
+<col width="22%">
 <col width="12%">
+<col width="11%">
+<col width="25%">
 <col width="28%">
-<col width="20%">
 </colgroup>
 <thead><tr class="header">
 <th>Taxon</th>
@@ -105,6 +105,20 @@
 <td>100</td>
 <td><code>tree_amphibian_n100</code></td>
 <td>Jetz and Pyron 2018</td>
+</tr>
+<tr class="even">
+<td>Bee</td>
+<td>4651</td>
+<td>1</td>
+<td><code>tree_bee</code></td>
+<td>Henríquez-Piskulich et al. 2023</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>4651</td>
+<td>100</td>
+<td><code>tree_bee_n100</code></td>
+<td>Henríquez-Piskulich et al. 2023</td>
 </tr>
 <tr class="even">
 <td>Bird</td>
@@ -209,11 +223,11 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sp_list_df.html">sp_list_df</a></span><span class="op">(</span>sp_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Periophthalmus_barbarus"</span>, <span class="st">"Barathronus_bicolor"</span><span class="op">)</span>,</span>
 <span>           taxon <span class="op">=</span> <span class="st">"fish"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 2 × 3</span></span>
-<span><span class="co">#&gt;   species                 genus          family    </span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;                   &lt;chr&gt;          &lt;chr&gt;     </span></span>
-<span><span class="co">#&gt; 1 Periophthalmus_barbarus Periophthalmus Gobiidae  </span></span>
-<span><span class="co">#&gt; 2 Barathronus_bicolor     Barathronus    Aphyonidae</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 2 × 4</span></span>
+<span><span class="co">#&gt;   species                 genus          family     Family</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;                   &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt; </span></span>
+<span><span class="co">#&gt; 1 Periophthalmus_barbarus Periophthalmus Gobiidae   &lt;NA&gt;  </span></span>
+<span><span class="co">#&gt; 2 Barathronus_bicolor     Barathronus    Aphyonidae &lt;NA&gt;</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get-phylogeny-from-one-megatree">Get phylogeny from one megatree<a class="anchor" aria-label="anchor" href="#get-phylogeny-from-one-megatree"></a>

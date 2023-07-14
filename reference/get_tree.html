@@ -12,7 +12,7 @@ task to derive a phylogeny from each of these (or a random subset of) megatrees.
     
     <a class="navbar-brand me-2" href="../index.html">rtrees</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,6 +65,7 @@ task to derive a phylogeny from each of these (or a random subset of) megatrees.
 <span>  .progress <span class="op">=</span> <span class="st">"text"</span>,</span>
 <span>  fish_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"timetree"</span>, <span class="st">"all-taxon"</span><span class="op">)</span>,</span>
 <span>  mammal_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vertlife"</span>, <span class="st">"phylacine"</span><span class="op">)</span>,</span>
+<span>  bee_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"maximum-likelihood"</span>, <span class="st">"bootstrap"</span><span class="op">)</span>,</span>
 <span>  dt <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -86,6 +87,7 @@ as that required by Phylomatic (i.e., family/genus/genus_sp).</p></dd>
 Optional if <code>taxon</code> is specified, in which case, a default
 mega-phylogeny (or a set of 100 randomly selected posterior phylogenies) will be used
 (see their own documentations from the <code>megatrees</code> package).</p><ul><li><p>For amphibian, the mega-trees are <a href="https://rdrr.io/pkg/megatrees/man/tree_amphibian_n100.html" class="external-link">megatrees::tree_amphibian_n100</a>.</p></li>
+<li><p>For bee, the mega-tree is megatrees::tree_bee, with megatrees::tree_bee_n100 be the other option.</p></li>
 <li><p>For bird, the mega-trees are <a href="https://rdrr.io/pkg/megatrees/man/tree_bird_n100.html" class="external-link">megatrees::tree_bird_n100</a>.</p></li>
 <li><p>For fish, the mega-tree is <a href="https://rdrr.io/pkg/megatrees/man/tree_fish_12k.html" class="external-link">megatrees::tree_fish_12k</a>, with <a href="https://rdrr.io/pkg/megatrees/man/tree_fish_32k_n50.html" class="external-link">megatrees::tree_fish_32k_n50</a> be the other option.</p></li>
 <li><p>For mammal, the default mega-trees are <a href="https://rdrr.io/pkg/megatrees/man/tree_mammal_n100_vertlife.html" class="external-link">megatrees::tree_mammal_n100_vertlife</a>, with <a href="https://rdrr.io/pkg/megatrees/man/tree_mammal_n100_phylacine.html" class="external-link">megatrees::tree_mammal_n100_phylacine</a> be the other option.</p></li>
@@ -140,6 +142,10 @@ that all have sequence data; if it is "all-taxon", then it will be the 100 large
 <dt>mammal_tree</dt>
 <dd><p>Which set of mammal trees to use? If it is "vertlife" (default), then 100 randomly selected posterior phylogenies provided
 by Vertlife will be used; if it is "phylacine", then 100 randomly selected posterior phylogenies provided by PHYLACINE will be used.</p></dd>
+
+
+<dt>bee_tree</dt>
+<dd><p>Which bee tree to use? If it is "maximum-likelihood" (default), the a single maximum likelihood tree will be used. If it is "bootstrap", then a set of 100 randomly selected posterior phylogenies will be used. All trees are provided by the <a href="http://beetreeoflife.org" class="external-link">Bee Tree of Life</a>.</p></dd>
 
 
 <dt>dt</dt>

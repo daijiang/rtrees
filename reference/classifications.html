@@ -7,6 +7,7 @@ Plant classification information. Its sources include:
 + Plants of the World online
 Fish classification information was based on FishBase. There are 4,825 genus in this file.
 https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz
+Bee classification information was from Bee Tree of Life. Note that we used 'Subfamily' in their nomenclature file as &quot;family&quot; here. If a genus' Subfamily is missing, we used its Family.
 Bird classification information was based on BirdLife, which resulted in 2,391 genus.
 http://datazone.birdlife.org/species/taxonomy However, based on the
 taxonomy file
@@ -28,6 +29,7 @@ Plant classification information. Its sources include:
 + Plants of the World online
 Fish classification information was based on FishBase. There are 4,825 genus in this file.
 https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz
+Bee classification information was from Bee Tree of Life. Note that we used 'Subfamily' in their nomenclature file as &quot;family&quot; here. If a genus' Subfamily is missing, we used its Family.
 Bird classification information was based on BirdLife, which resulted in 2,391 genus.
 http://datazone.birdlife.org/species/taxonomy However, based on the
 taxonomy file
@@ -52,7 +54,7 @@ Shark and Ray classification information was largely from NCBI.
     
     <a class="navbar-brand me-2" href="../index.html">rtrees</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,6 +97,7 @@ Shark and Ray classification information was largely from NCBI.
 + <a href="http://plantsoftheworldonline.org/" class="external-link">Plants of the World online</a></p></li>
 <li><p>Fish classification information was based on FishBase. There are 4,825 genus in this file.
 <a href="https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz" class="external-link">https://fishtreeoflife.org/downloads/PFC_taxonomy.csv.xz</a></p></li>
+<li><p>Bee classification information was from <a href="http://beetreeoflife.org/nomenclature/" class="external-link">Bee Tree of Life</a>. Note that we used 'Subfamily' in their nomenclature file as "family" here. If a genus' Subfamily is missing, we used its Family.</p></li>
 <li><p>Bird classification information was based on BirdLife, which resulted in 2,391 genus.
 <a href="http://datazone.birdlife.org/species/taxonomy" class="external-link">http://datazone.birdlife.org/species/taxonomy</a> However, based on the
 <a href="https://data.vertlife.org/birdtree/BLIOCPhyloMasterTax.csv" class="external-link">taxonomy file</a>
@@ -116,7 +119,7 @@ I used the family from Vertlife as I found that they are mostly more accurate.</
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A data frame with three columns: genus, family, and taxon (<code>plant</code>, <code>fish</code>, <code>bird</code>, <code>mammal</code>, <code>amphibian</code>, <code>reptile</code>, <code>shark_ray</code>).</p>
+    <p>A data frame with three columns: genus, family, and taxon (<code>plant</code>, <code>fish</code>, <code>bird</code>, <code>mammal</code>, <code>amphibian</code>, <code>reptile</code>, <code>shark_ray</code>, <code>bee</code>).</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
