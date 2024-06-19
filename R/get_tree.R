@@ -89,7 +89,10 @@ get_tree = function(sp_list, tree, taxon = NULL,
   if(missing(tree) & !is.null(taxon)){# pick default tree
     if(taxon == "plant") tree = megatrees::tree_plant_otl
     if(taxon == "bird") tree = megatrees::tree_bird_n100
-    if(taxon == "butterfly") tree = megatrees::tree_butterfly
+    if(taxon == "butterfly") {
+      warning("Classification of butterfly is not complete; it will work better if you can prepare the family information for your species.")
+      tree = megatrees::tree_butterfly
+    } 
     if(taxon == "amphibian") tree = megatrees::tree_amphibian_n100
     if(taxon == "reptile") tree = megatrees::tree_reptile_n100
     if(taxon == "shark_ray") tree = megatrees::tree_shark_ray_n100

@@ -39,6 +39,7 @@ reduce the package size) are saved in the data package
 | Amphibian                | 7238          | 100         | `tree_amphibian_n100`        | Jetz and Pyron 2018             |
 | Bee                      | 4651          | 1           | `tree_bee`                   | Henríquez-Piskulich et al. 2023 |
 |                          | 4651          | 100         | `tree_bee_n100`              | Henríquez-Piskulich et al. 2023 |
+| Butterfly                | 2244          | 1           | `tree_butterfly`             | Kawahara et al. 2023            |
 | Bird                     | 9993          | 100         | `tree_bird_n100`             | Jetz et al. 2012                |
 | Fish                     | 11638         | 1           | `tree_fish_12k`              | Rabosky et al. 2018             |
 |                          | 31516         | 50          | `tree_fish_32k_n50`          | Rabosky et al. 2018             |
@@ -52,6 +53,7 @@ reduce the package size) are saved in the data package
 
 ``` r
 library(rtrees)
+#> Warning: package 'rtrees' was built under R version 4.3.3
 library(ape)
 ```
 
@@ -104,11 +106,11 @@ phylogeny).
 ``` r
 sp_list_df(sp_list = c("Periophthalmus_barbarus", "Barathronus_bicolor"),
            taxon = "fish")
-#> # A tibble: 2 × 4
-#>   species                 genus          family     Family
-#>   <chr>                   <chr>          <chr>      <chr> 
-#> 1 Periophthalmus_barbarus Periophthalmus Gobiidae   <NA>  
-#> 2 Barathronus_bicolor     Barathronus    Aphyonidae <NA>
+#> # A tibble: 2 × 3
+#>   species                 genus          family    
+#>   <chr>                   <chr>          <chr>     
+#> 1 Periophthalmus_barbarus Periophthalmus Gobiidae  
+#> 2 Barathronus_bicolor     Barathronus    Aphyonidae
 ```
 
 ## Get phylogeny from one megatree
@@ -202,6 +204,52 @@ plot(get_tree(sp_list = test_tree_sp, tree = test_tree, taxon = "plant",
 #>               by adding root information for genus and family that can be found in the phylogeny or species list but
 #>               we recommend to prepare the phylogeny using `add_root_info()` with a classification
 #>               data frame with all tips first.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
 #> 
 #> 5 species added at genus level (*)
 #> 1 species added at family level (**)
@@ -243,6 +291,52 @@ plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
 #>               by adding root information for genus and family that can be found in the phylogeny or species list but
 #>               we recommend to prepare the phylogeny using `add_root_info()` with a classification
 #>               data frame with all tips first.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
+#> ! # Invaild edge matrix for <phylo>. A <tbl_df> is returned.
 #> 
 #> 5 species added at genus level (*)
 #> 1 species added at family level (**)

@@ -40,8 +40,9 @@ Currently, `rtrees` provides mega-trees for the following taxonomic groups: amph
 | Taxon                    | # of species | # of trees | R object (in `{megatrees}`)  | Reference            |
 |--------------------------|--------------|------------|------------------------------|----------------------|
 | Amphibian                | 7238         | 100        | `tree_amphibian_n100`        | Jetz and Pyron 2018  |
-| Bee                      | 4651         | 1          | `tree_bee`                   | Henríquez-Piskulich et al. 2023  |
-|                          | 4651         | 100        | `tree_bee_n100`                   | Henríquez-Piskulich et al. 2023  |
+| Bee                      | 4651         | 1          | `tree_bee`                   | Henríquez-Piskulich et al. 2023 |
+|                          | 4651         | 100        | `tree_bee_n100`              | Henríquez-Piskulich et al. 2023 |
+| Butterfly                | 2244         | 1          | `tree_butterfly`             | Kawahara et al. 2023 |
 | Bird                     | 9993         | 100        | `tree_bird_n100`             | Jetz et al. 2012     |
 | Fish                     | 11638        | 1          | `tree_fish_12k`              | Rabosky et al. 2018  |
 |                          | 31516        | 50         | `tree_fish_32k_n50`          | Rabosky et al. 2018  |
