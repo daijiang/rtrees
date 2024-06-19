@@ -209,7 +209,7 @@ add_root_info = function(tree, classification, process_all_tips = TRUE,
     # cat(sp_names)
     tree_df_subset = tree_df[tree_df$label %fin% sp_names, ]
     # basal_node = tidytree::MRCA(tree_df, range(tree_df_subset$node))
-    basal_node = tidytree::MRCA(tree_df, tree_df_subset$node) # same
+    basal_node = suppressMessages(tidytree::MRCA(tree_df, tree_df_subset$node)) # same
     # if a genus / family is not monophyletic, the most inclusive ancestor will be returned
     if(show_warning & length(sp_names) > 1){
       descts = tidytree::offspring(tree_df, basal_node$node, tiponly = T)$label
