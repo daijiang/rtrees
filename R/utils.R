@@ -30,7 +30,7 @@ cap_first_letter = function (x) {
 }
 
 if(getRversion() >= "2.15.1") 
-  utils::globalVariables(c(".", "isTip", "is_tip", "node", "tree_bee",
+  utils::globalVariables(c(".", "isTip", "is_tip", "node", "tree_bee", "tree_butterfly",
                            "tree_fish", "tree_plant_otl", "classifications",
                            "tree_bird_ericson", "tree_mammal", "taxon",
                            "family", "genus", "species", "grp", "parent",

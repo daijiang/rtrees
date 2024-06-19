@@ -5,7 +5,7 @@
 \alias{classifications}
 \title{Classifications of species}
 \format{
-A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}, \code{mammal}, \code{amphibian}, \code{reptile}, \code{shark_ray}, \code{bee}).
+A data frame with three columns: genus, family, and taxon (\code{plant}, \code{fish}, \code{bird}, \code{mammal}, \code{amphibian}, \code{reptile}, \code{shark_ray}, \code{bee}, \code{butterfly}).
 }
 \usage{
 classifications
@@ -33,6 +33,7 @@ I used the family from Vertlife as I found that they are mostly more accurate.
 \item Amphibian classification information was from \href{https://data.vertlife.org/amphibiantree/download/amph_shl_new_Classification.csv}{VertLife}.
 \item Reptile classification information was largely from \href{https://en.wikipedia.org/wiki/List_of_reptile_genera}{wikipedia}.
 \item Shark and Ray classification information was largely from NCBI.
+\item Butterfly classification information was from Kawahara et al. 2023, using the tip labels of their phylogeny.
 }
 }
 \keyword{datasets}

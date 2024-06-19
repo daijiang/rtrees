@@ -31,6 +31,8 @@
 #' 
 #' - Shark and Ray classification information was largely from NCBI.
 #' 
-#' @format A data frame with three columns: genus, family, and taxon (`plant`, `fish`, `bird`, `mammal`, `amphibian`, `reptile`, `shark_ray`, `bee`). 
+#' - Butterfly classification information was from Kawahara et al. 2023, using the tip labels of their phylogeny.
+#' 
+#' @format A data frame with three columns: genus, family, and taxon (`plant`, `fish`, `bird`, `mammal`, `amphibian`, `reptile`, `shark_ray`, `bee`, `butterfly`). 
 #' 
 "classifications"

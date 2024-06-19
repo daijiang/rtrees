@@ -36,6 +36,7 @@ mega-phylogeny (or a set of 100 randomly selected posterior phylogenies) will be
 \itemize{
 \item For amphibian, the mega-trees are \link[megatrees:tree_amphibian_n100]{megatrees::tree_amphibian_n100}.
 \item For bee, the mega-tree is \link[megatrees:tree_bee]{megatrees::tree_bee}, with \link[megatrees:tree_bee_n100]{megatrees::tree_bee_n100} be the other option.
+\item For butterfly, the mega-tee is \link[megatrees:tree_butterfly]{megatrees::tree_butterfly}.
 \item For bird, the mega-trees are \link[megatrees:tree_bird_n100]{megatrees::tree_bird_n100}.
 \item For fish, the mega-tree is \link[megatrees:tree_fish_12k]{megatrees::tree_fish_12k}, with \link[megatrees:tree_fish_32k_n50]{megatrees::tree_fish_32k_n50} be the other option.
 \item For mammal, the default mega-trees are \link[megatrees:tree_mammal_n100_vertlife]{megatrees::tree_mammal_n100_vertlife}, with \link[megatrees:tree_mammal_n100_phylacine]{megatrees::tree_mammal_n100_phylacine} be the other option.

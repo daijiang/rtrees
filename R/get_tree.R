@@ -26,6 +26,7 @@
 #' 
 #' - For amphibian, the mega-trees are [megatrees::tree_amphibian_n100].
 #' - For bee, the mega-tree is [megatrees::tree_bee], with [megatrees::tree_bee_n100] be the other option.
+#' - For butterfly, the mega-tee is [megatrees::tree_butterfly].
 #' - For bird, the mega-trees are [megatrees::tree_bird_n100].
 #' - For fish, the mega-tree is [megatrees::tree_fish_12k], with [megatrees::tree_fish_32k_n50] be the other option.
 #' - For mammal, the default mega-trees are [megatrees::tree_mammal_n100_vertlife], with [megatrees::tree_mammal_n100_phylacine] be the other option.
@@ -88,6 +89,7 @@ get_tree = function(sp_list, tree, taxon = NULL,
   if(missing(tree) & !is.null(taxon)){# pick default tree
     if(taxon == "plant") tree = megatrees::tree_plant_otl
     if(taxon == "bird") tree = megatrees::tree_bird_n100
+    if(taxon == "butterfly") tree = megatrees::tree_butterfly
     if(taxon == "amphibian") tree = megatrees::tree_amphibian_n100
     if(taxon == "reptile") tree = megatrees::tree_reptile_n100
     if(taxon == "shark_ray") tree = megatrees::tree_shark_ray_n100

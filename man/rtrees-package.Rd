@@ -3,7 +3,6 @@
 \docType{package}
 \name{rtrees-package}
 \alias{rtrees-package}
-\alias{_PACKAGE}
 \alias{rtrees}
 \title{Fetching phylogenies from mega-trees}
 \description{
