@@ -1,69 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://daijiang.github.io/rtrees/404.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/articles/Non-monophyletic-groups.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/articles/Simple_example.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/articles/grafting_scenarios.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/articles/speed.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/index.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/add_root_info.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/bind_tip.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/bind_tip_df.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/classifications.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/fmatch.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/get_graft_status.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/get_one_tree.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/get_tree.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/rm_stars.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/rtrees-package.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/sp_list_df.html</loc>
-  </url>
-  <url>
-    <loc>https://daijiang.github.io/rtrees/reference/taxa_supported.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://daijiang.github.io/rtrees/404.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/LICENSE.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/articles/Non-monophyletic-groups.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/articles/Simple_example.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/articles/grafting_scenarios.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/articles/index.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/articles/speed.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/authors.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/index.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/add_root_info.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/bind_tip.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/bind_tip_df.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/classifications.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/fmatch.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/get_graft_status.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/get_one_tree.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/get_tree.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/index.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/rm_stars.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/rtrees-package.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/sp_list_df.html</loc></url>
+<url><loc>https://daijiang.github.io/rtrees/reference/taxa_supported.html</loc></url>
 </urlset>
+
