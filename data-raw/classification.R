@@ -220,6 +220,28 @@ classification_bird = bind_rows(
 )
 any(duplicated(classification_bird$genus))
 
+# bird McTavish ----
+bird_names_McTavish = read_csv("https://raw.githubusercontent.com/McTavishLab/AvesData/refs/heads/main/Taxonomy_versions/Clements2023/taxonAddition_2023taxonomy_v1_4.csv")
+bird_names_McTavish = mutate(bird_names_McTavish, family2 = str_extract(family, "^[^ ]+"))
+classification_bird3 = filter(rtrees::classifications, taxon == "bird") 
+classification_bird4 = dplyr::select(bird_names_McTavish, genus, family = family2) |> distinct() |> 
+  mutate(taxon = "bird")
+any(duplicated(classification_bird3$genus))
+any(duplicated(classification_bird4$genus)) # no duplication
+classification_bird5 = bind_rows(classification_bird3, classification_bird4) |> distinct()
+filter(classification_bird5, genus %in% classification_bird5$genus[which(duplicated(classification_bird5$genus))]) 
+# use the McTavish version since it is newer?
+classification_bird6 = filter(classification_bird3, !genus %in% classification_bird4$genus) |> 
+  bind_rows(classification_bird4) |> 
+  arrange(genus)
+
+classifications = rtrees::classifications |> 
+  filter(taxon != "bird") |> 
+  bind_rows(classification_bird6) |> 
+  arrange(taxon, genus)
+
+usethis::use_data(classifications, overwrite = T, compress = "xz")
+
 # mammals ----
 names_mammal = read_csv("https://raw.githubusercontent.com/MegaPast2Future/PHYLACINE_1.2/master/Data/Taxonomy/Synonymy_table_valid_species_only.csv")
 names_mammal = unique(select(names_mammal, species = Binomial.1.2, genus = Genus.1.2, family = Family.1.2))
@@ -698,7 +720,7 @@ bees_class = add_row(bees_class, genus = "Micralictoides", family = "Rophitinae"
 classifications = bind_rows(classifications, bees_class) 
 
 # butterfly ----
-https://www.nature.com/articles/s41559-023-02041-9#MOESM1
+# https://www.nature.com/articles/s41559-023-02041-9#MOESM1
 # download its supplementary data
 # https://springernature.figshare.com/articles/dataset/A_global_phylogeny_of_butterflies_reveals_their_evolutionary_history_ancestral_host_plants_and_biogeographic_origins/21774899?file=39124943
 
