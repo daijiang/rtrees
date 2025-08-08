@@ -350,6 +350,16 @@ get_one_tree = function(sp_list, tree, taxon,
   
   tree_sub = castor::get_subtree_with_tips(tidytree::as.phylo(tree_df), sp_list$species)$subtree
   
+  # in case of non ultrametric
+  if(ape::is.ultrametric(tree) & !ape::is.ultrametric(tree_sub)){
+    ntips = ape::Ntip(tree_sub)
+    ages_tips = castor::get_all_distances_to_root(tree_sub)[1 : ntips]
+    ages_diff = round(ages_tips - stats::median(ages_tips), 3) # the most common age should be the median
+    tree_sub_df = tidytree::as_tibble(tree_sub)
+    tree_sub_df$branch.length[1:ntips] = tree_sub_df$branch.length[1:ntips] - ages_diff
+    tree_sub = tidytree::as.phylo(tree_sub_df)
+  }
+  
   # add trailing *
   grafted = sp_out_tree[sp_out_tree$status %fin% c("*", "**"), ]
   grafted$sp2 = paste0(grafted$species, grafted$status)
