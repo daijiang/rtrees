@@ -770,6 +770,30 @@ classification_butterfly = dplyr::select(xx, genus, family) |>
 
 classifications = bind_rows(classifications, classification_butterfly) 
 
+
+## WCVP ----
+cls_plant = dplyr::filter(classifications, taxon == "plant")
+any(duplicated(cls_plant$genus))
+
+xwcvp = rWCVPdata::wcvp_names
+
+cls_wcvp = group_by(xwcvp, genus, family) |> tally() |> ungroup()
+
+cls_wcvp2 = filter(cls_wcvp, !genus %in% unique(cls_wcvp$genus[duplicated(cls_wcvp$genus)]))
+any(duplicated(cls_wcvp2$genus))
+
+setdiff(cls_wcvp2$genus, cls_plant$genus)
+
+# only to add the new and non-duplicated ones...
+cls_wcvp_new = filter(cls_wcvp2, genus %in% setdiff(cls_wcvp2$genus, cls_plant$genus)) |> 
+  filter(genus != "xxxx")
+any(duplicated(cls_wcvp_new$genus))
+
+classifications = bind_rows(classifications, 
+                            dplyr::select(cls_wcvp_new, genus, family) |> 
+                              mutate(taxon = "plant"))
+
+
 # all together and save ----
 classifications = arrange(classifications, taxon, genus) %>% 
   distinct()
