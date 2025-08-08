@@ -1,12 +1,12 @@
 pandoc: 3.1.11
-pkgdown: 2.1.2
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   grafting_scenarios: grafting_scenarios.html
   Non-monophyletic-groups: Non-monophyletic-groups.html
   Simple_example: Simple_example.html
   speed: speed.html
-last_built: 2025-04-29T20:54Z
+last_built: 2025-08-08T22:39Z
 urls:
   reference: https://daijiang.github.io/rtrees/reference
   article: https://daijiang.github.io/rtrees/articles

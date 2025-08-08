@@ -77,13 +77,13 @@
 <h1 id="mega-trees">Mega-trees<a class="anchor" aria-label="anchor" href="#mega-trees"></a>
 </h1>
 <p>Currently, <code>rtrees</code> provides mega-trees for the following taxonomic groups: amphibian, bird, fish, mammal, plant, reptile, and shark_ray. The mega-trees (or subset of 100 posterior phylogenies; 50 for fish to reduce the package size) are saved in the data package <a href="https://github.com/daijiang/megatrees" class="external-link">{megatrees}</a>.</p>
-<table style="width:100%;" class="table">
+<table class="table">
 <colgroup>
-<col width="22%">
-<col width="12%">
-<col width="11%">
-<col width="25%">
-<col width="28%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
 </colgroup>
 <thead><tr class="header">
 <th>Taxon</th>
@@ -129,48 +129,55 @@
 <td>Jetz et al. 2012</td>
 </tr>
 <tr class="even">
+<td></td>
+<td>11017</td>
+<td>1</td>
+<td><code>tree_bird_McTavish</code></td>
+<td>McTavish et al. 2025</td>
+</tr>
+<tr class="odd">
 <td>Fish</td>
 <td>11638</td>
 <td>1</td>
 <td><code>tree_fish_12k</code></td>
 <td>Rabosky et al. 2018</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td></td>
 <td>31516</td>
 <td>50</td>
 <td><code>tree_fish_32k_n50</code></td>
 <td>Rabosky et al. 2018</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Mammal</td>
 <td>5831</td>
 <td>100</td>
 <td><code>tree_mammal_n100_phylacine</code></td>
 <td>Faurby et al. 2018</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td></td>
 <td>5911</td>
 <td>100</td>
 <td><code>tree_mammal_n100_vertlife</code></td>
 <td>Upham et al. 2019</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Plant</td>
 <td>74531</td>
 <td>1</td>
 <td><code>tree_plant_otl</code></td>
-<td>Brown and Smith 2018</td>
+<td>Smith and Brown 2018</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Reptile (Squamate)</td>
 <td>9755</td>
 <td>100</td>
 <td><code>tree_reptile_n100</code></td>
 <td>Tonini et al. 2016</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Shark, Ray, and Chimaera</td>
 <td>1192</td>
 <td>100</td>
@@ -185,7 +192,6 @@
 </h1>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://daijiang.github.io/rtrees/">rtrees</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'rtrees' was built under R version 4.3.3</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/emmanuelparadis/ape" class="external-link">ape</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="prepare-species-data-frame-optional">Prepare species data frame (optional)<a class="anchor" aria-label="anchor" href="#prepare-species-data-frame-optional"></a>
@@ -301,52 +307,6 @@
 <span><span class="co">#&gt;               by adding root information for genus and family that can be found in the phylogeny or species list but</span></span>
 <span><span class="co">#&gt;               we recommend to prepare the phylogeny using `add_root_info()` with a classification</span></span>
 <span><span class="co">#&gt;               data frame with all tips first.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 5 species added at genus level (*)</span></span>
 <span><span class="co">#&gt; 1 species added at family level (**)</span></span></code></pre></div>
@@ -375,52 +335,6 @@
 <span><span class="co">#&gt;               by adding root information for genus and family that can be found in the phylogeny or species list but</span></span>
 <span><span class="co">#&gt;               we recommend to prepare the phylogeny using `add_root_info()` with a classification</span></span>
 <span><span class="co">#&gt;               data frame with all tips first.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
-<span><span class="co">#&gt; ! # Invaild edge matrix for &lt;phylo&gt;. A &lt;tbl_df&gt; is returned.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 5 species added at genus level (*)</span></span>
 <span><span class="co">#&gt; 1 species added at family level (**)</span></span></code></pre></div>
@@ -495,7 +409,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
