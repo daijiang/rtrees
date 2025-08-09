@@ -358,6 +358,8 @@ get_one_tree = function(sp_list, tree, taxon,
     tree_sub_df = tidytree::as_tibble(tree_sub)
     tree_sub_df$branch.length[1:ntips] = tree_sub_df$branch.length[1:ntips] - ages_diff
     tree_sub = tidytree::as.phylo(tree_sub_df)
+    # ultrametric
+    tree_sub = castor::extend_tree_to_height(tree_sub)$tree
   }
   
   # add trailing *
