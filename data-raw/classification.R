@@ -221,19 +221,23 @@ classification_bird = bind_rows(
 any(duplicated(classification_bird$genus))
 
 # bird McTavish ----
-bird_names_McTavish = read_csv("https://raw.githubusercontent.com/McTavishLab/AvesData/refs/heads/main/Taxonomy_versions/Clements2023/taxonAddition_2023taxonomy_v1_4.csv")
-bird_names_McTavish = mutate(bird_names_McTavish, family2 = str_extract(family, "^[^ ]+"))
+bird_names_McTavish = read_csv("https://raw.githubusercontent.com/McTavishLab/AvesData/refs/heads/main/Taxonomy_versions/Clements2025/OTT_crosswalk_2025.csv")
+bird_names_McTavish = mutate(bird_names_McTavish, 
+                             genus = str_extract(SCI_NAME, "^[^ ]+"),
+                             family2 = str_extract(FAMILY, "^[^ ]+"))
 classification_bird3 = filter(rtrees::classifications, taxon == "bird") 
 classification_bird4 = dplyr::select(bird_names_McTavish, genus, family = family2) |> distinct() |> 
   mutate(taxon = "bird")
 any(duplicated(classification_bird3$genus))
 any(duplicated(classification_bird4$genus)) # no duplication
+setdiff(classification_bird4$genus, classification_bird3$genus)
 classification_bird5 = bind_rows(classification_bird3, classification_bird4) |> distinct()
 filter(classification_bird5, genus %in% classification_bird5$genus[which(duplicated(classification_bird5$genus))]) 
 # use the McTavish version since it is newer?
 classification_bird6 = filter(classification_bird3, !genus %in% classification_bird4$genus) |> 
   bind_rows(classification_bird4) |> 
   arrange(genus)
+filter(classification_bird6, genus %in% classification_bird6$genus[which(duplicated(classification_bird6$genus))]) 
 
 classifications = rtrees::classifications |> 
   filter(taxon != "bird") |> 
