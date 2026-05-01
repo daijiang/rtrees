@@ -1,6 +1,6 @@
 Package: rtrees
 Title: Deriving Phylogenies from Synthesis Trees
-Version: 1.0.4
+Version: 1.0.5
 Authors@R: 
     person(given = "Daijiang",
            family = "Li",
@@ -32,6 +32,8 @@ Suggests:
     rmarkdown,
     testthat,
     ggplot2
+Remotes:
+    daijiang/megatrees
 Additional_repositories: 
     https://daijiang.r-universe.dev
 URL: https://daijiang.github.io/rtrees/
