@@ -305,6 +305,7 @@ create_progress_bar <- function(name = "text", ...) {
 ## original contributed by Bradley Jones and modified by Guangchuang Yu
 ## copied from tidytree, modified to make it slightly faster
 as_tree <- function(x) {
+  x = x[order(x$node), ] # tip.label must be in node-number order (ape convention)
   edge <- x[, c("parent", "node")]
   i <- which(edge[,1] != 0 & edge[,1] != edge[,2])
   edge <- edge[i, ]

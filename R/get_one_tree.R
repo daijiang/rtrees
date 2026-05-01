@@ -183,7 +183,7 @@ get_one_tree = function(sp_list, tree, taxon,
       # tree has species in the same genus
       idx_row = which(tree$genus_family_root$genus == sp_out_tree$genus[i])
       root_sub = tree$genus_family_root[idx_row, ]
-      if(root_sub$n_spp == 1 | !is.na(where_loc_i)) { # but only 1 species in this genus
+      if(isTRUE(root_sub$n_spp == 1) | !is.na(where_loc_i)) { # but only 1 species in this genus
         if(!is.na(where_loc_i)){# a close sp specified
           where_loc = where_loc_i
           # the new tip will be bind to this species, in the half of its branch length (default frac)
@@ -203,8 +203,9 @@ get_one_tree = function(sp_list, tree, taxon,
               basal_node = node_label_new,
               basal_time = new_ht,
               root_node = tree_df$label[tree_df$node == tree_df$parent[tree_df$label == where_loc_i]],
-              root_time = tree_df$branch.length[tree_df$node == tree_df$parent[tree_df$label == where_loc_i]],
+              root_time = unname(node_hts[tree_df$label[tree_df$node == tree_df$parent[tree_df$label == where_loc_i]]]),
               n_genus = 1, n_spp = 1, only_sp = sp_out_tree$species[i])
+            idx_row = nrow(tree$genus_family_root)
           }
         } else {
           where_loc = root_sub$only_sp
@@ -257,10 +258,10 @@ get_one_tree = function(sp_list, tree, taxon,
                                                  genus = sp_out_tree$genus[i],
                                                  basal_node = node_label_new,
                                                  basal_time = unname(new_ht),
-                                                 root_node = node_label_new,
-                                                 root_time = unname(new_ht),
+                                                 root_node = root_sub$basal_node,
+                                                 root_time = root_sub$basal_time,
                                                  n_genus = 1,
-                                                 n_spp = 1, 
+                                                 n_spp = 1,
                                                  only_sp = sp_out_tree$species[i]
         )
       } else { # more than 1 species; can be the same genus or different genus
@@ -313,7 +314,7 @@ get_one_tree = function(sp_list, tree, taxon,
     }
     
     # when the clade is large, tidytree::offspring() will take a long time
-    if(root_sub$n_spp > 3) use_castor = TRUE else use_castor = FALSE
+    if(isTRUE(root_sub$n_spp > 3)) use_castor = TRUE else use_castor = FALSE
     # cat(where_loc)
     if(dt){
       tree_df = bind_tip(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
@@ -356,7 +357,8 @@ get_one_tree = function(sp_list, tree, taxon,
     ages_tips = castor::get_all_distances_to_root(tree_sub)[1 : ntips]
     ages_diff = round(ages_tips - stats::median(ages_tips), 3) # the most common age should be the median
     tree_sub_df = tidytree::as_tibble(tree_sub)
-    tree_sub_df$branch.length[1:ntips] = tree_sub_df$branch.length[1:ntips] - ages_diff
+    stopifnot(all(!tree_sub_df$node[1:ntips] %in% tree_sub_df$parent))
+    tree_sub_df$branch.length[1:ntips] = pmax(0, tree_sub_df$branch.length[1:ntips] - ages_diff)
     tree_sub = tidytree::as.phylo(tree_sub_df)
     # ultrametric
     tree_sub = castor::extend_tree_to_height(tree_sub)$tree
