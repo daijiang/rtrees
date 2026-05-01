@@ -11,6 +11,7 @@ To get a phylogeny for a list of species using an existing synthetic
 megatree, we can use the following code:
 
 ``` r
+
 # create a species list
 species <- c('Meliosma laui', 'Acer cordatum', 'Fraxinus mandshurica',
             'Ormosia pinnata', 'Aglaia dasyclada', 'Sphagnum_subnitens',
@@ -48,6 +49,7 @@ is ‘TRUE’ or ‘FALSE’, the grafting information was saved along with the
 phylogeny and can be extracted with the following code:
 
 ``` r
+
 # or use rtrees::get_graft_status()
 sp_tree$graft_status
 #> # A tibble: 11 × 3
@@ -73,6 +75,7 @@ above), we can use the same code as above, with the argument
 generated above as a pretended megatree that we already have.
 
 ``` r
+
 more_sp_to_add = c('Ormosia_sp.', 'Fraxinus_americana')
 new_species = c(species, more_sp_to_add)
 sp_tree_2 = rtrees::get_tree(sp_list = new_species, tree = sp_tree, 
@@ -93,6 +96,7 @@ all genus of the species list are already in the user provided
 phylogeny, then we can ignore the `taxon` argument:
 
 ``` r
+
 # remove Sphagnum_subnitens so that all genus are in the megatree
 new_species_all_in = setdiff(new_species, 'Sphagnum_subnitens')
 sp_tree_3 = rtrees::get_tree(sp_list = new_species_all_in, tree = sp_tree, 
@@ -113,6 +117,7 @@ input megatrees. For this scenario, we can use exactly the same code
 described above.
 
 ``` r
+
 # bird species
 bird_species =  c('Brachypteryx_major', 'Asthenes_perijana', 'Ciridops_anna', 
                    'Leiothlypis_ruficapilla', 'Reinwardtoena_reinwardti',

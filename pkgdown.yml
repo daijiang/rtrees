@@ -1,4 +1,4 @@
-pandoc: 3.1.11
+pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
@@ -6,7 +6,7 @@ articles:
   Non-monophyletic-groups: Non-monophyletic-groups.html
   Simple_example: Simple_example.html
   speed: speed.html
-last_built: 2026-03-10T14:05Z
+last_built: 2026-05-01T17:15Z
 urls:
   reference: https://daijiang.github.io/rtrees/reference
   article: https://daijiang.github.io/rtrees/articles

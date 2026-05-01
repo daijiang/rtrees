@@ -22,6 +22,7 @@ The R code used for the speed tests can be found
 [here](https://github.com/daijiang/rtrees_ms/blob/main/Rcode/speed_test.R).
 
 ``` r
+
 if(!require("ggplot2")) install.packages("ggplot2")
 #> Loading required package: ggplot2
 library(ggplot2)
