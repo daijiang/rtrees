@@ -19,6 +19,8 @@ A data frame with columns: species, genus, and family (if \code{taxon} is specif
 Convert a vector of species names to a data frame
 }
 \examples{
-sp_list_df(sp_list = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii"),
-           taxon = "fish")
+sp_list_df(
+  sp_list = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii"),
+  taxon = "fish"
+)
 }

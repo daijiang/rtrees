@@ -5,4 +5,6 @@
 #' @docType package
 #' @author Daijiang Li <daijianglee@@gmail.com>
 #' @keywords internal
+#' @useDynLib rtrees, .registration = TRUE
+#' @importFrom Rcpp evalCpp
 "_PACKAGE"
