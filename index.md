@@ -3,6 +3,10 @@
 The goal of `rtrees` is to remove the barriers to derive phylogenies for
 a list of species from mega-trees. Basically, `Phylomatic` and more.
 
+**`rtrees` just got an important update to speed it up! Please try to
+install the latest version. If you see any problem, please file a GitHub
+issue. Thanks!**
+
 # Installation
 
 ``` r
@@ -149,16 +153,16 @@ test_tree$graft_status
 #>    tip_label                species                 status                      
 #>    <chr>                    <chr>                   <chr>                       
 #>  1 Prognichthys_glaphyrae   Prognichthys_glaphyrae  exisiting species in the me…
-#>  2 Rhamphochromis_lucius*   Rhamphochromis_lucius   grafted at genus level      
-#>  3 Haplochromis_nyanzae*    Haplochromis_nyanzae    grafted at genus level      
-#>  4 Knipowitschia_croatica*  Knipowitschia_croatica  grafted at genus level      
-#>  5 Periophthalmus_barbarus  Periophthalmus_barbarus exisiting species in the me…
-#>  6 Gobiomorphus_coxii       Gobiomorphus_coxii      exisiting species in the me…
-#>  7 Careproctus_reinhardti   Careproctus_reinhardti  exisiting species in the me…
-#>  8 Sanopus_reticulatus*     Sanopus_reticulatus     grafted at genus level      
-#>  9 Astronesthes_micropogon* Astronesthes_micropogon grafted at genus level      
-#> 10 Neolissochilus_tweediei* Neolissochilus_tweediei grafted at genus level      
-#> 11 Serrasalmus_geryi        Serrasalmus_geryi       exisiting species in the me…
+#>  2 Periophthalmus_barbarus  Periophthalmus_barbarus exisiting species in the me…
+#>  3 Gobiomorphus_coxii       Gobiomorphus_coxii      exisiting species in the me…
+#>  4 Careproctus_reinhardti   Careproctus_reinhardti  exisiting species in the me…
+#>  5 Sanopus_reticulatus*     Sanopus_reticulatus     grafted at genus level      
+#>  6 Serrasalmus_geryi        Serrasalmus_geryi       exisiting species in the me…
+#>  7 Knipowitschia_croatica*  Knipowitschia_croatica  grafted at genus level      
+#>  8 Rhamphochromis_lucius*   Rhamphochromis_lucius   grafted at genus level      
+#>  9 Neolissochilus_tweediei* Neolissochilus_tweediei grafted at genus level      
+#> 10 Haplochromis_nyanzae*    Haplochromis_nyanzae    grafted at genus level      
+#> 11 Astronesthes_micropogon* Astronesthes_micropogon grafted at genus level      
 #> 12 <NA>                     Barathronus_bicolor     skipped as no co-family in …
 ```
 
@@ -292,5 +296,7 @@ open an issue or send a pull request.
 
 # Citation
 
-Li Daijiang. (2023). rtrees: an R package to assemble phylogenetic trees
-from megatrees. Ecography.
+Li Daijiang. (2023). [rtrees: an R package to assemble phylogenetic
+trees from
+megatrees](https://nsojournals.onlinelibrary.wiley.com/doi/10.1111/ecog.06643).
+Ecography. e06643

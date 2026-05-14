@@ -30,7 +30,7 @@ library(ggplot2)
 temf = tempfile()
 download.file("https://raw.githubusercontent.com/daijiang/rtrees_ms/main/Data/rtrees_speed_out.rds", 
               destfile = temf)
-speed_out = readRDS(temf)
+speed_out = readRDS(system.file("extdata", "rtrees_speed_out.rds", package = "rtrees"))
 speed_out = dplyr::mutate(speed_out, n_sp_missing_k = n_sp_missing / 1000, time_s = time/1e9)
 # speed_lm = dplyr::group_by(speed_out, expr) |> 
 #   dplyr::do(broom::tidy(lm(time_s ~ n_sp_missing_k, data = .))) |> 
@@ -42,8 +42,8 @@ ggplot(speed_out, aes(x = n_sp_missing_k, y = time_s, color = expr, group = expr
        y = "Time (Second)", color = NULL, group = NULL) +
   scale_x_continuous(breaks = c(0.05, seq(0.5, 5, 0.5))) +
   scale_y_continuous(breaks = c(0, 10, seq(25, 200, 25))) +
-  geom_text(x = 4, y = 33, label = "rtrees: y = -0.09 + 15.6x", inherit.aes = FALSE, color = "#F8766D") +
-  geom_text(x = 1.8, y = 123, label = "V.PhyloMaker: y = 11.80 + 34.8x", inherit.aes = FALSE, color = "#00BFC4") +
+  geom_text(x = 4, y = 30, label = "rtrees: y = 0.35+ 0.95x", inherit.aes = FALSE, color = "#F8766D") +
+  geom_text(x = 1.8, y = 150, label = "V.PhyloMaker2: y = 12.3 + 36.8x", inherit.aes = FALSE, color = "#00BFC4") +
   theme(legend.position = "none") 
 #> `geom_smooth()` using formula = 'y ~ x'
 ```

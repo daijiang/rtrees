@@ -28,8 +28,10 @@ specified).
 ## Examples
 
 ``` r
-sp_list_df(sp_list = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii"),
-           taxon = "fish")
+sp_list_df(
+  sp_list = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii"),
+  taxon = "fish"
+)
 #> # A tibble: 3 × 3
 #>   species                genus        family       
 #>   <chr>                  <chr>        <chr>        
