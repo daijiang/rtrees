@@ -11,6 +11,6 @@ An object of class \code{character} of length 9.
 taxa_supported
 }
 \description{
-Supported taxonomic groups with mega-trees provided in the {megatrees} package.
+Supported taxonomic groups with mega-trees provided in the \pkg{megatrees} package.
 }
 \keyword{datasets}

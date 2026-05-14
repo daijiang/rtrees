@@ -5,6 +5,7 @@
 #' 
 #' @inheritParams get_tree
 #' @return A phylogeny for the species required, with class `phylo`.
+#' @importFrom stats setNames
 #' @export
 #' 
 get_one_tree = function(sp_list, tree, taxon, 
@@ -118,40 +119,58 @@ get_one_tree = function(sp_list, tree, taxon,
   }
   
   scenario = match.arg(scenario)
-  
+
   if(is.null(tree$genus_family_root))
     stop("Did you use your own phylogeny? If so, please set `tree_by_user = TRUE`.")
   sp_out_tree$status = ""
-  tree_df = tidytree::as_tibble(tree)
-  tree_df$is_tip = !(tree_df$node %fin% tree_df$parent)
-  node_hts = ape::branching.times(tree)
+
+  # Use plain integer/numeric vectors instead of a tibble throughout the loop.
+  # phylo_to_vecs() is O(Ntip) and avoids all tidytree/[[.tbl_df overhead.
+  vecs <- phylo_to_vecs(tree)
+  # O(1) label → row-index lookup updated incrementally after each graft.
+  label_env <- list2env(
+    setNames(as.list(seq_along(vecs$label)), vecs$label),
+    hash = TRUE, parent = emptyenv())
+  # O(1) node-height (branching time) lookup; new nodes added via [[ <- ]] .
+  node_hts_env <- list2env(as.list(ape::branching.times(tree)), hash = TRUE, parent = emptyenv())
+  n_internal_initial <- ape::Nnode(tree)
+  n_nodes_added <- 0L
+
   all_eligible_nodes = unique(c(tree$genus_family_root$basal_node,
                                 tree$genus_family_root$root_node))
-  
+
   n_spp_to_show_progress = 200
   if(nrow(sp_out_tree) > n_spp_to_show_progress){
     progress <- create_progress_bar(.progress)
     progress$init(nrow(sp_out_tree))
     on.exit(progress$term())
   }
-  
-  for(i in 1:nrow(sp_out_tree)){
-    # if(nrow(sp_out_tree) > 100){
-    #   utils::setTxtProgressBar(progbar, i)
-    # }
-    # cat(i, "\t")
+
+  # For at_basal_node: pre-allocate graft-parameter arrays; call graft_all_cpp()
+  # once after the loop (one C++ allocation instead of N tibble round-trips).
+  n_sp <- nrow(sp_out_tree)
+  if(scenario == "at_basal_node") {
+    gb_where <- character(n_sp)
+    gb_nlbl  <- character(n_sp)   # "" = no new internal node needed
+    gb_frac  <- rep(0.5, n_sp)
+    gb_above <- logical(n_sp)
+    gb_ht    <- numeric(n_sp)
+    gb_valid <- logical(n_sp)
+  }
+
+  for(i in 1:n_sp){
     if(nrow(sp_out_tree) > n_spp_to_show_progress)
       progress$step()
-    
+
     where_loc_i = where_loc_i2 = NA
-    
+
     if(close_sp_specified){
       if(!is.na(sp_out_tree$close_sp[i]) &
          sp_out_tree$close_sp[i] %fin% tree$tip.label){
         where_loc_i = sp_out_tree$close_sp[i]
       }
     }
-    
+
     if(close_genus_specified){
       if(!is.na(sp_out_tree$close_genus[i]) &
          sp_out_tree$close_genus[i] != "" &
@@ -160,23 +179,24 @@ get_one_tree = function(sp_list, tree, taxon,
         where_loc_i2 = sp_out_tree$close_genus[i]
       } else {
         if(!is.na(sp_out_tree$close_genus[i]))
-          warning("The genus specified for ", sp_out_tree$species[i], 
+          warning("The genus specified for ", sp_out_tree$species[i],
                   " is not in the phylogeny.")
       }
     }
-    
+
     if(!all_genus_in_tree & is.na(where_loc_i) & is.na(where_loc_i2)){
-      if(is.na(sp_out_tree$family[i]) | 
+      if(is.na(sp_out_tree$family[i]) |
          !sp_out_tree$family[i] %fin% tree$genus_family_root$family){
         sp_out_tree$status[i] = "No co-family species in the mega-tree"
         next()
       }
     }
-    
+
     node_label_new = NULL
     add_above_node = FALSE
     fraction = 1/2
-    
+    new_genus_entry_added = FALSE  # set TRUE when we register a new genus in family fallback
+
     if(sp_out_tree$genus[i] %fin% tree$genus_family_root$genus |
        !is.na(where_loc_i2) | !is.na(where_loc_i)){
       sp_out_tree$status[i] = "*"
@@ -186,24 +206,30 @@ get_one_tree = function(sp_list, tree, taxon,
       if(isTRUE(root_sub$n_spp == 1) | !is.na(where_loc_i)) { # but only 1 species in this genus
         if(!is.na(where_loc_i)){# a close sp specified
           where_loc = where_loc_i
-          # the new tip will be bind to this species, in the half of its branch length (default frac)
-          new_ht = tree_df$branch.length[tree_df$label == where_loc_i] * (1 - fraction)
-          node_hts = c(new_ht, node_hts) # update node ages since added 1 new node
-          node_label_new = paste0("N", length(node_hts))
-          names(node_hts)[1] = node_label_new
+          wi <- label_env[[where_loc_i]]
+          new_ht = vecs$branch.length[wi] * (1 - fraction)
+          n_nodes_added <- n_nodes_added + 1L
+          node_label_new = paste0("N", n_internal_initial + n_nodes_added)
+          node_hts_env[[node_label_new]] <- new_ht
           all_eligible_nodes = c(all_eligible_nodes, node_label_new)
           add_above_node = TRUE
           if(!sp_out_tree$genus[i] %fin% tree$genus_family_root$genus){
             # this is a new genus that has not in the tree
-            # cat("here")
+            par_num <- vecs$parent[wi]
+            # For the initial tree vecs$node[j]==j, so par_num IS the row index.
+            # Use match() to be safe across random_below_basal grafts.
+            par_row <- match(par_num, vecs$node)
+            par_label <- vecs$label[par_row]
+            nh_par <- node_hts_env[[par_label]]
+            if(is.null(nh_par)) nh_par <- 0.0
             tree$genus_family_root = tibble::add_row(
               tree$genus_family_root,
               family = sp_out_tree$family[i],
               genus = sp_out_tree$genus[i],
               basal_node = node_label_new,
               basal_time = new_ht,
-              root_node = tree_df$label[tree_df$node == tree_df$parent[tree_df$label == where_loc_i]],
-              root_time = unname(node_hts[tree_df$label[tree_df$node == tree_df$parent[tree_df$label == where_loc_i]]]),
+              root_node = par_label,
+              root_time = nh_par,
               n_genus = 1, n_spp = 1, only_sp = sp_out_tree$species[i])
             idx_row = nrow(tree$genus_family_root)
           }
@@ -211,9 +237,9 @@ get_one_tree = function(sp_list, tree, taxon,
           where_loc = root_sub$only_sp
           # the new tip will be bind to this species, in the half of its branch length (default frac)
           new_ht = root_sub$basal_time * (1 - fraction)
-          node_hts = c(new_ht, node_hts) # update node ages since added 1 new node
-          node_label_new = paste0("N", length(node_hts))
-          names(node_hts)[1] = node_label_new
+          n_nodes_added <- n_nodes_added + 1L
+          node_label_new = paste0("N", n_internal_initial + n_nodes_added)
+          node_hts_env[[node_label_new]] <- new_ht
           all_eligible_nodes = c(all_eligible_nodes, node_label_new)
           add_above_node = TRUE
           tree$genus_family_root$only_sp[idx_row] = NA # now will be more than 1 sp in this genus
@@ -223,13 +249,15 @@ get_one_tree = function(sp_list, tree, taxon,
       } else { # more than 1 species in the genus
         where_loc = root_sub$basal_node # scenarioes 1 and 3, no new node added
         if(scenario == "random_below_basal"){ # randomly select a node in the genus and attach to it, no new node added
-          # TO DO: speed up the line below
-          tree_df_sub = tidytree::offspring(tree_df, where_loc)
-          tree_df_sub= tree_df_sub[tree_df_sub$is_tip == FALSE,]
-          if(nrow(tree_df_sub) > 0){
-            potential_locs = c(where_loc, tree_df_sub$label)
-            bls = tree_df_sub$branch.length
-            names(bls) = tree_df_sub$label
+          wi <- label_env[[where_loc]]
+          where_loc_node = vecs$node[wi]
+          sub_idx = fast_internal_offspring_cpp(vecs$parent, vecs$node, vecs$is_tip, where_loc_node)
+          if(length(sub_idx) > 0){
+            sub_labels <- vecs$label[sub_idx]
+            sub_bls    <- vecs$branch.length[sub_idx]
+            potential_locs = c(where_loc, sub_labels)
+            bls = sub_bls
+            names(bls) = sub_labels
             bls = c(root_sub$root_time - root_sub$basal_time, bls)
             names(bls)[1] = root_sub$basal_node
             prob = bls/sum(bls)
@@ -240,17 +268,17 @@ get_one_tree = function(sp_list, tree, taxon,
     } else {
       # no species in the same genus in the tree, go up to family node
       sp_out_tree$status[i] = "**"
-      idx_row = which(tree$genus_family_root$family == sp_out_tree$family[i] & 
+      idx_row = which(tree$genus_family_root$family == sp_out_tree$family[i] &
                         is.na(tree$genus_family_root$genus))
       root_sub = tree$genus_family_root[idx_row, ]
-      
+
       if(root_sub$n_spp == 1) { # but only 1 species in this family
         where_loc = root_sub$only_sp
         # the new tip will be bind to this species, in the half of its branch length (default frac)
         new_ht = root_sub$basal_time * (1 - fraction)
-        node_hts = c(new_ht, node_hts) # update node ages since added 1 new node
-        node_label_new = paste0("N", length(node_hts))
-        names(node_hts)[1] = node_label_new
+        n_nodes_added <- n_nodes_added + 1L
+        node_label_new = paste0("N", n_internal_initial + n_nodes_added)
+        node_hts_env[[node_label_new]] <- new_ht
         all_eligible_nodes = c(all_eligible_nodes, node_label_new)
         add_above_node = TRUE
         tree$genus_family_root = tibble::add_row(tree$genus_family_root,
@@ -267,15 +295,17 @@ get_one_tree = function(sp_list, tree, taxon,
       } else { # more than 1 species; can be the same genus or different genus
         where_loc = root_sub$basal_node # for scenario 1, no new node added
         if(scenario == "random_below_basal"){ # randomly select a node in the family, no new node added
-          # TO DO: speed up the line below
-          tree_df_sub = tidytree::offspring(tree_df, where_loc)
-          tree_df_sub= tree_df_sub[tree_df_sub$is_tip == FALSE,]
-          if(nrow(tree_df_sub) > 0){
+          wi <- label_env[[where_loc]]
+          where_loc_node = vecs$node[wi]
+          sub_idx = fast_internal_offspring_cpp(vecs$parent, vecs$node, vecs$is_tip, where_loc_node)
+          if(length(sub_idx) > 0){
+            sub_labels <- vecs$label[sub_idx]
+            sub_bls    <- vecs$branch.length[sub_idx]
             # only bind to genus/family basal node, not within genus nodes
-            potential_locs = intersect(c(where_loc, tree_df_sub$label), all_eligible_nodes)
-            locs_bl = tree_df_sub[tree_df_sub$label %fin% potential_locs, ]
-            bls = locs_bl$branch.length
-            names(bls) = locs_bl$label
+            potential_locs = intersect(c(where_loc, sub_labels), all_eligible_nodes)
+            pl_in_sub <- potential_locs[potential_locs %fin% sub_labels]
+            bls = sub_bls[match(pl_in_sub, sub_labels)]
+            names(bls) = pl_in_sub
             bls = c(root_sub$root_time - root_sub$basal_time, bls)
             names(bls)[1] = root_sub$basal_node
             prob = bls/sum(bls)
@@ -291,9 +321,9 @@ get_one_tree = function(sp_list, tree, taxon,
         #   new_ht = unname(root_sub$basal_time + (root_sub$root_time - root_sub$basal_time) * (1 - fraction))
         #   # here is the node height, but in bind_tip, it is the length between a parent and a node,
         #   # thus 1 - fraction
-        #   node_hts = c(new_ht, node_hts) # update node ages since added 1 new node
-        #   node_label_new = paste0("N", length(node_hts)) 
-        #   names(node_hts)[1] = node_label_new
+        #   n_nodes_added <- n_nodes_added + 1L
+        #   node_label_new = paste0("N", n_internal_initial + n_nodes_added)
+        #   node_hts_env[[node_label_new]] <- new_ht
         #   all_eligible_nodes = c(all_eligible_nodes, node_label_new)
         #   tree$genus_family_root$basal_node[idx_row] = node_label_new # new basal node
         #   tree$genus_family_root$basal_time[idx_row] = new_ht
@@ -305,36 +335,113 @@ get_one_tree = function(sp_list, tree, taxon,
         #                                            root_node = root_sub$root_node,
         #                                            root_time = root_sub$root_time,
         #                                            n_genus = 1,
-        #                                            n_spp = 1, 
+        #                                            n_spp = 1,
         #                                            only_sp = sp_out_tree$species[i])
         # }
+        # Register a new genus entry only when there are additional missing
+        # species from the same new genus, so they form a polytomy clade above
+        # the first attached species rather than scattering at the family basal node.
+        if (i < n_sp) {
+          genus_i <- sp_out_tree$genus[i]
+          remaining_genera <- sp_out_tree$genus[(i + 1L):n_sp]
+          n_same_genus_remaining <- sum(
+            remaining_genera == genus_i &
+            !remaining_genera %fin% tree$genus_family_root$genus
+          )
+          if (n_same_genus_remaining > 0L) {
+            tree$genus_family_root = tibble::add_row(
+              tree$genus_family_root,
+              family     = sp_out_tree$family[i],
+              genus      = genus_i,
+              basal_node = root_sub$basal_node,
+              basal_time = root_sub$basal_time,
+              root_node  = root_sub$root_node,
+              root_time  = root_sub$root_time,
+              n_genus    = 1L,
+              n_spp      = 1L,
+              only_sp    = sp_out_tree$species[i]
+            )
+            new_genus_entry_added = TRUE
+          }
+        }
       }
       # update genus number
       tree$genus_family_root$n_genus[idx_row] = tree$genus_family_root$n_genus[idx_row] + 1
     }
-    
-    # when the clade is large, tidytree::offspring() will take a long time
-    if(isTRUE(root_sub$n_spp > 3)) use_castor = TRUE else use_castor = FALSE
-    # cat(where_loc)
-    if(dt){
-      tree_df = bind_tip(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
-                         new_node_above = add_above_node, tip_label = sp_out_tree$species[i], 
-                         frac = fraction, return_tree = FALSE, node_label = node_label_new,
-                         use_castor = use_castor)
+
+    # ---- Graft ----
+    if(scenario == "at_basal_node") {
+      # Collect parameters; the single graft_all_cpp() call happens after the loop.
+      nh_val <- node_hts_env[[where_loc]]
+      gb_where[i] <- where_loc
+      gb_nlbl[i]  <- if (!is.null(node_label_new)) node_label_new else ""
+      gb_frac[i]  <- fraction
+      gb_above[i] <- add_above_node
+      gb_ht[i]    <- if (!is.null(nh_val)) nh_val else 0.0
+      gb_valid[i] <- TRUE
     } else {
-      tree_df = bind_tip_df(tree_tbl = tree_df, node_heights = node_hts, where = where_loc, 
-                            new_node_above = add_above_node, tip_label = sp_out_tree$species[i], 
-                            frac = fraction, return_tree = FALSE, node_label = node_label_new,
-                            use_castor = use_castor)
+      # random_below_basal: update vecs in place after each graft.
+      # bind_tip_core_cpp() operates on plain vectors — no tibble allocation per step.
+      nh_val <- node_hts_env[[where_loc]]
+      if(is.null(nh_val)) nh_val <- 0.0
+      res <- bind_tip_core_cpp(
+        parent        = vecs$parent,
+        node          = vecs$node,
+        branch_length = vecs$branch.length,
+        label         = vecs$label,
+        is_tip        = vecs$is_tip,
+        where         = where_loc,
+        tip_label     = sp_out_tree$species[i],
+        node_label_str = if (!is.null(node_label_new)) node_label_new else "",
+        frac          = fraction,
+        new_node_above = add_above_node,
+        node_height   = nh_val
+      )
+      n_old <- length(vecs$label)
+      vecs$parent        <- res$parent
+      vecs$node          <- res$node
+      vecs$branch.length <- res$`branch.length`
+      vecs$label         <- res$label
+      vecs$is_tip        <- res$is_tip
+      for (j in (n_old + 1L):length(vecs$label)) label_env[[vecs$label[j]]] <- j
+      if (new_genus_entry_added) {
+        # Correct basal_time to the actual branch length of the first species after
+        # random placement (may differ from the family basal time used as initial estimate).
+        tree$genus_family_root$basal_time[nrow(tree$genus_family_root)] <-
+          vecs$branch.length[label_env[[sp_out_tree$species[i]]]]
+      }
     }
-    
-    # tree_df$is_tip[tree_df$label == sp_out_tree$species[i]] = TRUE
-    # tree_df$is_tip[is.na(tree_df$is_tip)] = FALSE
-    # tree_df = dplyr::distinct(tree_df)
+
     # update n_spp in tree$genus_family_root
     tree$genus_family_root$n_spp[idx_row] = tree$genus_family_root$n_spp[idx_row] + 1
   }
-  
+
+  # ---- Post-loop: materialise the final tree_df ----
+  if(scenario == "at_basal_node") {
+    valid_i <- which(gb_valid)
+    if(length(valid_i) > 0) {
+      result <- graft_all_cpp(
+        parent0        = vecs$parent,
+        node0          = vecs$node,
+        bl0            = vecs$branch.length,
+        label0         = vecs$label,
+        is_tip0        = vecs$is_tip,
+        where_labels   = gb_where[valid_i],
+        new_tip_labels = sp_out_tree$species[valid_i],
+        new_node_labels = gb_nlbl[valid_i],
+        fracs          = gb_frac[valid_i],
+        above_flags    = gb_above[valid_i],
+        node_heights_vec = gb_ht[valid_i]
+      )
+      tree_df <- tibble::as_tibble(result)
+    } else {
+      tree_df <- tibble::as_tibble(vecs)
+    }
+  } else {
+    tree_df <- tibble::as_tibble(vecs)
+  }
+  if(!inherits(tree_df, "tbl_tree")) class(tree_df) <- c("tbl_tree", class(tree_df))
+
   tree_df = dplyr::arrange(tree_df, node)
   
   # if(nrow(sp_out_tree) > 100){

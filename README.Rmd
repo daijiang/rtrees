@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 
 The goal of `rtrees` is to remove the barriers to derive phylogenies for a list of species from mega-trees. Basically, `Phylomatic` and more.
 
+**`rtrees` just got an important update to speed it up! Please try to install the latest version. If you see any problem, please file a GitHub issue. Thanks!**
+
 
 # Installation
 
@@ -178,6 +180,6 @@ Feel free to test it. Contributions and suggestions are welcome. You can open an
   
 # Citation
 
-Li Daijiang. (2023). rtrees: an R package to assemble phylogenetic trees from megatrees. Ecography.
+Li Daijiang. (2023). [rtrees: an R package to assemble phylogenetic trees from megatrees](https://nsojournals.onlinelibrary.wiley.com/doi/10.1111/ecog.06643). Ecography. e06643
 
 

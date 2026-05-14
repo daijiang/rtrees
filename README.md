@@ -6,6 +6,10 @@
 The goal of `rtrees` is to remove the barriers to derive phylogenies for
 a list of species from mega-trees. Basically, `Phylomatic` and more.
 
+**`rtrees` just got an important update to speed it up! Please try to
+install the latest version. If you see any problem, please file a GitHub
+issue. Thanks!**
+
 # Installation
 
 ``` r
@@ -131,7 +135,7 @@ test_tree = get_tree(sp_list = test_fish_list,
 plot(test_tree, no.margin = T)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" alt="" width="100%" />
 
 No matter whether `show_grafted` is ‘TRUE’ or ‘FALSE’, the grafting
 information was saved along with the phylogeny and can be extracted with
@@ -144,16 +148,16 @@ test_tree$graft_status
 #>    tip_label                species                 status                      
 #>    <chr>                    <chr>                   <chr>                       
 #>  1 Prognichthys_glaphyrae   Prognichthys_glaphyrae  exisiting species in the me…
-#>  2 Rhamphochromis_lucius*   Rhamphochromis_lucius   grafted at genus level      
-#>  3 Haplochromis_nyanzae*    Haplochromis_nyanzae    grafted at genus level      
-#>  4 Knipowitschia_croatica*  Knipowitschia_croatica  grafted at genus level      
-#>  5 Periophthalmus_barbarus  Periophthalmus_barbarus exisiting species in the me…
-#>  6 Gobiomorphus_coxii       Gobiomorphus_coxii      exisiting species in the me…
-#>  7 Careproctus_reinhardti   Careproctus_reinhardti  exisiting species in the me…
-#>  8 Sanopus_reticulatus*     Sanopus_reticulatus     grafted at genus level      
-#>  9 Astronesthes_micropogon* Astronesthes_micropogon grafted at genus level      
-#> 10 Neolissochilus_tweediei* Neolissochilus_tweediei grafted at genus level      
-#> 11 Serrasalmus_geryi        Serrasalmus_geryi       exisiting species in the me…
+#>  2 Periophthalmus_barbarus  Periophthalmus_barbarus exisiting species in the me…
+#>  3 Gobiomorphus_coxii       Gobiomorphus_coxii      exisiting species in the me…
+#>  4 Careproctus_reinhardti   Careproctus_reinhardti  exisiting species in the me…
+#>  5 Sanopus_reticulatus*     Sanopus_reticulatus     grafted at genus level      
+#>  6 Serrasalmus_geryi        Serrasalmus_geryi       exisiting species in the me…
+#>  7 Knipowitschia_croatica*  Knipowitschia_croatica  grafted at genus level      
+#>  8 Rhamphochromis_lucius*   Rhamphochromis_lucius   grafted at genus level      
+#>  9 Neolissochilus_tweediei* Neolissochilus_tweediei grafted at genus level      
+#> 10 Haplochromis_nyanzae*    Haplochromis_nyanzae    grafted at genus level      
+#> 11 Astronesthes_micropogon* Astronesthes_micropogon grafted at genus level      
 #> 12 <NA>                     Barathronus_bicolor     skipped as no co-family in …
 ```
 
@@ -182,7 +186,7 @@ test_tree2
 plot(ladderize(test_tree2[[1]]), no.margin = T)
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" alt="" width="100%" />
 
 ## Add tips to user provided trees
 
@@ -209,7 +213,7 @@ plot(get_tree(sp_list = test_tree_sp, tree = test_tree, taxon = "plant",
 #> 1 species added at family level (**)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" alt="" width="100%" />
 
 **Pay attention to the warning message there**. Because not all genera
 in the species list are presented in the megatree, it is impossible to
@@ -250,7 +254,7 @@ plot(get_tree(sp_list = test_tree_sp_df, tree = test_tree, taxon = "plant",
 #> 1 species added at family level (**)
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" alt="" width="100%" />
 
 # Some notes
 
@@ -280,5 +284,7 @@ open an issue or send a pull request.
 
 # Citation
 
-Li Daijiang. (2023). rtrees: an R package to assemble phylogenetic trees
-from megatrees. Ecography.
+Li Daijiang. (2023). [rtrees: an R package to assemble phylogenetic
+trees from
+megatrees](https://nsojournals.onlinelibrary.wiley.com/doi/10.1111/ecog.06643).
+Ecography. e06643
