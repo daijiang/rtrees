@@ -8,3 +8,5 @@ docs
 inst/doc
 .positai
 .claude
+src/*.o
+src/*.so
