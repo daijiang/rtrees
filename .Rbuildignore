@@ -12,5 +12,6 @@
 ^\.github$
 ^\.positai$
 ^\.claude$
-^vignettes/Simple_example\.Rmd$
+^vignettes/.*\.html$
+^vignettes/.*\.html\.asis$
 ^validate_fixes\.R$

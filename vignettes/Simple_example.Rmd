@@ -1,6 +1,10 @@
 ---
 title: "Simple example"
 output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Simple example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

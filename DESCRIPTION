@@ -34,7 +34,8 @@ Suggests:
     rmarkdown,
     testthat,
     piggyback,
-    R.rsp
+    R.rsp,
+    ggplot2
 Remotes:
     daijiang/megatrees
 Additional_repositories: 
