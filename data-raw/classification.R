@@ -797,6 +797,9 @@ classifications = bind_rows(classifications,
                             dplyr::select(cls_wcvp_new, genus, family) |> 
                               mutate(taxon = "plant"))
 
+# additional classification from the Carruthers et al plant phylogeny
+classifications = bind_rows(classifications, readRDS("data-raw/classification_plants_missing_wcvp.rds"))
+
 
 # all together and save ----
 classifications = arrange(classifications, taxon, genus) %>% 
