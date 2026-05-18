@@ -248,7 +248,7 @@ add_root_info <- function(tree, classification, process_all_tips = TRUE,
         n_genus = dplyr::n_distinct(genus),
         n_spp = dplyr::n_distinct(species)
       ),
-      genus = NA
+      genus = NA_character_
     )
     family_summ <- family_summ[!is.na(family_summ$family), ]
     genus_summ <- dplyr::left_join(

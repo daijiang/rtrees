@@ -24,15 +24,15 @@
 #' mega-phylogeny (or a set of 100 randomly selected posterior phylogenies) will be used 
 #' (see their own documentations from the `megatrees` package).
 #' 
-#' - For amphibian, the mega-trees are [megatrees::tree_amphibian_n100].
-#' - For bee, the mega-tree is [megatrees::tree_bee], with [megatrees::tree_bee_n100] be the other option.
+#' - For amphibian, the mega-trees are loaded via [megatrees::get_tree_amphibian_n100()].
+#' - For bee, the mega-tree is [megatrees::tree_bee], with the bootstrap option loaded via [megatrees::get_tree_bee_n100()].
 #' - For butterfly, the mega-tee is [megatrees::tree_butterfly].
-#' - For bird, the mega-trees are [megatrees::tree_bird_n100].
-#' - For fish, the mega-tree is [megatrees::tree_fish_12k], with [megatrees::tree_fish_32k_n50] be the other option.
-#' - For mammal, the default mega-trees are [megatrees::tree_mammal_n100_vertlife], with [megatrees::tree_mammal_n100_phylacine] be the other option.
+#' - For bird, the mega-trees are loaded via [megatrees::get_tree_bird_n100()].
+#' - For fish, the mega-tree is [megatrees::tree_fish_12k], with the all-taxon option loaded via [megatrees::get_tree_fish_32k_n50()].
+#' - For mammal, the default mega-trees are loaded via [megatrees::get_tree_mammal_n100_vertlife()], with [megatrees::get_tree_mammal_n100_phylacine()] be the other option.
 #' - For plant, the mega-tree is [megatrees::tree_plant_otl].
-#' - For reptile, the mega-trees are [megatrees::tree_reptile_n100].
-#' - For shark, ray, and chimaeras, the mega-trees are [megatrees::tree_shark_ray_n100].
+#' - For reptile, the mega-trees are loaded via [megatrees::get_tree_reptile_n100()].
+#' - For shark, ray, and chimaeras, the mega-trees are loaded via [megatrees::get_tree_shark_ray_n100()].
 #' 
 #' @param taxon The taxon of species in the `sp_list`. Currently, can be `amphibian`, `bird`, `fish`, `mammal`, `plant`, `reptile`, or `shark_ray`.
 #' @param scenario How to insert a species into the mega-tree? 
@@ -88,28 +88,28 @@ get_tree = function(sp_list, tree, taxon = NULL,
     stop("Please specify at least a tree or a taxon group.")
   if(missing(tree) & !is.null(taxon)){# pick default tree
     if(taxon == "plant") tree = megatrees::tree_plant_otl
-    if(taxon == "bird") tree = megatrees::tree_bird_n100
+    if(taxon == "bird") tree = megatrees::get_tree_bird_n100()
     if(taxon == "butterfly") {
       warning("Classification of butterfly is not complete; it will work better if you can prepare the family information for your species.")
       tree = megatrees::tree_butterfly
-    } 
-    if(taxon == "amphibian") tree = megatrees::tree_amphibian_n100
-    if(taxon == "reptile") tree = megatrees::tree_reptile_n100
-    if(taxon == "shark_ray") tree = megatrees::tree_shark_ray_n100
+    }
+    if(taxon == "amphibian") tree = megatrees::get_tree_amphibian_n100()
+    if(taxon == "reptile") tree = megatrees::get_tree_reptile_n100()
+    if(taxon == "shark_ray") tree = megatrees::get_tree_shark_ray_n100()
     if(taxon == "mammal"){
       mammal_tree = match.arg(mammal_tree)
-      if (mammal_tree == "vertlife") tree = megatrees::tree_mammal_n100_vertlife
-      if (mammal_tree == "phylacine") tree = megatrees::tree_mammal_n100_phylacine
+      if (mammal_tree == "vertlife") tree = megatrees::get_tree_mammal_n100_vertlife()
+      if (mammal_tree == "phylacine") tree = megatrees::get_tree_mammal_n100_phylacine()
     }
     if(taxon == "fish"){
       fish_tree = match.arg(fish_tree)
       if (fish_tree == "timetree") tree = megatrees::tree_fish_12k
-      if (fish_tree == "all-taxon") tree = megatrees::tree_fish_32k_n50
+      if (fish_tree == "all-taxon") tree = megatrees::get_tree_fish_32k_n50()
     }
     if(taxon == "bee"){
       bee_tree = match.arg(bee_tree)
       if (bee_tree == "maximum-likelihood") tree = megatrees::tree_bee
-      if (bee_tree == "bootstrap") tree = megatrees::tree_bee_n100
+      if (bee_tree == "bootstrap") tree = megatrees::get_tree_bee_n100()
     }
   }
   
