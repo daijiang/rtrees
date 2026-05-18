@@ -124,6 +124,7 @@ bird_species =  c('Brachypteryx_major', 'Asthenes_perijana', 'Ciridops_anna',
                    'Garrulax_caerulatus', 'Buteo_rufofuscus', 'Sylvia_mystacea',
                    'Telophorus_viridis', 'Trachyphonus_darnaudii')
 sp_tree_4 = rtrees::get_tree(sp_list = bird_species, taxon = 'bird')
+#> Downloading tree_bird_n100.rda (~18 MB) to local cache...
 #> 
 #> 3 species added at genus level (*)
 #> 2 species added at family level (**)

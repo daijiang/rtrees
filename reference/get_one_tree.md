@@ -44,41 +44,44 @@ get_one_tree(
   phylogenies) will be used (see their own documentations from the
   `megatrees` package).
 
-  - For amphibian, the mega-trees are
-    [megatrees::tree_amphibian_n100](https://rdrr.io/pkg/megatrees/man/tree_amphibian_n100.html).
+  - For amphibian, the mega-trees are loaded via
+    [`megatrees::get_tree_amphibian_n100()`](https://rdrr.io/pkg/megatrees/man/get_tree_amphibian_n100.html).
 
   - For bee, the mega-tree is
     [megatrees::tree_bee](https://rdrr.io/pkg/megatrees/man/tree_bee.html),
-    with
-    [megatrees::tree_bee_n100](https://rdrr.io/pkg/megatrees/man/tree_bee_n100.html)
-    be the other option.
+    with the bootstrap option loaded via
+    [`megatrees::get_tree_bee_n100()`](https://rdrr.io/pkg/megatrees/man/get_tree_bee_n100.html).
 
   - For butterfly, the mega-tee is
     [megatrees::tree_butterfly](https://rdrr.io/pkg/megatrees/man/tree_butterfly.html).
 
-  - For bird, the mega-trees are
-    [megatrees::tree_bird_n100](https://rdrr.io/pkg/megatrees/man/tree_bird_n100.html).
+  - For bird, the mega-trees are loaded via
+    [`megatrees::get_tree_bird_n100()`](https://rdrr.io/pkg/megatrees/man/get_tree_bird_n100.html).
 
   - For fish, the mega-tree is
     [megatrees::tree_fish_12k](https://rdrr.io/pkg/megatrees/man/tree_fish_12k.html),
+    with the all-taxon option loaded via
+    [`megatrees::get_tree_fish_32k_n50()`](https://rdrr.io/pkg/megatrees/man/get_tree_fish_32k_n50.html).
+
+  - For mammal, the default mega-trees are loaded via
+    [`megatrees::get_tree_mammal_n100_vertlife()`](https://rdrr.io/pkg/megatrees/man/get_tree_mammal_n100_vertlife.html),
     with
-    [megatrees::tree_fish_32k_n50](https://rdrr.io/pkg/megatrees/man/tree_fish_32k_n50.html)
+    [`megatrees::get_tree_mammal_n100_phylacine()`](https://rdrr.io/pkg/megatrees/man/get_tree_mammal_n100_phylacine.html)
     be the other option.
 
-  - For mammal, the default mega-trees are
-    [megatrees::tree_mammal_n100_vertlife](https://rdrr.io/pkg/megatrees/man/tree_mammal_n100_vertlife.html),
-    with
-    [megatrees::tree_mammal_n100_phylacine](https://rdrr.io/pkg/megatrees/man/tree_mammal_n100_phylacine.html)
-    be the other option.
+  - For plant, the default mega-tree is
+    [megatrees::tree_plant_otl](https://rdrr.io/pkg/megatrees/man/tree_plant_otl.html)
+    (Smith and Brown 2018);
+    [megatrees::tree_plant_Carruthers](https://rdrr.io/pkg/megatrees/man/tree_plant_Carruthers.html)
+    (Carruthers et al. 2026) is also available; 100 posterior trees are
+    loaded via
+    [`megatrees::get_tree_plant_n100_Carruthers()`](https://rdrr.io/pkg/megatrees/man/get_tree_plant_n100_Carruthers.html).
 
-  - For plant, the mega-tree is
-    [megatrees::tree_plant_otl](https://rdrr.io/pkg/megatrees/man/tree_plant_otl.html).
+  - For reptile, the mega-trees are loaded via
+    [`megatrees::get_tree_reptile_n100()`](https://rdrr.io/pkg/megatrees/man/get_tree_reptile_n100.html).
 
-  - For reptile, the mega-trees are
-    [megatrees::tree_reptile_n100](https://rdrr.io/pkg/megatrees/man/tree_reptile_n100.html).
-
-  - For shark, ray, and chimaeras, the mega-trees are
-    [megatrees::tree_shark_ray_n100](https://rdrr.io/pkg/megatrees/man/tree_shark_ray_n100.html).
+  - For shark, ray, and chimaeras, the mega-trees are loaded via
+    [`megatrees::get_tree_shark_ray_n100()`](https://rdrr.io/pkg/megatrees/man/get_tree_shark_ray_n100.html).
 
 - taxon:
 

@@ -33,24 +33,27 @@ here will be limited to 1,000.
 Currently, `rtrees` provides mega-trees for the following taxonomic
 groups: amphibian, bird, fish, mammal, plant, reptile, and shark_ray.
 The mega-trees (or subset of 100 posterior phylogenies; 50 for fish to
-reduce the package size) are saved in the data package
-[{megatrees}](https://github.com/daijiang/megatrees).
+reduce the package size) are stored as GitHub release assets in the data
+package [{megatrees}](https://github.com/daijiang/megatrees) and
+downloaded on demand via getter functions.
 
-| Taxon | \# of species | \# of trees | R object (in `{megatrees}`) | Reference |
+| Taxon | \# of species | \# of trees | How to load (in `{megatrees}`) | Reference |
 |----|----|----|----|----|
-| Amphibian | 7238 | 100 | `tree_amphibian_n100` | Jetz and Pyron 2018 |
+| Amphibian | 7238 | 100 | `get_tree_amphibian_n100()` | Jetz and Pyron 2018 |
 | Bee | 4651 | 1 | `tree_bee` | Henríquez-Piskulich et al. 2023 |
-|  | 4651 | 100 | `tree_bee_n100` | Henríquez-Piskulich et al. 2023 |
+|  | 4651 | 100 | `get_tree_bee_n100()` | Henríquez-Piskulich et al. 2023 |
 | Butterfly | 2244 | 1 | `tree_butterfly` | Kawahara et al. 2023 |
-| Bird | 9993 | 100 | `tree_bird_n100` | Jetz et al. 2012 |
+| Bird | 9993 | 100 | `get_tree_bird_n100()` | Jetz et al. 2012 |
 |  | 11017 | 1 | `tree_bird_McTavish` | McTavish et al. 2025 |
 | Fish | 11638 | 1 | `tree_fish_12k` | Rabosky et al. 2018 |
-|  | 31516 | 50 | `tree_fish_32k_n50` | Rabosky et al. 2018 |
-| Mammal | 5831 | 100 | `tree_mammal_n100_phylacine` | Faurby et al. 2018 |
-|  | 5911 | 100 | `tree_mammal_n100_vertlife` | Upham et al. 2019 |
-| Plant | 74531 | 1 | `tree_plant_otl` | Smith and Brown 2018 |
-| Reptile (Squamate) | 9755 | 100 | `tree_reptile_n100` | Tonini et al. 2016 |
-| Shark, Ray, and Chimaera | 1192 | 100 | `tree_shark_ray_n100` | Stein et al. 2018 |
+|  | 31516 | 50 | `get_tree_fish_32k_n50()` | Rabosky et al. 2018 |
+| Mammal | 5831 | 100 | `get_tree_mammal_n100_phylacine()` | Faurby et al. 2018 |
+|  | 5911 | 100 | `get_tree_mammal_n100_vertlife()` | Upham et al. 2019 |
+| Plant | 74531 | 1 | `tree_plant_otl` (default) | Smith and Brown 2018 |
+|  | 123182 | 1 | `tree_plant_Carruthers` | Carruthers et al. 2026 |
+|  | 123182 | 100 | `get_tree_plant_n100_Carruthers()` | Carruthers et al. 2026 |
+| Reptile (Squamate) | 9755 | 100 | `get_tree_reptile_n100()` | Tonini et al. 2016 |
+| Shark, Ray, and Chimaera | 1192 | 100 | `get_tree_shark_ray_n100()` | Stein et al. 2018 |
 
 # Usage examples
 

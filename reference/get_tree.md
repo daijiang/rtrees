@@ -19,6 +19,7 @@ get_tree(
   fish_tree = c("timetree", "all-taxon"),
   mammal_tree = c("vertlife", "phylacine"),
   bee_tree = c("maximum-likelihood", "bootstrap"),
+  plant_tree = c("tree_plant_otl", "tree_plant_Carruthers", "tree_plant_n100_Carruthers"),
   dt = TRUE
 )
 ```
@@ -48,41 +49,44 @@ get_tree(
   phylogenies) will be used (see their own documentations from the
   `megatrees` package).
 
-  - For amphibian, the mega-trees are
-    [megatrees::tree_amphibian_n100](https://rdrr.io/pkg/megatrees/man/tree_amphibian_n100.html).
+  - For amphibian, the mega-trees are loaded via
+    [`megatrees::get_tree_amphibian_n100()`](https://rdrr.io/pkg/megatrees/man/get_tree_amphibian_n100.html).
 
   - For bee, the mega-tree is
     [megatrees::tree_bee](https://rdrr.io/pkg/megatrees/man/tree_bee.html),
-    with
-    [megatrees::tree_bee_n100](https://rdrr.io/pkg/megatrees/man/tree_bee_n100.html)
-    be the other option.
+    with the bootstrap option loaded via
+    [`megatrees::get_tree_bee_n100()`](https://rdrr.io/pkg/megatrees/man/get_tree_bee_n100.html).
 
   - For butterfly, the mega-tee is
     [megatrees::tree_butterfly](https://rdrr.io/pkg/megatrees/man/tree_butterfly.html).
 
-  - For bird, the mega-trees are
-    [megatrees::tree_bird_n100](https://rdrr.io/pkg/megatrees/man/tree_bird_n100.html).
+  - For bird, the mega-trees are loaded via
+    [`megatrees::get_tree_bird_n100()`](https://rdrr.io/pkg/megatrees/man/get_tree_bird_n100.html).
 
   - For fish, the mega-tree is
     [megatrees::tree_fish_12k](https://rdrr.io/pkg/megatrees/man/tree_fish_12k.html),
+    with the all-taxon option loaded via
+    [`megatrees::get_tree_fish_32k_n50()`](https://rdrr.io/pkg/megatrees/man/get_tree_fish_32k_n50.html).
+
+  - For mammal, the default mega-trees are loaded via
+    [`megatrees::get_tree_mammal_n100_vertlife()`](https://rdrr.io/pkg/megatrees/man/get_tree_mammal_n100_vertlife.html),
     with
-    [megatrees::tree_fish_32k_n50](https://rdrr.io/pkg/megatrees/man/tree_fish_32k_n50.html)
+    [`megatrees::get_tree_mammal_n100_phylacine()`](https://rdrr.io/pkg/megatrees/man/get_tree_mammal_n100_phylacine.html)
     be the other option.
 
-  - For mammal, the default mega-trees are
-    [megatrees::tree_mammal_n100_vertlife](https://rdrr.io/pkg/megatrees/man/tree_mammal_n100_vertlife.html),
-    with
-    [megatrees::tree_mammal_n100_phylacine](https://rdrr.io/pkg/megatrees/man/tree_mammal_n100_phylacine.html)
-    be the other option.
+  - For plant, the default mega-tree is
+    [megatrees::tree_plant_otl](https://rdrr.io/pkg/megatrees/man/tree_plant_otl.html)
+    (Smith and Brown 2018);
+    [megatrees::tree_plant_Carruthers](https://rdrr.io/pkg/megatrees/man/tree_plant_Carruthers.html)
+    (Carruthers et al. 2026) is also available; 100 posterior trees are
+    loaded via
+    [`megatrees::get_tree_plant_n100_Carruthers()`](https://rdrr.io/pkg/megatrees/man/get_tree_plant_n100_Carruthers.html).
 
-  - For plant, the mega-tree is
-    [megatrees::tree_plant_otl](https://rdrr.io/pkg/megatrees/man/tree_plant_otl.html).
+  - For reptile, the mega-trees are loaded via
+    [`megatrees::get_tree_reptile_n100()`](https://rdrr.io/pkg/megatrees/man/get_tree_reptile_n100.html).
 
-  - For reptile, the mega-trees are
-    [megatrees::tree_reptile_n100](https://rdrr.io/pkg/megatrees/man/tree_reptile_n100.html).
-
-  - For shark, ray, and chimaeras, the mega-trees are
-    [megatrees::tree_shark_ray_n100](https://rdrr.io/pkg/megatrees/man/tree_shark_ray_n100.html).
+  - For shark, ray, and chimaeras, the mega-trees are loaded via
+    [`megatrees::get_tree_shark_ray_n100()`](https://rdrr.io/pkg/megatrees/man/get_tree_shark_ray_n100.html).
 
 - taxon:
 
@@ -154,6 +158,15 @@ get_tree(
   used. All trees are provided by the [Bee Tree of
   Life](http://beetreeoflife.org).
 
+- plant_tree:
+
+  Which plant tree to use? If `"tree_plant_otl"` (default), the Smith
+  and Brown (2018) tree is used. If `"tree_plant_Carruthers"`, the
+  single best-scoring tree from Carruthers et al. (2026) is used. If
+  `"tree_plant_n100_Carruthers"`, 100 randomly selected posterior
+  phylogenies from Carruthers et al. (2026) are downloaded and used
+  (large file, ~135 MB, cached after first use).
+
 - dt:
 
   Whether to use data.table version to bind tips
@@ -178,13 +191,17 @@ mega-tree, it will be grafted to the mega-tree with two scenarios.
 ## Examples
 
 ``` r
-test_sp = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii", 
-"Periophthalmus_barbarus", "Prognichthys_glaphyrae", "Barathronus_bicolor", 
-"Knipowitschia_croatica", "Rhamphochromis_lucius", "Neolissochilus_tweediei", 
-"Haplochromis_nyanzae", "Astronesthes_micropogon", "Sanopus_reticulatus")
-test_tree = get_tree(sp_list = test_sp,
-                     taxon = "fish",
-                     show_grafted = TRUE)
+test_sp <- c(
+  "Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii",
+  "Periophthalmus_barbarus", "Prognichthys_glaphyrae", "Barathronus_bicolor",
+  "Knipowitschia_croatica", "Rhamphochromis_lucius", "Neolissochilus_tweediei",
+  "Haplochromis_nyanzae", "Astronesthes_micropogon", "Sanopus_reticulatus"
+)
+test_tree <- get_tree(
+  sp_list = test_sp,
+  taxon = "fish",
+  show_grafted = TRUE
+)
 #> 
 #> 6 species added at genus level (*) 
 #> 1 species have no co-family species in the mega-tree, skipped
