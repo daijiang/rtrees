@@ -33,7 +33,6 @@ Suggests:
     knitr,
     rmarkdown,
     testthat,
-    ggplot2,
     piggyback,
     R.rsp
 Remotes:
