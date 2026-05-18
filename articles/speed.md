@@ -23,13 +23,7 @@ The R code used for the speed tests can be found
 
 ``` r
 
-if(!require("ggplot2")) install.packages("ggplot2")
-#> Loading required package: ggplot2
 library(ggplot2)
-# library(broom)
-temf = tempfile()
-download.file("https://raw.githubusercontent.com/daijiang/rtrees_ms/main/Data/rtrees_speed_out.rds", 
-              destfile = temf)
 speed_out = readRDS(system.file("extdata", "rtrees_speed_out.rds", package = "rtrees"))
 speed_out = dplyr::mutate(speed_out, n_sp_missing_k = n_sp_missing / 1000, time_s = time/1e9)
 # speed_lm = dplyr::group_by(speed_out, expr) |> 
