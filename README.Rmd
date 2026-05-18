@@ -51,7 +51,9 @@ Currently, `rtrees` provides mega-trees for the following taxonomic groups: amph
 |                          | 31516        | 50         | `get_tree_fish_32k_n50()`              | Rabosky et al. 2018  |
 | Mammal                   | 5831         | 100        | `get_tree_mammal_n100_phylacine()`     | Faurby et al. 2018   |
 |                          | 5911         | 100        | `get_tree_mammal_n100_vertlife()`      | Upham et al. 2019    |
-| Plant                    | 74531        | 1          | `tree_plant_otl`                       | Smith and Brown 2018 |
+| Plant                    | 74531        | 1          | `tree_plant_otl` (default)             | Smith and Brown 2018 |
+|                          | 123182       | 1          | `tree_plant_Carruthers`                | Carruthers et al. 2026 |
+|                          | 123182       | 100        | `get_tree_plant_n100_Carruthers()`     | Carruthers et al. 2026 |
 | Reptile (Squamate)       | 9755         | 100        | `get_tree_reptile_n100()`              | Tonini et al. 2016   |
 | Shark, Ray, and Chimaera | 1192         | 100        | `get_tree_shark_ray_n100()`            | Stein et al. 2018    |
 

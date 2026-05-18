@@ -16,6 +16,7 @@ get_tree(
   fish_tree = c("timetree", "all-taxon"),
   mammal_tree = c("vertlife", "phylacine"),
   bee_tree = c("maximum-likelihood", "bootstrap"),
+  plant_tree = c("tree_plant_otl", "tree_plant_Carruthers", "tree_plant_n100_Carruthers"),
   dt = TRUE
 )
 }
@@ -34,15 +35,17 @@ Optional if \code{taxon} is specified, in which case, a default
 mega-phylogeny (or a set of 100 randomly selected posterior phylogenies) will be used
 (see their own documentations from the \code{megatrees} package).
 \itemize{
-\item For amphibian, the mega-trees are \link[megatrees:tree_amphibian_n100]{megatrees::tree_amphibian_n100}.
-\item For bee, the mega-tree is \link[megatrees:tree_bee]{megatrees::tree_bee}, with \link[megatrees:tree_bee_n100]{megatrees::tree_bee_n100} be the other option.
+\item For amphibian, the mega-trees are loaded via \code{\link[megatrees:get_tree_amphibian_n100]{megatrees::get_tree_amphibian_n100()}}.
+\item For bee, the mega-tree is \link[megatrees:tree_bee]{megatrees::tree_bee}, with the bootstrap option loaded via \code{\link[megatrees:get_tree_bee_n100]{megatrees::get_tree_bee_n100()}}.
 \item For butterfly, the mega-tee is \link[megatrees:tree_butterfly]{megatrees::tree_butterfly}.
-\item For bird, the mega-trees are \link[megatrees:tree_bird_n100]{megatrees::tree_bird_n100}.
-\item For fish, the mega-tree is \link[megatrees:tree_fish_12k]{megatrees::tree_fish_12k}, with \link[megatrees:tree_fish_32k_n50]{megatrees::tree_fish_32k_n50} be the other option.
-\item For mammal, the default mega-trees are \link[megatrees:tree_mammal_n100_vertlife]{megatrees::tree_mammal_n100_vertlife}, with \link[megatrees:tree_mammal_n100_phylacine]{megatrees::tree_mammal_n100_phylacine} be the other option.
-\item For plant, the mega-tree is \link[megatrees:tree_plant_otl]{megatrees::tree_plant_otl}.
-\item For reptile, the mega-trees are \link[megatrees:tree_reptile_n100]{megatrees::tree_reptile_n100}.
-\item For shark, ray, and chimaeras, the mega-trees are \link[megatrees:tree_shark_ray_n100]{megatrees::tree_shark_ray_n100}.
+\item For bird, the mega-trees are loaded via \code{\link[megatrees:get_tree_bird_n100]{megatrees::get_tree_bird_n100()}}.
+\item For fish, the mega-tree is \link[megatrees:tree_fish_12k]{megatrees::tree_fish_12k}, with the all-taxon option loaded via \code{\link[megatrees:get_tree_fish_32k_n50]{megatrees::get_tree_fish_32k_n50()}}.
+\item For mammal, the default mega-trees are loaded via \code{\link[megatrees:get_tree_mammal_n100_vertlife]{megatrees::get_tree_mammal_n100_vertlife()}}, with \code{\link[megatrees:get_tree_mammal_n100_phylacine]{megatrees::get_tree_mammal_n100_phylacine()}} be the other option.
+\item For plant, the default mega-tree is \link[megatrees:tree_plant_otl]{megatrees::tree_plant_otl} (Smith and Brown 2018);
+\link[megatrees:tree_plant_Carruthers]{megatrees::tree_plant_Carruthers} (Carruthers et al. 2026) is also available; 100 posterior trees are loaded via
+\code{\link[megatrees:get_tree_plant_n100_Carruthers]{megatrees::get_tree_plant_n100_Carruthers()}}.
+\item For reptile, the mega-trees are loaded via \code{\link[megatrees:get_tree_reptile_n100]{megatrees::get_tree_reptile_n100()}}.
+\item For shark, ray, and chimaeras, the mega-trees are loaded via \code{\link[megatrees:get_tree_shark_ray_n100]{megatrees::get_tree_shark_ray_n100()}}.
 }}
 
 \item{taxon}{The taxon of species in the \code{sp_list}. Currently, can be \code{amphibian}, \code{bird}, \code{fish}, \code{mammal}, \code{plant}, \code{reptile}, or \code{shark_ray}.}
@@ -80,6 +83,11 @@ by Vertlife will be used; if it is "phylacine", then 100 randomly selected poste
 
 \item{bee_tree}{Which bee tree to use? If it is "maximum-likelihood" (default), the a single maximum likelihood tree will be used. If it is "bootstrap", then a set of 100 randomly selected posterior phylogenies will be used. All trees are provided by the \href{http://beetreeoflife.org}{Bee Tree of Life}.}
 
+\item{plant_tree}{Which plant tree to use? If \code{"tree_plant_otl"} (default), the Smith and Brown (2018) tree
+is used. If \code{"tree_plant_Carruthers"}, the single best-scoring tree from Carruthers et al. (2026) is used.
+If \code{"tree_plant_n100_Carruthers"}, 100 randomly selected posterior phylogenies from Carruthers et al. (2026)
+are downloaded and used (large file, ~135 MB, cached after first use).}
+
 \item{dt}{Whether to use data.table version to bind tips \link{bind_tip}. The default is \code{TRUE} as it maybe slightly faster.}
 }
 \value{
@@ -98,11 +106,15 @@ provided mega-tree or mega-trees. If a species is
 not in the mega-tree, it will be grafted to the mega-tree with two scenarios.
 }
 \examples{
-test_sp = c("Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii", 
-"Periophthalmus_barbarus", "Prognichthys_glaphyrae", "Barathronus_bicolor", 
-"Knipowitschia_croatica", "Rhamphochromis_lucius", "Neolissochilus_tweediei", 
-"Haplochromis_nyanzae", "Astronesthes_micropogon", "Sanopus_reticulatus")
-test_tree = get_tree(sp_list = test_sp,
-                     taxon = "fish",
-                     show_grafted = TRUE)
+test_sp <- c(
+  "Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii",
+  "Periophthalmus_barbarus", "Prognichthys_glaphyrae", "Barathronus_bicolor",
+  "Knipowitschia_croatica", "Rhamphochromis_lucius", "Neolissochilus_tweediei",
+  "Haplochromis_nyanzae", "Astronesthes_micropogon", "Sanopus_reticulatus"
+)
+test_tree <- get_tree(
+  sp_list = test_sp,
+  taxon = "fish",
+  show_grafted = TRUE
+)
 }
