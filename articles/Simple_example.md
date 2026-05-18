@@ -1,4 +1,4 @@
-# Simple_example
+# Simple example
 
 In this vignette, I provide code for some simple examples. The main
 function to use is
@@ -118,16 +118,16 @@ described above.
 
 ``` r
 
-# bird species
-bird_species =  c('Brachypteryx_major', 'Asthenes_perijana', 'Ciridops_anna', 
+# bird species (requires the piggyback package to download posterior trees)
+bird_species =  c('Brachypteryx_major', 'Asthenes_perijana', 'Ciridops_anna',
                    'Leiothlypis_ruficapilla', 'Reinwardtoena_reinwardti',
                    'Garrulax_caerulatus', 'Buteo_rufofuscus', 'Sylvia_mystacea',
                    'Telophorus_viridis', 'Trachyphonus_darnaudii')
 sp_tree_4 = rtrees::get_tree(sp_list = bird_species, taxon = 'bird')
-#> Downloading tree_bird_n100.rda (~18 MB) to local cache...
-#> 
-#> 3 species added at genus level (*)
-#> 2 species added at family level (**)
 sp_tree_4
-#> 100 phylogenetic trees
 ```
+
+    #> 5 of 10 species are already in the megatree
+    #> 4 of 10 species will be grafted at genus level
+    #> 1 of 10 species will be grafted at family level
+    #> 100 phylogenetic trees

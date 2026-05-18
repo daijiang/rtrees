@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Simple_example • rtrees</title>
+<title>Simple example • rtrees</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simple_example">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simple example">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,7 +35,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/grafting_scenarios.html">Grafting Scenarios</a></li>
     <li><a class="dropdown-item" href="../articles/Non-monophyletic-groups.html">Non-monophyletic genera</a></li>
-    <li><a class="dropdown-item" href="../articles/Simple_example.html">Simple_example</a></li>
+    <li><a class="dropdown-item" href="../articles/Simple_example.html">Simple example</a></li>
     <li><a class="dropdown-item" href="../articles/speed.html">Speed comparisons</a></li>
   </ul>
 </li>
@@ -57,7 +57,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Simple_example</h1>
+      <h1>Simple example</h1>
             
       
 
@@ -161,18 +161,17 @@ the number of derived phylogenies will be the same as the input
 megatrees. For this scenario, we can use exactly the same code described
 above.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># bird species</span></span>
-<span><span class="va">bird_species</span> <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Brachypteryx_major'</span>, <span class="st">'Asthenes_perijana'</span>, <span class="st">'Ciridops_anna'</span>, </span>
+<code class="sourceCode R"><span><span class="co"># bird species (requires the piggyback package to download posterior trees)</span></span>
+<span><span class="va">bird_species</span> <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Brachypteryx_major'</span>, <span class="st">'Asthenes_perijana'</span>, <span class="st">'Ciridops_anna'</span>,</span>
 <span>                   <span class="st">'Leiothlypis_ruficapilla'</span>, <span class="st">'Reinwardtoena_reinwardti'</span>,</span>
 <span>                   <span class="st">'Garrulax_caerulatus'</span>, <span class="st">'Buteo_rufofuscus'</span>, <span class="st">'Sylvia_mystacea'</span>,</span>
 <span>                   <span class="st">'Telophorus_viridis'</span>, <span class="st">'Trachyphonus_darnaudii'</span><span class="op">)</span></span>
 <span><span class="va">sp_tree_4</span> <span class="op">=</span> <span class="fu">rtrees</span><span class="fu">::</span><span class="fu"><a href="../reference/get_tree.html">get_tree</a></span><span class="op">(</span>sp_list <span class="op">=</span> <span class="va">bird_species</span>, taxon <span class="op">=</span> <span class="st">'bird'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Downloading tree_bird_n100.rda (~18 MB) to local cache...</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 3 species added at genus level (*)</span></span>
-<span><span class="co">#&gt; 2 species added at family level (**)</span></span>
-<span><span class="va">sp_tree_4</span></span>
-<span><span class="co">#&gt; 100 phylogenetic trees</span></span></code></pre></div>
+<span><span class="va">sp_tree_4</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; 5 of 10 species are already in the megatree</span></span>
+<span><span class="co">#&gt; 4 of 10 species will be grafted at genus level</span></span>
+<span><span class="co">#&gt; 1 of 10 species will be grafted at family level</span></span>
+<span><span class="co">#&gt; 100 phylogenetic trees</span></span></code></pre>
   </main>
 </div>
 
