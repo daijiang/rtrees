@@ -29,15 +29,17 @@ Imports:
     Rcpp
 LinkingTo:
     Rcpp
-Suggests: 
+Suggests:
     knitr,
     rmarkdown,
     testthat,
-    ggplot2
+    ggplot2,
+    piggyback,
+    R.rsp
 Remotes:
     daijiang/megatrees
 Additional_repositories: 
     https://daijiang.r-universe.dev
 URL: https://daijiang.github.io/rtrees/
-VignetteBuilder: knitr
+VignetteBuilder: knitr, R.rsp
 Config/roxygen2/version: 8.0.0

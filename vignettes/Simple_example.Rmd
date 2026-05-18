@@ -1,10 +1,6 @@
 ---
-title: "Simple_example"
+title: "Simple example"
 output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Simple_example}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -57,14 +53,21 @@ sp_tree_3 = rtrees::get_tree(sp_list = new_species_all_in, tree = sp_tree,
 
 The function `rtrees::get_tree()` can also work with **a set of posterior megatrees** with the option to use parallel computing for the whole process. The default number of cores to be used will be the available number of cores minus 2 (so that users can still perform other tasks on their computers at the same time). The output will be a set of generated phylogenies with class 'multiPhylo'; the number of derived phylogenies will be the same as the input megatrees. For this scenario, we can use exactly the same code described above.
 
-```{r echo=TRUE}
-# bird species
-bird_species =  c('Brachypteryx_major', 'Asthenes_perijana', 'Ciridops_anna', 
+```{r echo=TRUE, eval=FALSE}
+# bird species (requires the piggyback package to download posterior trees)
+bird_species =  c('Brachypteryx_major', 'Asthenes_perijana', 'Ciridops_anna',
                    'Leiothlypis_ruficapilla', 'Reinwardtoena_reinwardti',
                    'Garrulax_caerulatus', 'Buteo_rufofuscus', 'Sylvia_mystacea',
                    'Telophorus_viridis', 'Trachyphonus_darnaudii')
 sp_tree_4 = rtrees::get_tree(sp_list = bird_species, taxon = 'bird')
 sp_tree_4
+```
+
+```
+#> 5 of 10 species are already in the megatree
+#> 4 of 10 species will be grafted at genus level
+#> 1 of 10 species will be grafted at family level
+#> 100 phylogenetic trees
 ```
 
 
