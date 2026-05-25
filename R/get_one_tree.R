@@ -42,12 +42,12 @@ get_one_tree = function(sp_list, tree, taxon,
   sp_out_tree = sp_list[!sp_list$species %fin% tree$tip.label, ]
   
   # some tree tips has genus_sp_subsp
-  subsp_in_tree = grep("^.*_.*_.*$", x = tree$tip.label, value = T)
+  subsp_in_tree = grep("^.*_.*_.*$", x = tree$tip.label, value = TRUE)
   if(length(subsp_in_tree)){
     sp_out_tree = dplyr::mutate(sp_out_tree, re_matched = NA, matched_name = NA)
     for(i in 1:length(sp_out_tree$species)){
       name_in_tree = grep(paste0("^", sp_out_tree$species[i], "_"), x = subsp_in_tree,
-                          ignore.case = T, value = T) 
+                          ignore.case = TRUE, value = TRUE)
       # avoid Allium_sp. match things like Allium_splendens
       # cat(i, name_in_tree, "\n")
       if(length(name_in_tree)) {

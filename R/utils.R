@@ -295,8 +295,8 @@ add_root_info <- function(tree, classification, process_all_tips = TRUE,
     if (show_warning) {
       descts <- tidytree::offspring(tree_df, mrca_row$node, tiponly = TRUE)$label
       if (!setequal(sp_names, descts)) {
-        cat("Caution: Species in", if (fam) "family" else "genus", target,
-            "do not form a monophyletic clade.\n")
+        message("Caution: Species in ", if (fam) "family" else "genus", " ", target,
+                " do not form a monophyletic clade.")
       }
     }
 

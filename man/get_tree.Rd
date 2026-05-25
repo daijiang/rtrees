@@ -106,6 +106,7 @@ provided mega-tree or mega-trees. If a species is
 not in the mega-tree, it will be grafted to the mega-tree with two scenarios.
 }
 \examples{
+\donttest{
 test_sp <- c(
   "Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii",
   "Periophthalmus_barbarus", "Prognichthys_glaphyrae", "Barathronus_bicolor",
@@ -117,4 +118,5 @@ test_tree <- get_tree(
   taxon = "fish",
   show_grafted = TRUE
 )
+}
 }
