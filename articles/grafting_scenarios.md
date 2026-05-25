@@ -39,7 +39,7 @@ Black dashed lines in the larger regression plots represent 1-to-1
 relationships (intercept = 0, slope = 1). Nested histograms present the
 distributions of differences between estimated values based on the
 phylogenies derived with different grafting scenarios and the true
-phylogeny.](https://raw.githubusercontent.com/daijiang/rtrees_ms/main/Figs/pd_ps_scenarios.png)
+phylogeny.](pd_ps_scenarios.png)
 
 Effects of different grafting scenarios on results of community
 phylogenetic diversity (A-C) and phylogenetic signal of traits (D-E).

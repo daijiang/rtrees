@@ -50,8 +50,7 @@ genera on phylogenetic diversity. Black dashed lines represent 1-to-1
 relationships (intercept = 0, slope = 1). These results suggested that
 the current approach (inclusive) to graft species to non-monophyletic
 group works well and there is no significant benefit gained with the
-largest cluster
-approach.](https://raw.githubusercontent.com/daijiang/rtrees_ms/main/Figs/monophyletic.png)
+largest cluster approach.](monophyletic.png)
 
 Effects of different approches to graft species to non-monophyletic
 genera on phylogenetic diversity. Black dashed lines represent 1-to-1
