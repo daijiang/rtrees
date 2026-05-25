@@ -1,10 +1,6 @@
 ---
 title: "Non-monophyletic genera"
 output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Non-monophyletic-groups}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -23,5 +19,5 @@ From the results, we can see that these two approaches give similar results (bot
 Therefore, I decided to not implement the second option in the main branch to make it simpler for users.
 
 ```{r monophy, echo=FALSE, out.width='100%', fig.cap="Effects of different approches to graft species to non-monophyletic genera on phylogenetic diversity. Black dashed lines represent 1-to-1 relationships (intercept = 0, slope = 1). These results suggested that the current approach (inclusive) to graft species to non-monophyletic group works well and there is no significant benefit gained with the largest cluster approach."}
-knitr::include_graphics("https://raw.githubusercontent.com/daijiang/rtrees_ms/main/Figs/monophyletic.png")
+knitr::include_graphics("monophyletic.png")
 ```

@@ -1,10 +1,6 @@
 ---
 title: "Grafting Scenarios"
 output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{grafting_scenarios}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -20,6 +16,6 @@ To evaluate the effects of the placements of grafted taxa (“at_basal_node”, 
 
 
 ```{r scenarioFig, echo=FALSE, out.width='100%', fig.cap='Effects of different grafting scenarios on results of community phylogenetic diversity (A-C) and phylogenetic signal of traits (D-E). Black dashed lines in the larger regression plots represent 1-to-1 relationships (intercept = 0, slope = 1). Nested histograms present the distributions of differences between estimated values based on the phylogenies derived with different grafting scenarios and the true phylogeny.'}
-knitr::include_graphics("https://raw.githubusercontent.com/daijiang/rtrees_ms/main/Figs/pd_ps_scenarios.png")
+knitr::include_graphics("pd_ps_scenarios.png")
 ```
 

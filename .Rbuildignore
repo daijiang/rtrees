@@ -12,6 +12,9 @@
 ^\.github$
 ^\.positai$
 ^\.claude$
-^vignettes/.*\.html$
-^vignettes/.*\.html\.asis$
+^vignettes/speed\.html$
+^vignettes/grafting_scenarios\.Rmd$
+^vignettes/Non-monophyletic-groups\.Rmd$
+^vignettes/Simple_example\.Rmd$
+^vignettes/.*\.png$
 ^validate_fixes\.R$

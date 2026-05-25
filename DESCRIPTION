@@ -36,10 +36,6 @@ Suggests:
     piggyback,
     R.rsp,
     ggplot2
-Remotes:
-    daijiang/megatrees
-Additional_repositories: 
-    https://daijiang.r-universe.dev
 URL: https://daijiang.github.io/rtrees/
 VignetteBuilder: knitr, R.rsp
 Config/roxygen2/version: 8.0.0

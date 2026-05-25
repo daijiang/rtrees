@@ -1,3 +1,5 @@
 *.html
 !Simple_example.html
+!grafting_scenarios.html
+!Non-monophyletic-groups.html
 *.R
