@@ -5,7 +5,7 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 2 notes
+0 errors | 0 warnings | 1 notes
 
 - NOTE: "New submission" -- this is the first submission of this package to CRAN.
 
