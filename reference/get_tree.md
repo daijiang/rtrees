@@ -191,7 +191,6 @@ mega-tree, it will be grafted to the mega-tree with two scenarios.
 ## Examples
 
 ``` r
-# \donttest{
 test_sp <- c(
   "Serrasalmus_geryi", "Careproctus_reinhardti", "Gobiomorphus_coxii",
   "Periophthalmus_barbarus", "Prognichthys_glaphyrae", "Barathronus_bicolor",
@@ -208,5 +207,4 @@ test_tree <- get_tree(
 #> 1 species have no co-family species in the mega-tree, skipped
 #> (if you know their family, prepare and edit species list with `rtrees::sp_list_df()` may help): 
 #> Barathronus_bicolor
-# }
 ```
