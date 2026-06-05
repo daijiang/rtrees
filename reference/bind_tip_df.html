@@ -109,15 +109,31 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://daijiang.github.io/rtrees/">rtrees</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="bind_tip.html">bind_tip</a></span><span class="op">(</span><span class="va">tree_plant_otl</span>, <span class="st">"N70407"</span>, tip_label <span class="op">=</span> <span class="st">"test_sp"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tree_plant_otl_df</span> <span class="op">=</span> <span class="fu">tidytree</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">tree_plant_otl</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">node_heights</span> <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/branching.times.html" class="external-link">branching.times</a></span><span class="op">(</span><span class="va">tree_plant_otl</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="bind_tip.html">bind_tip</a></span><span class="op">(</span>tree_tbl <span class="op">=</span> <span class="va">tree_plant_otl_df</span>, where <span class="op">=</span> <span class="st">"N70407"</span>, </span></span>
-<span class="r-in"><span>         tip_label <span class="op">=</span> <span class="st">"test_sp"</span>, node_heights <span class="op">=</span> <span class="va">node_heights</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">tr</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">"((A:1,B:1):1,C:2);"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tr</span><span class="op">$</span><span class="va">node.label</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"root"</span>, <span class="st">"N1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">bind_tip_df</span><span class="op">(</span><span class="va">tr</span>, where <span class="op">=</span> <span class="st">"N1"</span>, tip_label <span class="op">=</span> <span class="st">"D"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 4 tips and 2 internal nodes.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tip labels:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   A, B, D, C</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node labels:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   root, N1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rooted; includes branch length(s).</span>
+<span class="r-in"><span><span class="va">tr_tbl</span> <span class="op">&lt;-</span> <span class="fu">tidytree</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">tr</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">node_hts</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/branching.times.html" class="external-link">branching.times</a></span><span class="op">(</span><span class="va">tr</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">bind_tip_df</span><span class="op">(</span>tree_tbl <span class="op">=</span> <span class="va">tr_tbl</span>, where <span class="op">=</span> <span class="st">"N1"</span>,</span></span>
+<span class="r-in"><span>            tip_label <span class="op">=</span> <span class="st">"D"</span>, node_heights <span class="op">=</span> <span class="va">node_hts</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Phylogenetic tree with 4 tips and 2 internal nodes.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tip labels:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   A, B, D, C</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Node labels:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   root, N1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rooted; includes branch length(s).</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
