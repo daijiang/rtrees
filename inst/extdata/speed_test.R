@@ -1,13 +1,8 @@
-# need to also install the following packages
-if(!require("xfun")) install.packages("xfun")
-options(repos = c(
-  rtrees = 'https://daijiang.r-universe.dev',
-  CRAN = 'https://cloud.r-project.org')
-)
-xfun::pkg_attach2(c("phylocomr", "microbenchmark", "tidyverse"))
-# I cannot use V.PhyloMaker::phylo.maker() and was forced to library it, 
-#     which is a little bit annoying.
-library(V.PhyloMaker2) 
+# Packages required: phylocomr, microbenchmark, tidyverse, V.PhyloMaker2
+# Install them manually before running this script if needed.
+library(microbenchmark)
+library(tidyverse)
+library(V.PhyloMaker2)
 
 d = read_delim("https://raw.githubusercontent.com/daijiang/rtrees_ms/refs/heads/main/Data/plants_phylomatic_names.txt", "/", col_names = F) %>%
   set_names(c("family", "genus", "species")) %>%
@@ -51,9 +46,8 @@ speed_test = function(n_sp_missing, n_sp_in = 500, n_times = 5, ...){
 
 x = get_tree(sp_list = test_sp_df, taxon = "plant")
 y = V.PhyloMaker2::phylo.maker(sp.list = test_sp_df, scenarios = "S1")
- par(mfrow = c(1,2))
- plot(x, type = "fan", show.tip.label = F, main = "rtrees")
- plot(ape::ladderize(y[[1]]), type = "fan", show.tip.label = F, main = "v.p")
+plot(x, type = "fan", show.tip.label = F, main = "rtrees")
+plot(ape::ladderize(y[[1]]), type = "fan", show.tip.label = F, main = "v.p")
 
 # all tests have 500 species already in the megatree, then
 # start with 50 missing species, and 100, 200, 500, 1000, 3000, 5000

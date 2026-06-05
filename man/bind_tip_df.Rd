@@ -45,13 +45,11 @@ Either a phylogeny or a data frame, which can be then converted to a phylogeny l
 Graft a tip to a phylogeny at location specified.
 }
 \examples{
-\dontrun{
-library(rtrees)
-bind_tip(tree_plant_otl, "N70407", tip_label = "test_sp")
-tree_plant_otl_df = tidytree::as_tibble(tree_plant_otl)
-node_heights = ape::branching.times(tree_plant_otl)
-bind_tip(tree_tbl = tree_plant_otl_df, where = "N70407", 
-         tip_label = "test_sp", node_heights = node_heights)
-}
-
+tr <- ape::read.tree(text = "((A:1,B:1):1,C:2);")
+tr$node.label <- c("root", "N1")
+bind_tip_df(tr, where = "N1", tip_label = "D")
+tr_tbl <- tidytree::as_tibble(tr)
+node_hts <- ape::branching.times(tr)
+bind_tip_df(tree_tbl = tr_tbl, where = "N1",
+            tip_label = "D", node_heights = node_hts)
 }
