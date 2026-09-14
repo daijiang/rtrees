@@ -163,7 +163,21 @@ sp_list_df <- function(sp_list, taxon) {
   }
   out <- dplyr::left_join(out, clsf, by = "genus")
   out$taxon <- NULL
-  unique(out)
+  out <- unique(out)
+  # a genus with two family names in the classification database would return
+  # two rows for the same species, which downstream grafts that species twice
+  if (anyDuplicated(out$species)) {
+    dup_sp <- unique(out$species[duplicated(out$species)])
+    warning(length(dup_sp), " species have more than one candidate family ",
+      "because their genus is listed under multiple families in the ",
+      "classification database: ",
+      paste(utils::head(dup_sp, 10), collapse = ", "),
+      if (length(dup_sp) > 10) ", ...",
+      "\n Keep one family per species before deriving a phylogeny.",
+      call. = FALSE
+    )
+  }
+  out
 }
 
 #' Add genus and family basal/root node information to a phylogeny

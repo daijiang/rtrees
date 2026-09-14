@@ -797,11 +797,71 @@ classifications = bind_rows(classifications,
                             dplyr::select(cls_wcvp_new, genus, family) |> 
                               mutate(taxon = "plant"))
 
-# additional classification from the Carruthers et al plant phylogeny
-classifications = bind_rows(classifications, readRDS("data-raw/classification_plants_missing_wcvp.rds"))
+# additional classification from the Carruthers et al plant phylogeny, taken
+# from the tip taxonomy of the current tree (data-raw/carruthers_taxonomy.rds).
+# Only genera that are not already in the database are added. Carruthers et al.
+# use a different family concept for many genera (Polypodiaceae and
+# Aspleniaceae in the broad sense for the ferns, Hyacinthaceae for
+# Asparagaceae, Chenopodiaceae for Amaranthaceae, Hydrophyllaceae for
+# Boraginaceae, ...), and 49 genera are listed under two families within that
+# file itself. A plain bind_rows() would give those genera two families here,
+# and `sp_list_df()` joins by genus, so a genus with two families returns two
+# rows per species, which grafts species twice and misplaces tips. We follow
+# WCVP, so for a genus we already know our family wins. See
+# fix_duplicated_genus.R, which applies the same rules to the shipped data.
+cls_carruthers = readRDS("data-raw/carruthers_taxonomy.rds") |>
+  # 47 tips have no family; older builds of the file store that as the literal
+  # string "NA" rather than a real NA, so drop both spellings
+  filter(!is.na(family), family != "NA") |>
+  distinct(genus, family)
+cls_carruthers_ambiguous = cls_carruthers |> count(genus) |> filter(n > 1) |> pull(genus)
+cls_carruthers_new = cls_carruthers |>
+  filter(!genus %in% cls_carruthers_ambiguous) |>
+  dplyr::anti_join(classifications, by = "genus") |>
+  mutate(taxon = "plant")
+classifications = bind_rows(classifications, cls_carruthers_new)
 
+# Hand-checked family overrides: genera where the family we inherited is either
+# a homonym mismatch (Bergera, Leichhardtia, Stenanthera, Neuroloma) or out of
+# date (the Metteniusaceae genera, Hellenia, Chaetachme, ...). Each row carries
+# its reason. Everywhere else we keep the WCVP family, including the ~50 genera
+# where Carruthers et al. simply use a broader family than PPG I / APG IV.
+family_overrides = read.csv("data-raw/family_overrides.csv")
+stopifnot(all(family_overrides$genus %in%
+                classifications$genus[classifications$taxon == "plant"]))
+ovr_idx = match(family_overrides$genus,
+                ifelse(classifications$taxon == "plant", classifications$genus, NA))
+classifications$family[ovr_idx] = family_overrides$family
+
+
+# drop genus rows that can never be used ----
+# rtrees pulls the genus out of a species label with ^([-A-Za-z]*)_, so a genus
+# name holding a multiplication sign (the nothogenera) or a diaeresis can never
+# be matched. All but one of these already have an ASCII-spelled row with the
+# identical family, so the odd spelling is redundant and dropped; any without a
+# twin is renamed instead of lost. "Incertae_sedis" is a placeholder, not a
+# family, so those rows cannot graft a species either. See fix_duplicated_genus.R.
+ascii_genus = function(x) chartr("\u00e4\u00eb\u00ef\u00f6\u00fc", "aeiou", sub("^\u00d7", "", x))
+is_plant = classifications$taxon == "plant"
+special = is_plant & grepl("[^-A-Za-z]", classifications$genus)
+twin = match(
+  paste(ascii_genus(classifications$genus[special]), classifications$family[special]),
+  paste(classifications$genus[is_plant], classifications$family[is_plant])
+)
+rename_special = which(special)[is.na(twin)]
+classifications$genus[rename_special] = ascii_genus(classifications$genus[rename_special])
+classifications = classifications[-which(special)[!is.na(twin)], ]
+classifications = filter(classifications,
+                         !(taxon == "plant" &
+                             (genus %in% c("X", "diospyros", "immaculatae") |
+                                family == "Incertae_sedis")))
 
 # all together and save ----
 classifications = arrange(classifications, taxon, genus) %>% 
   distinct()
+
+# one family per genus within each taxon group; sp_list_df() relies on this to
+# return exactly one row per species
+stopifnot(!any(duplicated(classifications[, c("taxon", "genus")])))
+
 usethis::use_data(classifications, overwrite = T, compress = "xz")

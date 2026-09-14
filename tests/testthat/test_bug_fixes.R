@@ -165,3 +165,110 @@ test_that("get_graft_status returns correct structure", {
                    "skipped as no co-family in the megatree")
   expect_true(all(gs$status %in% valid_status))
 })
+
+# -----------------------------------------------------------------------
+# Bug: a genus listed under two families in the classification database
+#   `sp_list_df()` left-joins by genus, so such a genus returned two rows per
+#   species. get_one_tree() then grafted the species once per row, which
+#   produced duplicated tips when both families were in the mega-tree,
+#   reported the species as having no co-family species while it had in fact
+#   been grafted, and made the trailing-* join return more rows than tips,
+#   silently shifting the labels of every grafted tip after the first
+#   duplicate onto the wrong branch.
+# -----------------------------------------------------------------------
+
+test_that("classifications has exactly one family per genus in every taxon", {
+  expect_false(any(duplicated(rtrees::classifications[, c("taxon", "genus")])))
+})
+
+test_that("sp_list_df returns one row per species", {
+  sp = c("Muscari_armeniacum", "Phacelia_purshii", "Salsola_tragus",
+         "Viburnum_rafinesqueanum", "Prosartes_hookeri", "Thesium_alpinum",
+         "Senegalia_greggii", "Buchnera_americana")
+  out = sp_list_df(sp, taxon = "plant")
+  expect_equal(nrow(out), length(sp))
+  expect_false(any(duplicated(out$species)))
+})
+
+# Novus has no congener in the tree, so it is grafted at family level, and both
+# of its candidate families are represented. Before the fix it was grafted once
+# per family and came out with two tips. Muscari/Asparagaceae+Hyacinthaceae was
+# the real-world instance; this is the same shape on a tree we control.
+dup_family_sp = tibble::tibble(
+  species = c("Rosa_setigera", "Rosa_arkansana", "Rosa_acicularis",
+              "Rubus_odoratus", "Rubus_parviflorus", "Novus_sp1", "Novus_sp1"),
+  genus   = c("Rosa", "Rosa", "Rosa", "Rubus", "Rubus", "Novus", "Novus"),
+  family  = c(rep("Rosaceae", 3), rep("Rubaceae", 2), "Rosaceae", "Rubaceae")
+)
+
+test_that("a species with two candidate families is grafted exactly once", {
+  tt = suppressMessages(suppressWarnings(
+    get_tree(dup_family_sp, tree = rosaceae_tree, taxon = "plant",
+             show_grafted = TRUE, tree_by_user = TRUE)
+  ))
+  labs = rm_stars(tt)$tip.label
+  expect_false(any(duplicated(labs)))
+  expect_equal(sum(labs == "Novus_sp1"), 1)
+  expect_setequal(labs, unique(dup_family_sp$species))
+  expect_equal(ape::Ntip(tt), length(unique(dup_family_sp$species)))
+})
+
+test_that("graft_status agrees with the tip labels and covers every species", {
+  tt = suppressMessages(suppressWarnings(
+    get_tree(dup_family_sp, tree = rosaceae_tree, taxon = "plant",
+             show_grafted = TRUE, tree_by_user = TRUE)
+  ))
+  gs = tt$graft_status
+  expect_setequal(gs$species, unique(dup_family_sp$species))
+  expect_false(any(duplicated(gs$species)))
+  # every tip the tree marks as grafted is recorded as grafted, and vice versa
+  expect_equal(sum(grepl("\\*$", tt$tip.label)),
+               sum(gs$status != "exisiting species in the megatree"))
+  expect_equal(gs$status[gs$species == "Novus_sp1"], "grafted at family level")
+})
+
+test_that("a grafted tip keeps its own label instead of a neighbour's", {
+  # the trailing-* step used a join that could return more rows than tips,
+  # which shifted every later grafted label onto the wrong branch
+  sp = dplyr::bind_rows(
+    dup_family_sp,
+    tibble::tibble(species = "Rosa_novum", genus = "Rosa", family = "Rosaceae")
+  )
+  tt = suppressMessages(suppressWarnings(
+    get_tree(sp, tree = rosaceae_tree, taxon = "plant",
+             show_grafted = TRUE, tree_by_user = TRUE)
+  ))
+  labs = rm_stars(tt)$tip.label
+  expect_setequal(labs, unique(sp$species))
+  # the grafted species sits with its own congeners, not with the species that
+  # happens to precede it in the grafting order
+  i = match("Rosa_novum", labs)
+  par = tt$edge[match(i, tt$edge[, 2]), 1]
+  sis = setdiff(labs[intersect(tt$edge[tt$edge[, 1] == par, 2], seq_along(labs))],
+                "Rosa_novum")
+  expect_true(any(grepl("^Rosa_", sis)))
+})
+
+# -----------------------------------------------------------------------
+# Bug: `%fin%` (fastmatch) compares the string encoding flag, base match()
+#   does not. A species name holding a non-ASCII character therefore failed
+#   to match a byte-identical tip label that was not flagged UTF-8, so the
+#   trailing * was never appended and graft_status reported the species as
+#   already present in the mega-tree.
+# -----------------------------------------------------------------------
+
+test_that("species names with non-ASCII characters are marked as grafted", {
+  hybrid = "Rosa_×_hybrida" # UTF-8 flagged, as read from an .rds
+  sp = tibble::tibble(
+    species = c("Rosa_setigera", "Rosa_arkansana", "Rubus_odoratus", hybrid),
+    genus   = c("Rosa", "Rosa", "Rubus", "Rosa"),
+    family  = rep("Rosaceae", 4)
+  )
+  tt = suppressMessages(suppressWarnings(
+    get_tree(sp, tree = rosaceae_tree, taxon = "plant",
+             show_grafted = TRUE, tree_by_user = TRUE)
+  ))
+  expect_true(paste0(hybrid, "*") %in% tt$tip.label)
+  gs = tt$graft_status
+  expect_equal(gs$status[gs$species == hybrid], "grafted at genus level")
+})

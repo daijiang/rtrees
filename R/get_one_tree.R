@@ -16,10 +16,16 @@ get_one_tree = function(sp_list, tree, taxon,
   if(tree_by_user & all(!grepl("_", tree$tip.label)))
     stop("Please change the tree's tip labels to be the format of genus_sp.")
   if(tree_by_user) tree = rm_stars(tree)
+  # `%fin%` (fastmatch) compares the encoding flag as well as the bytes, unlike
+  # base match(), so a species name with a non-ASCII character (hybrid signs
+  # such as Amelanchier_x_spicata, diacritics) fails to match a byte-identical
+  # tip label that is not flagged UTF-8. Normalise every label once here.
+  tree$tip.label = enc2utf8(tree$tip.label)
   tree_genus = unique(gsub("^([-A-Za-z]*)_.*$", "\\1", tree$tip.label))
   
   sp_list = sp_list_df(unique(sp_list)) # remove duplication and prep genus, family
-  
+  sp_list$species = enc2utf8(sp_list$species)
+
   all_genus_in_tree = all(unique(sp_list$genus) %fin% tree_genus)
   # if TRUE, no taxon is required
   if(!all_genus_in_tree){
@@ -122,6 +128,25 @@ get_one_tree = function(sp_list, tree, taxon,
 
   if(is.null(tree$genus_family_root))
     stop("Did you use your own phylogeny? If so, please set `tree_by_user = TRUE`.")
+
+  # A genus can carry more than one family name across classification sources
+  # (e.g. Muscari in both Asparagaceae and Hyacinthaceae), in which case
+  # `sp_list_df()` returns more than one row per species. Left unchecked, such a
+  # species is grafted once per row: it may end up with duplicated tips, be
+  # reported as having no co-family species while it was in fact grafted, and
+  # shift the tip labels of later grafted species. Keep one row per species,
+  # preferring a family that the mega-tree actually knows about.
+  if(anyDuplicated(sp_out_tree$species)){
+    row_order = seq_len(nrow(sp_out_tree))
+    if("family" %fin% names(sp_out_tree)){
+      # stable sort: for each species, rows with a family the mega-tree knows
+      # about come first, so those are the ones kept below
+      row_order = row_order[order(!(sp_out_tree$family %fin% tree$genus_family_root$family))]
+    }
+    keep = sort(row_order[!duplicated(sp_out_tree$species[row_order])])
+    sp_out_tree = sp_out_tree[keep, ] # original row order preserved
+  }
+
   sp_out_tree$status = ""
 
   # Use plain integer/numeric vectors instead of a tibble throughout the loop.
@@ -457,7 +482,9 @@ get_one_tree = function(sp_list, tree, taxon,
   }
   
   tree_sub = castor::get_subtree_with_tips(tidytree::as.phylo(tree_df), sp_list$species)$subtree
-  
+  # the C++ grafting round-trip drops the UTF-8 flag from the labels it returns
+  tree_sub$tip.label = enc2utf8(tree_sub$tip.label)
+
   # in case of non ultrametric
   if(ape::is.ultrametric(tree) & !ape::is.ultrametric(tree_sub)){
     ntips = ape::Ntip(tree_sub)
@@ -473,10 +500,12 @@ get_one_tree = function(sp_list, tree, taxon,
   
   # add trailing *
   grafted = sp_out_tree[sp_out_tree$status %fin% c("*", "**"), ]
+  grafted = grafted[!duplicated(grafted$species), ] # one status per species
   grafted$sp2 = paste0(grafted$species, grafted$status)
   wid = which(tree_sub$tip.label %fin% grafted$species)
-  tree_sub$tip.label[wid] = dplyr::left_join(tibble::tibble(species = tree_sub$tip.label[wid]),
-                                             grafted, by = "species")$sp2
+  # match() rather than a join: a join can return more rows than `wid` if a
+  # species appears more than once, which silently shifts every label after it
+  tree_sub$tip.label[wid] = grafted$sp2[match(tree_sub$tip.label[wid], grafted$species)]
   
   graft_status = tibble::tibble(tip_label = tree_sub$tip.label)
   graft_status$species = gsub("\\*", "", graft_status$tip_label)
