@@ -82,6 +82,11 @@ get_one_tree = function(sp_list, tree, taxon,
   if(nrow(sp_out_tree) == 0){
     message("Wow, all species are already in the mega-tree!")
     tree_sub = ape::drop.tip(tree, setdiff(tree$tip.label, sp_list$species))
+    tree_sub$graft_status = tibble::tibble(
+      tip_label = tree_sub$tip.label,
+      species = tree_sub$tip.label,
+      status = rep("exisiting species in the megatree", length(tree_sub$tip.label))
+    )
     return(tree_sub)
   }
   

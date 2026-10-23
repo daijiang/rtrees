@@ -251,3 +251,22 @@ test_that("get_graft_status works on individual trees from multiPhylo output", {
   expect_true(all(c("tip_label", "species", "status") %in% names(gs)))
   expect_true(all(test_bird_list$species %in% gs$species))
 })
+
+test_that("get_graft_status always returns a table", {
+  tm = suppressMessages(get_tree(test_bird_list, taxon = "bird"))
+  # multiPhylo
+  gm = get_graft_status(tm)
+  expect_s3_class(gm, "data.frame")
+  expect_true("tree" %in% names(gm))
+  expect_gt(nrow(gm), 0)
+  # nothing to graft: all species already in the tree
+  one = tm[[1]]
+  sp_in = one$tip.label[1:3]
+  t_all = suppressMessages(suppressWarnings(
+    get_tree(sp_in, tree = one, taxon = "bird", tree_by_user = TRUE)))
+  gs = get_graft_status(t_all)
+  expect_s3_class(gs, "data.frame")
+  expect_equal(nrow(gs), 3)
+  # no information at all
+  expect_equal(nrow(get_graft_status(ape::rtree(3))), 0)
+})
